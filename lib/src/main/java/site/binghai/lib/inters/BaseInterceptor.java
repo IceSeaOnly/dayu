@@ -15,11 +15,11 @@ public abstract class BaseInterceptor extends HandlerInterceptorAdapter {
                 return true;
             }
         }
-        response.sendRedirect(getRedirectUrl(session));
+        response.sendRedirect(getRedirectUrl(session,request));
         return false;
     }
 
-    protected abstract String getRedirectUrl(HttpSession session);
+    protected abstract String getRedirectUrl(HttpSession session, HttpServletRequest request);
 
     protected abstract String getFilterTag(HttpSession session);
 

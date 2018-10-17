@@ -34,7 +34,7 @@ public class GroovyEngineUtils {
         return engine;
     }
 
-    public static String instanceGroovyEngine(String template, Map context) throws Exception {
+    public static String renderTemplate(String template, Map context) throws Exception {
         TemplateEngine engine = new SimpleTemplateEngine();
         return engine.createTemplate(template).make(context).toString();
     }

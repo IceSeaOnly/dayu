@@ -40,14 +40,13 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return daoHolder;
     }
 
-
     /**
      * 获取某列的所有case，适用于可以枚举的列
-     * */
+     */
     public List distinctList(String filed) {
         List ls = entityManager.createQuery(
-                String.format("select distinct %s from %s", filed, getTypeArguement().getSimpleName()))
-                .getResultList();
+            String.format("select distinct %s from %s", filed, getTypeArguement().getSimpleName()))
+            .getResultList();
 
         return ls;
     }
@@ -56,7 +55,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
      * 获取T的实际类型
      */
     protected Class<T> getTypeArguement() {
-        Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return tClass;
     }
 
@@ -68,13 +67,14 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     @Transactional
     public T update(T t) {
         if (t.getId() >= 0) {
+            t.setUpdated(now());
             return save(t);
         }
         return t;
     }
 
     public T findById(Long id) {
-        if (id == null) return null;
+        if (id == null) { return null; }
         return getDao().findById(id).orElse(null);
     }
 
@@ -86,7 +86,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     @Transactional
     public T deleteIfExist(Long id) {
         T t = findById(id);
-        if (t == null) return null;
+        if (t == null) { return null; }
         delete(id);
         return t;
     }

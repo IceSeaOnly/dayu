@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SessionDataBundle implements SessionPersistent {
-    private static final String BACK_URL = "BACK_URL";
+    public static final String BACK_URL = "BACK_URL";
 
 
     private Map<String, String> attrs;

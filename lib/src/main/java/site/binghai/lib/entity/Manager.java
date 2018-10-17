@@ -18,8 +18,4 @@ public class Manager extends BaseEntity implements SessionPersistent {
     private String nickName;
     private Boolean forbidden;
 
-    @Override
-    public String sessionTag() {
-        return "_SYS_MANAGER_";
-    }
 }

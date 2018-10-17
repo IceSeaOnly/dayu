@@ -27,6 +27,7 @@ public class IceConfig {
     private String wxValidateMD5Key;
     private String wxPayUrl;
     private String wxRefundUrl;
+    private String defaultAvatarUrl;
 
     private static Map<String, String> setupParams = new HashMap<>();
 

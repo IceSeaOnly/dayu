@@ -17,10 +17,8 @@ public class WxUser extends BaseEntity implements SessionPersistent {
     private String userName;
     private String phone;
     private String openId;
-    private Long refereeId; //推荐人id
-
-    @Override
-    public String sessionTag() {
-        return "_WX_USER_";
-    }
+    /**
+     * 推荐人id
+     * */
+    private Long refereeId;
 }

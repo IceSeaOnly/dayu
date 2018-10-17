@@ -26,9 +26,8 @@ public abstract class AbastractKVCacheService<K, V, P extends Map<K, V>> extends
         return now() - lastCallTime > expiredSecs;
     }
 
-
     private synchronized void init() {
-        if (cache != null) return;
+        if (cache != null) { return; }
         expiredSecs = setExpiredSecs() * 1000;
         loadData();
     }
