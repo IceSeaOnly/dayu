@@ -14,4 +14,8 @@ public class SysConfig extends BaseEntity {
     private Long id;
     private Boolean closeSystem;
     private String closeMessage;
+    /**
+     * 系统账户余额
+     * */
+    private Integer systemFinanceBalance;
 }

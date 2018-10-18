@@ -10,7 +10,6 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.utils.GroovyEngineUtils;
 import site.binghai.lib.utils.UrlUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
