@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Getter
 public enum PayBizEnum {
-
+    TREE_HOLE_WRITER_FEE(0,"树洞原创作品费"),
     ;
 
     private int code;

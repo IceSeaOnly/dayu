@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import site.binghai.lib.entity.BaseEntity;
+import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.utils.BaseBean;
 
 import javax.persistence.EntityManager;
@@ -16,6 +17,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     @Autowired
@@ -48,7 +50,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             String.format("select distinct %s from %s", filed, getTypeArguement().getSimpleName()))
             .getResultList();
 
-        return ls;
+        return filterDeleted(ls);
     }
 
     /**
@@ -75,12 +77,21 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
 
     public T findById(Long id) {
         if (id == null) { return null; }
-        return getDao().findById(id).orElse(null);
+        T t = getDao().findById(id).orElse(null);
+        if (t.getDeleted()) {
+            return null;
+        }
+        return t;
     }
 
     @Transactional
     public void delete(Long id) {
-        getDao().deleteById(id);
+        //getDao().deleteById(id);
+        T t = findById(id);
+        if (t != null) {
+            t.setDeleted(Boolean.TRUE);
+            update(t);
+        }
     }
 
     @Transactional
@@ -91,24 +102,31 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return t;
     }
 
-    @Transactional
-    public boolean deleteAll(String confirm) {
-        if (confirm.equals("confirm")) {
-            getDao().deleteAll();
-            return true;
-        }
-        return false;
-    }
+    //@Transactional 启用逻辑删除，禁用此方法
+    //public boolean deleteAll(String confirm) {
+    //    if (confirm.equals("confirm")) {
+    //        getDao().deleteAll();
+    //        return true;
+    //    }
+    //    return false;
+    //}
 
     public List<T> findByIds(List<Long> ids) {
-        return getDao().findAllById(ids);
+        return filterDeleted(getDao().findAllById(ids));
+    }
+
+    public List<T> filterDeleted(List<T> inputs) {
+        if (isEmptyList(inputs)) { return inputs; }
+        return inputs.stream()
+            .filter(v -> !v.getDeleted())
+            .collect(Collectors.toList());
     }
 
     public List<T> query(T example) {
         example.setCreated(null);
         example.setCreatedTime(null);
         Example<T> ex = Example.of(example);
-        return getDao().findAll(ex);
+        return filterDeleted(getDao().findAll(ex));
     }
 
     public T queryOne(T example) {
@@ -116,26 +134,35 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setCreatedTime(null);
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
-        return rs == null ? null : rs.orElse(null);
+        T t = (rs == null ? null : rs.orElse(null));
+        return t.getDeleted() ? null : t;
     }
 
     public List<T> sortQuery(T example, String sortField, Boolean desc) {
         example.setCreated(null);
         example.setCreatedTime(null);
         Example<T> ex = Example.of(example);
-        return getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField));
+        return filterDeleted(getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField)));
     }
 
     public List<T> findAll(int limit) {
-        return getDao().findAll(new PageRequest(0, limit)).getContent();
+        return filterDeleted(getDao().findAll(new PageRequest(0, limit)).getContent());
     }
 
     public List<T> findAll(int page, int pageSize) {
-        return getDao().findAll(new PageRequest(page, pageSize)).getContent();
+        return filterDeleted(getDao().findAll(new PageRequest(page, pageSize)).getContent());
     }
 
     public long count() {
-        return getDao().count();
+        try {
+            T exp = getTypeArguement().newInstance();
+            exp.setDeleted(Boolean.FALSE);
+            Example<T> ex = Example.of(exp);
+            return getDao().count(ex);
+        } catch (Exception e) {
+            logger.error("count error! ", e);
+        }
+        return 0;
     }
 
     @Transactional

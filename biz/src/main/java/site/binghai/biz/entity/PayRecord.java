@@ -40,6 +40,6 @@ public class PayRecord extends BaseEntity {
     /**
      * 支付原因
      */
-    private String payReasone;
+    private String payReason;
 
 }

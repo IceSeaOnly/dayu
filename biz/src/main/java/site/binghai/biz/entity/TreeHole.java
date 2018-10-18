@@ -23,8 +23,8 @@ public class TreeHole extends BaseEntity {
     private Long payId;
     private Long userId;
     private String openId;
-    private boolean passed;
-    private boolean consumed;
+    private Boolean passed;
+    private Boolean consumed;
     private Long buyerId;
     private String buyerOpenId;
 }

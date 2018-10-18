@@ -9,8 +9,8 @@ public enum AuditStatusEnum {
     REJECT(2, "拒绝"),
     ;
 
-    private int code;
-    private String name;
+    public int code;
+    public String name;
     private static Map<Integer, AuditStatusEnum> maps;
 
     static {
@@ -28,4 +28,6 @@ public enum AuditStatusEnum {
         this.code = code;
         this.name = name;
     }
+
+
 }

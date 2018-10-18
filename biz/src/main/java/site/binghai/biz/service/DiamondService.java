@@ -10,7 +10,7 @@ import java.util.Properties;
 
 /**
  * 阿里云KV服务
- * */
+ */
 @Service
 public class DiamondService extends AbastractMultiKVCacheService<String, String> implements InitializingBean {
     @Override

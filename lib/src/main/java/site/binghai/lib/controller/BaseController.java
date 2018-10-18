@@ -7,6 +7,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import site.binghai.lib.entity.SessionDataBundle;
+import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.interfaces.SessionPersistent;
 import site.binghai.lib.utils.BaseBean;
 
@@ -62,6 +63,10 @@ public class BaseController extends BaseBean {
             instanceHolder.put(sp, sp.newInstance());
         }
         return instanceHolder.get(sp).sessionTag();
+    }
+
+    public WxUser getUser() {
+        return getSessionPersistent(WxUser.class);
     }
 
     public void setString2Session(String key, String value) {

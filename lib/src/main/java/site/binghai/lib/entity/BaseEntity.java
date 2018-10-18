@@ -16,6 +16,7 @@ public abstract class BaseEntity {
     private Long updated;
     private String createdTime;
     private String updatedTime;
+    private Boolean isDeleted;
 
     public BaseEntity() {
         created = TimeTools.currentTS();
@@ -23,6 +24,16 @@ public abstract class BaseEntity {
 
         updated = created;
         updatedTime = createdTime;
+
+        isDeleted = Boolean.FALSE;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 
     public Long getUpdated() {
