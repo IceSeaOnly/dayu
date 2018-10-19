@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/const/view/")
+@RequestMapping("/view/")
 public class ConstViewController extends BaseController {
     @Autowired
     private DiamondService diamondService;
@@ -30,7 +30,7 @@ public class ConstViewController extends BaseController {
         return success(null, UUID.randomUUID().toString());
     }
 
-    @RequestMapping("/page/{viewId}")
+    @RequestMapping("/page/const/{viewId}")
     public Object page(String nocache, @PathVariable String viewId) {
         String tpl = nocache == null ? diamondService.get(viewId) : diamondService.refreshGet(viewId);
         if (hasEmptyString(tpl)) {
