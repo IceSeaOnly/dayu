@@ -4,6 +4,7 @@ import lombok.Data;
 import site.binghai.biz.enums.AuditTypeEnum;
 import site.binghai.lib.entity.BaseEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -43,6 +44,7 @@ public class AuditRecord extends BaseEntity {
      *     "2018-10-17 00:00:00":"yyyy"
      * }
      * */
+    @Column(columnDefinition = "TEXT")
     private String message;
 
 }

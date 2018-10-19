@@ -60,6 +60,8 @@ public class TreeHoleService extends BaseService<TreeHole> {
             return;
         }
         delete(id);
+        payRecordService.delete(hole.getPayId());
+        auditRecordService.delete(hole.getAuditId());
     }
 
     public List<TreeHole> findByUser(WxUser user) {

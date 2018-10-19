@@ -5,6 +5,7 @@ import site.binghai.lib.entity.BaseEntity;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,6 +37,7 @@ public class PayRecord extends BaseEntity {
     /**
      * 付款后的消息文案
      */
+    @Column(columnDefinition = "TEXT")
     private String message;
     /**
      * 支付原因

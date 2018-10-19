@@ -1,5 +1,6 @@
 package site.binghai.biz.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,15 +32,31 @@ public class ConstViewController extends BaseController {
 
     @RequestMapping("/page/{viewId}")
     public Object page(String nocache, @PathVariable String viewId) {
-        Map<String, String> ctx = UrlUtil.getRequestParams(getServletRequest());
-        urlDecode(ctx);
         String tpl = nocache == null ? diamondService.get(viewId) : diamondService.refreshGet(viewId);
         if (hasEmptyString(tpl)) {
             return fail("no such page error!");
         }
 
+        return tpl;
+    }
+
+    @RequestMapping("/page/dyna/{viewId}")
+    public Object dynamicPage(String nocache, @PathVariable String viewId) {
+        Object tpl = page(nocache, viewId);
+
+        if (tpl instanceof JSONObject) {
+            return tpl;
+        }
+
+        if (hasEmptyString(tpl)) {
+            return fail("no such page error!");
+        }
+
+        Map<String, String> ctx = UrlUtil.getRequestParams(getServletRequest());
+        urlDecode(ctx);
+
         try {
-            String ret = GroovyEngineUtils.renderTemplate(tpl, ctx);
+            String ret = GroovyEngineUtils.renderTemplate(String.valueOf(tpl), ctx);
             return ret;
         } catch (Exception e) {
             logger.error("render page error! viewId:{},ctx:{}", viewId, ctx, e);

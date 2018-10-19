@@ -7,6 +7,7 @@ import site.binghai.biz.enums.AuditTypeEnum;
 import site.binghai.lib.service.BaseService;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class AuditRecordService extends BaseService<AuditRecord> {
@@ -18,5 +19,11 @@ public class AuditRecordService extends BaseService<AuditRecord> {
         record.setAuditType(type.code);
         record.setExternalId(externalId);
         return save(record);
+    }
+
+    public List<AuditRecord> findByAuditStatus(AuditStatusEnum status) {
+        AuditRecord exp = new AuditRecord();
+        exp.setAuditStatus(status.code);
+        return sortQuery(exp, "id", true);
     }
 }
