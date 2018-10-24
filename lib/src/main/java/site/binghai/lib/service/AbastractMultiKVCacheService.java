@@ -10,8 +10,11 @@ public abstract class AbastractMultiKVCacheService<K, V> extends BaseBean {
     private long expiredSecs = 0L;
     private ConcurrentHashMap<K, Pair<Long, V>> cache;
 
-    public V refreshGet(K key){
-        loadData(key);
+    public V refreshGet(K key) {
+        Pair ret = loadData(key);
+        if (ret != null) {
+            cache.put(key, ret);
+        }
         return get(key);
     }
 
