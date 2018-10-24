@@ -11,7 +11,7 @@ public abstract class AbastractMultiKVCacheService<K, V> extends BaseBean {
     private ConcurrentHashMap<K, Pair<Long, V>> cache;
 
     public V refreshGet(K key){
-        load(key);
+        loadData(key);
         return get(key);
     }
 
