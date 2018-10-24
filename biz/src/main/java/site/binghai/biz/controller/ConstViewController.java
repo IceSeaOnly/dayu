@@ -32,7 +32,7 @@ public class ConstViewController extends BaseController {
 
     @RequestMapping("/page/const/{viewId}")
     public Object page(String nocache, @PathVariable String viewId) {
-        String tpl = nocache == null ? diamondService.get(viewId) : diamondService.refreshGet(viewId);
+        String tpl = diamondService.get(viewId,nocache != null);
         if (hasEmptyString(tpl)) {
             return fail("no such page error!");
         }
