@@ -10,10 +10,12 @@ import java.util.Map;
 @Service
 public class DecodeUtil extends BaseBean {
 
-    public void urlDecode(Map<String, String> ctx) {
+    public void urlDecode(Map ctx) {
         ctx.forEach((k, v) -> {
             try {
-                ctx.put(k, URLDecoder.decode(v, "UTF-8"));
+                if (v instanceof String) {
+                    ctx.put(k, URLDecoder.decode(String.valueOf(v), "UTF-8"));
+                }
             } catch (UnsupportedEncodingException e) {
                 logger.error("urlDecode error!", e);
             }
