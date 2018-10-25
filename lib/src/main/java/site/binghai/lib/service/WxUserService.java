@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.entity.WxUser;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -18,6 +19,7 @@ public class WxUserService extends BaseService<WxUser> {
         return queryOne(wxUser);
     }
 
+    @Transactional
     public WxUser newUser(String openId) {
         WxUser wxUser = new WxUser();
         wxUser.setOpenId(openId);
