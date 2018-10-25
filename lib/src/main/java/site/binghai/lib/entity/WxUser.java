@@ -3,12 +3,13 @@ package site.binghai.lib.entity;
 import lombok.Data;
 import site.binghai.lib.interfaces.SessionPersistent;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 @Data
-@MappedSuperclass
+@Entity
 public class WxUser extends BaseEntity implements SessionPersistent {
     @Id
     @GeneratedValue
