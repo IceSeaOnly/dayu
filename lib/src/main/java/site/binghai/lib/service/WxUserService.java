@@ -43,6 +43,9 @@ public class WxUserService extends BaseService<WxUser> {
     }
 
     private String getGender(WxInfo info) {
+        if (hasEmptyString(info.getSex())) {
+            return "未知";
+        }
         switch (info.getSex()) {
             case "1":
                 return "男";
