@@ -135,6 +135,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
         T t = (rs == null ? null : rs.orElse(null));
+        if (t == null) { return null; }
         return t.getDeleted() ? null : t;
     }
 
