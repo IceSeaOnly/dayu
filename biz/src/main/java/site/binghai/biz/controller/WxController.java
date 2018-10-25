@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.SessionDataBundle;
+import site.binghai.lib.entity.WxInfo;
 import site.binghai.lib.entity.WxUser;
+import site.binghai.lib.service.WxCommonService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.MD5;
 import site.binghai.lib.utils.UrlUtil;
@@ -22,6 +24,8 @@ public class WxController extends BaseController {
     private IceConfig iceConfig;
     @Autowired
     private WxUserService wxUserService;
+    @Autowired
+    private WxCommonService wxCommonService;
 
     @GetMapping("wxLogin")
     public String wxLogin(@RequestParam String openId, @RequestParam String validate, String backUrl) {
@@ -38,7 +42,11 @@ public class WxController extends BaseController {
 
         WxUser wxUser = wxUserService.findByOpenId(openId);
         if (wxUser == null) {
-            wxUser = wxUserService.newUser(openId);
+            WxInfo info = wxCommonService.getUserInfo(openId);
+            if (info == null || !info.isSubscribed()) {
+                return "redirect:" + iceConfig.getSubscribePage();
+            }
+            wxUser = wxUserService.newUser(openId, info);
         }
 
         persistent(wxUser);

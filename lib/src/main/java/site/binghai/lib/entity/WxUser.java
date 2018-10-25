@@ -18,6 +18,17 @@ public class WxUser extends BaseEntity implements SessionPersistent {
     private String userName;
     private String phone;
     private String openId;
+    private String gender;
+    //用户所在城市
+    private String city;
+    //用户所在国家
+    private String country;
+    //用户所在省份
+    private String province;
+    //用户关注时间，为时间戳。如果用户曾多次关注，则取最后关注时间
+    private String subscribeTime;
+    //用户关注的渠道来源
+    private String subscribeScene;
     /**
      * 余额
      * */

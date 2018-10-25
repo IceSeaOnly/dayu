@@ -22,12 +22,14 @@ public class IceConfig {
     private String aliyunAccessKeyId;
     private String aliyunAccessKeySecret;
 
-
+    private String wxAppid;
+    private String wxSecret;
     private String wxAuthenticationUrl;
     private String wxValidateMD5Key;
     private String wxPayUrl;
     private String wxRefundUrl;
     private String defaultAvatarUrl;
+    private String subscribePage;
 
     private static Map<String, String> setupParams = new HashMap<>();
 

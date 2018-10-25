@@ -125,6 +125,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     public List<T> query(T example) {
         example.setCreated(null);
         example.setCreatedTime(null);
+        example.setDeleted(null);
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex));
     }
@@ -132,6 +133,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     public T queryOne(T example) {
         example.setCreated(null);
         example.setCreatedTime(null);
+        example.setDeleted(null);
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
         T t = (rs == null ? null : rs.orElse(null));
@@ -142,6 +144,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     public List<T> sortQuery(T example, String sortField, Boolean desc) {
         example.setCreated(null);
         example.setCreatedTime(null);
+        example.setDeleted(null);
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField)));
     }
