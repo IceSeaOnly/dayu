@@ -28,8 +28,12 @@ public class UrlUtil {
         }
         String[] kvs = query.split("&");
         for (String kv : kvs) {
-            String[] pair = kv.split("=");
-            params.put(pair[0], pair[1]);
+            if (kv != null) {
+                String[] pair = kv.split("=");
+                if (pair != null && pair.length == 2) {
+                    params.put(pair[0], pair[1]);
+                }
+            }
         }
         return params;
     }
