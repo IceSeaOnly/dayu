@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.binghai.biz.service.DiamondService;
+import site.binghai.biz.utils.DecodeUtil;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.utils.GroovyEngineUtils;
 import site.binghai.lib.utils.UrlUtil;
@@ -21,6 +22,8 @@ import java.util.UUID;
 public class ConstViewController extends BaseController {
     @Autowired
     private DiamondService diamondService;
+    @Autowired
+    private DecodeUtil decodeUtil;
 
     /**
      * 随机生成一个序列号
@@ -53,7 +56,7 @@ public class ConstViewController extends BaseController {
         }
 
         Map<String, String> ctx = UrlUtil.getRequestParams(getServletRequest());
-        urlDecode(ctx);
+        decodeUtil.urlDecode(ctx);
 
         try {
             String ret = GroovyEngineUtils.renderTemplate(String.valueOf(tpl), ctx);
@@ -64,14 +67,6 @@ public class ConstViewController extends BaseController {
         return fail("page error,viewId:" + viewId + ",time:" + now());
     }
 
-    private void urlDecode(Map<String, String> ctx) {
-        ctx.forEach((k, v) -> {
-            try {
-                ctx.put(k, URLDecoder.decode(v, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                logger.error("urlDecode error!", e);
-            }
-        });
-    }
+
 
 }
