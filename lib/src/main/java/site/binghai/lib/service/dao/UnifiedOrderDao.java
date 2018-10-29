@@ -14,4 +14,6 @@ public interface UnifiedOrderDao extends JpaRepository<UnifiedOrder, Long> {
     Long countByAppCode(Integer code);
 
     Long countByAppCodeAndStatus(Integer code, Integer status);
+
+    List<UnifiedOrder> findAllByUserIdOrderByIdDesc(Long userId, Pageable pageable);
 }

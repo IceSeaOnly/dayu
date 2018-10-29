@@ -86,4 +86,27 @@ public abstract class AbstractPayBizController<T extends PayBizEntity> extends B
         uorder = getService().save(uorder);
         return success(uorder, "/user/unified/detail?unifiedId=" + unifiedOrder.getId());
     }
+
+    public JSONObject create(T uorder, int fee) throws Exception {
+        if(sysConfigService.isSystemClosed()){
+            return fail(sysConfigService.getCloseReason());
+        }
+
+        WxUser user = getSessionPersistent(WxUser.class);
+
+        uorder.setStatus(OrderStatusEnum.CREATED.getCode());
+        uorder.setPaid(Boolean.FALSE);
+        uorder.setUserId(user.getId());
+
+        UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(
+            getBizType(),
+            user,
+            getBizType().getName(),
+            fee);
+
+        uorder.setUnifiedId(unifiedOrder.getId());
+
+        uorder = getService().save(uorder);
+        return success(uorder, "/user/unified/detail?unifiedId=" + unifiedOrder.getId());
+    }
 }

@@ -32,6 +32,7 @@ public class WxUserService extends BaseService<WxUser> {
         wxUser.setAvatar(getAvatar(info));
         wxUser.setSubscribeTime(info.getSubscribe_time());
         wxUser.setSubscribeScene(info.getSubscribe_scene());
+        wxUser.setSubscribed(true);
         return save(wxUser);
     }
 

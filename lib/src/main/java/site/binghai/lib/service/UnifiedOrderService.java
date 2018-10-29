@@ -13,8 +13,7 @@ import site.binghai.lib.service.dao.UnifiedOrderDao;
 import java.util.List;
 
 /**
- * Created by IceSea on 2018/4/5.
- * GitHub: https://github.com/IceSeaOnly
+ * Created by IceSea on 2018/4/5. GitHub: https://github.com/IceSeaOnly
  */
 @Service
 public class UnifiedOrderService extends BaseService<UnifiedOrder> {
@@ -27,14 +26,14 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
     }
 
     public List<UnifiedOrder> findByAppCode(PayBizEnum pbe, Integer page, Integer pageSize) {
-        if (page == null || page < 0) page = 0;
-        if (pageSize == null || pageSize < 0) pageSize = 100;
+        if (page == null || page < 0) { page = 0; }
+        if (pageSize == null || pageSize < 0) { pageSize = 100; }
         return dao.findAllByAppCodeOrderByCreatedDesc(pbe.getCode(), new PageRequest(page, pageSize));
     }
 
     public List<UnifiedOrder> findByAppCode(PayBizEnum pbe, Long categoryId, Integer page, Integer pageSize) {
-        if (page == null || page < 0) page = 0;
-        if (pageSize == null || pageSize < 0) pageSize = 100;
+        if (page == null || page < 0) { page = 0; }
+        if (pageSize == null || pageSize < 0) { pageSize = 100; }
         return dao.findAllByAppCodeOrderByCreatedDesc(pbe.getCode(), new PageRequest(page, pageSize));
     }
 
@@ -47,10 +46,11 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
     }
 
     public List<UnifiedOrder> list(PayBizEnum payBiz, OrderStatusEnum status, Integer page, Integer pageSize) {
-        if (page == null || page < 0) page = 0;
-        if (pageSize == null || pageSize < 0) pageSize = 100;
+        if (page == null || page < 0) { page = 0; }
+        if (pageSize == null || pageSize < 0) { pageSize = 100; }
 
-        return dao.findAllByAppCodeAndStatusOrderByCreatedDesc(payBiz.getCode(), status.getCode(), new PageRequest(page, pageSize));
+        return dao.findAllByAppCodeAndStatusOrderByCreatedDesc(payBiz.getCode(), status.getCode(),
+            new PageRequest(page, pageSize));
     }
 
     public UnifiedOrder newOrder(PayBizEnum biz, WxUser user, String title, int payMuch) {
@@ -66,7 +66,6 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         order.setOriginalPrice(payMuch);
         return save(order);
     }
-
 
     public UnifiedOrder findByOrderId(String orderKey) {
         UnifiedOrder unifiedOrder = new UnifiedOrder();
@@ -92,5 +91,15 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
 
         res.addAll(query(unifiedOrder));
         return res;
+    }
+
+    public List<UnifiedOrder> findByUserIdOrderByIdDesc(Long userId, Integer page, Integer pageSize) {
+        if (page == null || page < 0) page = 0;
+        if (pageSize == null || pageSize < 0) pageSize = 100;
+        return dao.findAllByUserIdOrderByIdDesc(userId, new PageRequest(page, pageSize));
+    }
+
+    public boolean cancel(Long id) {
+        return false;
     }
 }

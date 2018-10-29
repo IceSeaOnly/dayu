@@ -17,9 +17,8 @@ public enum OrderStatusEnum {
     PROCESSING(3, "订单处理中"),
     COMPLETE(4, "已完成"),
     REFUNDING(5, "退款申请中"),
-    CANCELED_REFUNDED(6, "已退款/已取消"),
+    CANCELED(6, "已取消"),
     OUTOFDATE(7, "已超时/已取消"),
-
     ;
 
 

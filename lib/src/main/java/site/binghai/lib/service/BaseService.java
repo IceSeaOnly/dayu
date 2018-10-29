@@ -56,7 +56,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     /**
      * 获取T的实际类型
      */
-    protected Class<T> getTypeArguement() {
+    public Class<T> getTypeArguement() {
         Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return tClass;
     }

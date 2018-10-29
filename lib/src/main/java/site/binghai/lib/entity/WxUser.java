@@ -17,6 +17,7 @@ public class WxUser extends BaseEntity implements SessionPersistent {
     private String avatar;
     private String userName;
     private String phone;
+    private Integer wallet;
     private String openId;
     private String gender;
     //用户所在城市
@@ -37,4 +38,5 @@ public class WxUser extends BaseEntity implements SessionPersistent {
      * 推荐人id
      * */
     private Long refereeId;
+    private Boolean subscribed;
 }

@@ -1,6 +1,7 @@
 package site.binghai.lib.config;
 
 import lombok.Data;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,9 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "ice")
 @PropertySource("classpath:application.properties")
 @Data
-public class IceConfig {
+public class IceConfig implements InitializingBean {
+    public static IceConfig iceConfigHolder;
+
     private String appName;
     private String appRoot;
 
@@ -39,5 +42,10 @@ public class IceConfig {
 
     public static void addSetupParam(String k, String v) {
         setupParams.put(k, v);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        iceConfigHolder = this;
     }
 }

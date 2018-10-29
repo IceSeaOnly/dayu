@@ -2,7 +2,6 @@ package site.binghai.biz.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.entity.AuditRecord;
 import site.binghai.biz.entity.PayRecord;
 import site.binghai.biz.entity.TreeHole;
@@ -34,9 +33,6 @@ public class TreeHoleService extends BaseService<TreeHole> {
         }
 
         ins.setAuditId(null);
-        ins.setBuyerId(null);
-        ins.setBuyerOpenId(null);
-        ins.setConsumed(false);
         ins.setPassed(false);
         ins.setPayId(null);
         ins = save(ins);
