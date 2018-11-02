@@ -9,7 +9,6 @@ public abstract class AbastractCacheService<T> extends BaseBean implements Cache
     private long lastCallTime = 0l;
     private T cache;
 
-
     public T get() {
         if (cache == null) {
             init();
@@ -25,9 +24,8 @@ public abstract class AbastractCacheService<T> extends BaseBean implements Cache
         return now() - lastCallTime > expiredSecs;
     }
 
-
     private synchronized void init() {
-        if (cache != null) return;
+        if (cache != null) { return; }
         expiredSecs = setExpiredSecs() * 1000;
         loadData();
     }
