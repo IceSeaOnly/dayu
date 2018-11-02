@@ -28,7 +28,7 @@ public class UserTaskCenter extends BaseBean {
         List<WxUser> users = wxUserService.findAll(page++, pageSize);
 
         logger.info("User Tasks Start.");
-        while (!isEmptyList(users)) {
+        if (!isEmptyList(users)) {
             for (WxUser user : users) {
                 JSONObject old = toJsonObject(user);
                 user = handleTask(user);
