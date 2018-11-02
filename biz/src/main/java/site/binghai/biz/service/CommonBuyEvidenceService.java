@@ -31,7 +31,7 @@ public class CommonBuyEvidenceService extends BaseService<CommonBuyEvidence>
     @Override
     public CommonBuyEvidence cancel(UnifiedOrder order) {
         CommonBuyEvidence evidence = moreInfo(order);
-        evidence.setStatus(OrderStatusEnum.CANCELED_REFUNDED.getCode());
+        evidence.setStatus(OrderStatusEnum.CANCELED.getCode());
         return update(evidence);
     }
 
