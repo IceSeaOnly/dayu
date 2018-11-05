@@ -25,6 +25,6 @@ public class TurnGameTicketAddListener extends BaseBean implements WxTplMessageH
     @Override
     public void accept(WxTplMsg message) {
         String url = message.getUrl();
-        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url));
+        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url.split("\\?")[1]));
     }
 }
