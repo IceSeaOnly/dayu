@@ -11,6 +11,8 @@ import site.binghai.biz.service.turntable.TicketService;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.utils.TimeTools;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user/turngame/")
 public class TurnTableGameController extends BaseController {
@@ -22,8 +24,26 @@ public class TurnTableGameController extends BaseController {
     private DiamondService diamondService;
 
     @GetMapping("listWinners")
-    public Object listWinners() {
-        return success(ticketService.listWinners(), null);
+    public Object listWinners(Long time) {
+        List<Ticket> tickets = emptyList();
+
+        if (time == null) {
+            tickets.addAll(ticketService.listTodayWinners(time));
+        } else {
+            tickets.addAll(ticketService.listWinners());
+        }
+        tickets.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
+        StringBuilder html = new StringBuilder(String.format("<h3>中奖人数:%d</h3>", tickets.size()));
+        int counter = 1;
+        for (Ticket v : tickets) {
+            html.append(String.format("<h4>%d / 姓名：%s<h4>", counter++, v.getUserName()));
+            html.append(String.format("手机号:%s <br/>", v.getUserPhone()));
+            html.append(String.format("中奖时间:%s <br/>", v.getGameTimeString()));
+            html.append(String.format("奖品:%s <br/>", v.getPrize()));
+            html.append(String.format("关联订单号:%s <br/>", v.getRelationNo()));
+        }
+
+        return html.toString();
     }
 
     @GetMapping("getGameRule")

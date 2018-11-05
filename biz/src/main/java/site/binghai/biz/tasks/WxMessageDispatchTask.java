@@ -87,9 +87,6 @@ public class WxMessageDispatchTask extends BaseBean {
     }
 
     private void DealMsg(String messageBodyAsString) throws ClientException {
-        String content = TimeTools.format(Long.valueOf(System.currentTimeMillis())) + " - " + messageBodyAsString;
-        String fileName = "/data/wwwroot/notify/mns_" + TimeTools.format2yyyy_MM_dd(Long.valueOf(System.currentTimeMillis())) + ".txt";
-        IoUtils.WriteCH(fileName, content);
         JSONObject json = JSONObject.parseObject(messageBodyAsString);
         if (json.getString("type").equals("wxnotice")) {
             JSONArray arr = json.getJSONArray("datas");
