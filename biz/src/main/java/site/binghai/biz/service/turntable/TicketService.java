@@ -4,9 +4,11 @@ import org.springframework.stereotype.Service;
 import site.binghai.biz.entity.turntable.Ticket;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.BaseService;
+import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService extends BaseService<Ticket> {
@@ -52,5 +54,14 @@ public class TicketService extends BaseService<Ticket> {
         exp.setWin(false);
         exp.setPlayed(false);
         save(exp);
+    }
+
+    public List<Ticket> listTodayWinners(long now) {
+        Long[] today = TimeTools.today();
+
+        List<Ticket> winners = listWinners();
+        winners = winners.stream().filter(v -> today[0] <= v.getGameTime() && v.getGameTime() <= now)
+            .collect(Collectors.toList());
+        return winners;
     }
 }

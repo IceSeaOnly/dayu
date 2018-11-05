@@ -18,6 +18,7 @@ public class IceConfig implements InitializingBean {
 
     private String appName;
     private String appRoot;
+    private String debugCode;
 
     private String miaodiSms_ACCOUNT_SID;
     private String miaodiSms_AUTH_TOKEN;
@@ -36,6 +37,9 @@ public class IceConfig implements InitializingBean {
     private String wxRefundUrl;
     private String defaultAvatarUrl;
     private String subscribePage;
+
+    private String paySuccessTplId;
+    private String statisticsResultTplId;
 
     private static Map<String, String> setupParams = new HashMap<>();
 

@@ -24,6 +24,7 @@ public class Ticket extends BaseEntity {
     private Boolean played; //是否已经使用
     private Boolean win; //是否获奖
     private String prize;//奖品
-    private String gameTime;
+    private String gameTimeString;
+    private Long gameTime;
 
 }

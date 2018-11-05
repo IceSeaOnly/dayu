@@ -39,7 +39,8 @@ public class TurnTableGameController extends BaseController {
         }
 
         ticket.setPlayed(true);
-        ticket.setGameTime(TimeTools.now());
+        ticket.setGameTime(now());
+        ticket.setGameTimeString(TimeTools.now());
         ticket.setUserAvatar(getUser().getAvatar());
         ticket.setUserName(getUser().getUserName());
 

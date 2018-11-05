@@ -11,4 +11,6 @@ public class DiamondKey {
     public static final String TURN_GAME_MISS_PRIZE = "TURN_GAME_MISS_PRIZE";
     //大转盘游戏规则html
     public static final String TURN_GAME_RULE = "TURN_GAME_RULE";
+    //大转盘游戏每日报表配置
+    public static final String TURN_GAME_DAILY_REPORT_CONF = "TURN_GAME_DAILY_REPORT_CONF";
 }

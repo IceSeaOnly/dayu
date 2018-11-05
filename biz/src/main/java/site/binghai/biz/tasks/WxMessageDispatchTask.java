@@ -4,6 +4,7 @@ import com.aliyun.mns.client.CloudAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import site.binghai.biz.service.WxTplMessageService;
 import site.binghai.biz.service.jdy.JdyLogService;
 import site.binghai.biz.service.jdy.WxTplMsgLogService;
 import site.binghai.lib.config.IceConfig;
@@ -29,7 +30,7 @@ public class WxMessageDispatchTask extends BaseBean {
     @Autowired
     private JdyLogService jdyLogService;
     @Autowired
-    private WxTplMsgLogService wxTplMsgLogService;
+    private WxTplMessageService wxTplMessageService;
 
     @Scheduled(cron = "0/5 * * * * ?")
     public void work() {
@@ -93,8 +94,7 @@ public class WxMessageDispatchTask extends BaseBean {
         if (json.getString("type").equals("wxnotice")) {
             JSONArray arr = json.getJSONArray("datas");
             for (int i = 0; i < arr.size(); i++) {
-                String ret = new SendTemplateMsg(arr.getJSONObject(i)).send();
-                wxTplMsgLogService.save(arr.getJSONObject(i),ret);
+                String ret = wxTplMessageService.send(arr.getJSONObject(i));
             }
         } else if (json.getString("type").equals("sms")) {
             String phone = json.getString("phone");
