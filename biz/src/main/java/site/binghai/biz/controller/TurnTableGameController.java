@@ -40,7 +40,7 @@ public class TurnTableGameController extends BaseController {
             html.append(String.format("手机号:%s <br/>", v.getUserPhone()));
             html.append(String.format("中奖时间:%s <br/>", v.getGameTimeString()));
             html.append(String.format("奖品:%s <br/>", v.getPrize()));
-            html.append(String.format("关联订单号:%s <br/>", v.getRelationNo()));
+            html.append(String.format("关联订单号:%s <br/><br/><br/>", v.getRelationNo()));
         }
 
         return html.toString();

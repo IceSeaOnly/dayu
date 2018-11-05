@@ -20,14 +20,14 @@ public class TicketService extends BaseService<Ticket> {
             return ret;
         }
 
-        ret.forEach(v -> {
-            v.setRelationNo(null);
-            v.setUserPhone(null);
-            v.setOpenId(null);
-            v.setRelationNo(null);
-        });
+        //ret.forEach(v -> {
+        //    v.setRelationNo(null);
+        //    v.setUserPhone(null);
+        //    v.setOpenId(null);
+        //    v.setRelationNo(null);
+        //});
 
-        return ret;
+        return ret;g
     }
 
     public Ticket play(WxUser user) {
