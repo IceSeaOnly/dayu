@@ -13,14 +13,11 @@ public class TplGenerator {
     private String tplId;
     private JSONObject data;
 
-    private TplGenerator() {
-        this.data = data = new JSONObject();
-    }
-
     public TplGenerator(String tplId,String url, String toUser) {
         this.url = url;
         this.toUser = toUser;
         this.tplId = tplId;
+        this.data = new JSONObject();
     }
 
     public JSONObject build(){
