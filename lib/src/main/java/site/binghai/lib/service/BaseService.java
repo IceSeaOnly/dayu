@@ -126,6 +126,8 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setCreated(null);
         example.setCreatedTime(null);
         example.setDeleted(null);
+        example.setUpdated(null);
+        example.setUpdatedTime(null);
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex));
     }
@@ -134,6 +136,8 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setCreated(null);
         example.setCreatedTime(null);
         example.setDeleted(null);
+        example.setUpdated(null);
+        example.setUpdatedTime(null);
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
         T t = (rs == null ? null : rs.orElse(null));
@@ -145,6 +149,8 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setCreated(null);
         example.setCreatedTime(null);
         example.setDeleted(null);
+        example.setUpdated(null);
+        example.setUpdatedTime(null);
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField)));
     }
@@ -161,6 +167,10 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         try {
             T exp = getTypeArguement().newInstance();
             exp.setDeleted(Boolean.FALSE);
+            exp.setCreated(null);
+            exp.setCreatedTime(null);
+            exp.setUpdated(null);
+            exp.setUpdatedTime(null);
             Example<T> ex = Example.of(exp);
             return getDao().count(ex);
         } catch (Exception e) {
