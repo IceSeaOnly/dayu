@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import site.binghai.lib.service.AccessTokenService;
 import site.binghai.lib.utils.IoUtils;
 
-public class SendTemplateMsg extends PostSendBase
-    implements Runnable {
+public class SendTemplateMsg extends PostSendBase {
     private String data;
     private String token;
 
@@ -21,11 +20,5 @@ public class SendTemplateMsg extends PostSendBase
         setPostUrl("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + this.token);
         setContent(this.data);
         return postSend();
-    }
-
-    @Override
-    public void run() {
-        String sendResut = send();
-        IoUtils.WriteCH("/data/wwwroot/notify/WxTplMsgSendLog.log",String.format("%s send result : %s\n", new Object[] {this.data, sendResut}));
     }
 }

@@ -4,6 +4,8 @@ import com.aliyun.mns.client.CloudAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import site.binghai.biz.service.jdy.JdyLogService;
+import site.binghai.biz.service.jdy.WxTplMsgLogService;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.utils.BaseBean;
 import com.alibaba.fastjson.JSONArray;
@@ -24,6 +26,10 @@ public class WxMessageDispatchTask extends BaseBean {
 
     @Autowired
     private IceConfig iceConfig;
+    @Autowired
+    private JdyLogService jdyLogService;
+    @Autowired
+    private WxTplMsgLogService wxTplMsgLogService;
 
     @Scheduled(cron = "0/5 * * * * ?")
     public void work() {
@@ -74,8 +80,9 @@ public class WxMessageDispatchTask extends BaseBean {
     }
 
     private void writeLog(String content) {
-        String fileName = "/data/wwwroot/notify/log_" + TimeTools.format2yyyy_MM_dd(Long.valueOf(System.currentTimeMillis())) + ".txt";
-        IoUtils.WriteCH(fileName, TimeTools.format(Long.valueOf(System.currentTimeMillis())) + " - " + content);
+        jdyLogService.save(content);
+        //String fileName = "/data/wwwroot/notify/log_" + TimeTools.format2yyyy_MM_dd(Long.valueOf(System.currentTimeMillis())) + ".txt";
+        //IoUtils.WriteCH(fileName, TimeTools.format(Long.valueOf(System.currentTimeMillis())) + " - " + content);
     }
 
     private void DealMsg(String messageBodyAsString) throws ClientException {
@@ -86,7 +93,8 @@ public class WxMessageDispatchTask extends BaseBean {
         if (json.getString("type").equals("wxnotice")) {
             JSONArray arr = json.getJSONArray("datas");
             for (int i = 0; i < arr.size(); i++) {
-                new SendTemplateMsg(arr.getJSONObject(i)).run();
+                String ret = new SendTemplateMsg(arr.getJSONObject(i)).send();
+                wxTplMsgLogService.save(arr.getJSONObject(i),ret);
             }
         } else if (json.getString("type").equals("sms")) {
             String phone = json.getString("phone");
