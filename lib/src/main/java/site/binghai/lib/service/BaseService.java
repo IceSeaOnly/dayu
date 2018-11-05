@@ -118,7 +118,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     public List<T> filterDeleted(List<T> inputs) {
         if (isEmptyList(inputs)) { return inputs; }
         return inputs.stream()
-            .filter(v -> !v.getDeleted())
+            .filter(v -> v.getDeleted() == null || !v.getDeleted())
             .collect(Collectors.toList());
     }
 
