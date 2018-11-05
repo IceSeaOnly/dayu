@@ -28,6 +28,7 @@ public class DebugerController extends BaseController {
         return success(manualInvokeMap.get(clazz).invoke(), null);
     }
 
+    @Autowired
     public void joinList(List<ManualInvoke> list) {
         manualInvokeMap = new HashMap<>();
         list.forEach(v -> manualInvokeMap.put(v.getClass().getSimpleName(), v));
