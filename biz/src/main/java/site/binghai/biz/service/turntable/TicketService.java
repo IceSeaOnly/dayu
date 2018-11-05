@@ -27,7 +27,7 @@ public class TicketService extends BaseService<Ticket> {
         //    v.setRelationNo(null);
         //});
 
-        return ret;g
+        return ret;
     }
 
     public Ticket play(WxUser user) {
