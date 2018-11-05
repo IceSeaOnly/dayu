@@ -11,20 +11,24 @@ import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.utils.BaseBean;
 
 @Component
-public class TurnGameTicketAddListener extends BaseBean implements WxTplMessageHandler {
+public class TurnGameTicketCancelListener extends BaseBean implements WxTplMessageHandler {
     @Autowired
     private IceConfig iceConfig;
     @Autowired
     private TicketService ticketService;
+    @Autowired
+    private TurnGameReportDaily turnGameReportDaily;
 
     @Override
     public String focusOnTplId() {
-        return iceConfig.getPaySuccessTplId();
+        return iceConfig.getOrderCancelTplId();
     }
 
     @Override
     public void accept(WxTplMsg message) {
-        String url = message.getUrl();
-        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url));
+        JSONObject obj = JSONObject.parseObject(message.getText());
+        String desc = obj.getJSONObject("first").getString("value");
+        ticketService.cancel(message.getOpenId(), NumberUtil.getNumber(desc));
+        turnGameReportDaily.report("因用户订单取消，中奖名单产生变动，请以此次通知为准。");
     }
 }

@@ -64,4 +64,19 @@ public class TicketService extends BaseService<Ticket> {
             .collect(Collectors.toList());
         return winners;
     }
+
+    @Transactional
+    public void cancel(String openId, String number) {
+        Ticket exp = new Ticket();
+        exp.setOpenId(openId);
+        exp.setRelationNo(number);
+
+        List<Ticket> list = query(exp);
+        list.forEach(t -> {
+            t.setPlayed(Boolean.TRUE);
+            t.setWin(Boolean.FALSE);
+            t.setPrize("因订单取消奖品作废");
+            update(t);
+        });
+    }
 }

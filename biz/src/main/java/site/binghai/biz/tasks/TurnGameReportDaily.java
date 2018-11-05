@@ -30,6 +30,10 @@ public class TurnGameReportDaily extends BaseBean implements ManualInvoke {
 
     @Scheduled(cron = "0 0 16 * * ? ")
     public void report() {
+        report(null);
+    }
+
+    public void report(String remark) {
         List<Ticket> winners = ticketService.listTodayWinners(now());
         String conf = diamondService.get(DiamondKey.TURN_GAME_DAILY_REPORT_CONF);
         JSONObject cfg = JSONObject.parseObject(conf);
@@ -41,8 +45,13 @@ public class TurnGameReportDaily extends BaseBean implements ManualInvoke {
             generator.put("first", "统计服务 - 今日报表")
                 .put("keyword1", "今日大转盘中奖列表")
                 .put("keyword2", TimeTools.now())
-                .put("keyword3", winners.size() + "条记录")
-                .put("remark", String.format("今日大转盘中奖共%d人，详细信息点击查看", winners.size()));
+                .put("keyword3", winners.size() + "条记录");
+
+            if (remark == null) {
+                generator.put("remark", String.format("今日大转盘中奖共%d人，详细信息点击查看", winners.size()));
+            } else {
+                generator.put("remark", remark, "#FF0000");
+            }
 
             wxTplMessageService.send(generator.build());
         }
@@ -50,7 +59,7 @@ public class TurnGameReportDaily extends BaseBean implements ManualInvoke {
 
     @Override
     public Object invoke() {
-        report();
+        report(null);
         return null;
     }
 }

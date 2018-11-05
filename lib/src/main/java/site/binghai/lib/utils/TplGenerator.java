@@ -36,6 +36,14 @@ public class TplGenerator {
         return this;
     }
 
+    public TplGenerator put(String key, String value,String color) {
+        JSONObject v = new JSONObject();
+        v.put("value", value);
+        v.put("color", color);
+        data.put(key, v);
+        return this;
+    }
+
     public JSONObject getAll() {
         return data;
     }
