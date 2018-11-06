@@ -26,7 +26,11 @@ public class WxTplMsgLogService extends BaseService<WxTplMsg> {
         msg.setSendResult(ret);
 
         save(msg);
-        handle(msg);
+        try {
+            handle(msg);
+        } catch (Exception e) {
+            logger.error("handle wx message error!", e);
+        }
     }
 
     private void handle(WxTplMsg msg) {
