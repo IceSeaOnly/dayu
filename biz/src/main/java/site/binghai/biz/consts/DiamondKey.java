@@ -5,6 +5,8 @@ public class DiamondKey {
     public static final String TREE_HOLE_BUY_FEE = "TREE_HOLE_BUY_FEE";
     public static final String TREE_HOLE_WRITER_FEE_MSG = "TREE_HOLE_WRITER_FEE_MSG";
     public static final String ERROR_PAGE = "USER_ERROR_PAGE";
+    // 禁用的消息监听器列表
+    public static final String DISABLED_MESSAGE_LISTENER_MAP = "DISABLED_MESSAGE_LISTENER_MAP";
     //大转盘游戏无入场券提示信息
     public static final String TURN_GAME_NO_TICKET_NOTICE = "TURN_GAME_NO_TICKET_NOTICE";
     //大转盘游戏未获奖提示
@@ -17,4 +19,5 @@ public class DiamondKey {
     public static final String TURN_GAME_INVATION_TPL = "TURN_GAME_INVATION_TPL";
     //大转盘游戏游戏机会作废
     public static final String TURN_GAME_TICKET_CANCEL = "TURN_GAME_TICKET_CANCEL";
+
 }
