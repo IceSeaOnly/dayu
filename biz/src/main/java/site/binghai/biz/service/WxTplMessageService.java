@@ -27,7 +27,7 @@ public class WxTplMessageService extends BaseBean {
 
     private boolean accessTokenError(String ret) {
         JSONObject json = JSONObject.parseObject(ret);
-        if (null != json && !"0".equals(json.getString("errcode"))) {
+        if (null != json && "40001".equals(json.getString("errcode"))) {
             return true;
         }
         return false;
