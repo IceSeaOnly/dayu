@@ -38,7 +38,7 @@ public class TurnGameTicketCancelListener extends BaseBean implements WxTplMessa
 
         // 活动邀约
         JSONObject cfg = JSONObject.parseObject(diamondService.get(DiamondKey.TURN_GAME_TICKET_CANCEL));
-        TplGenerator generator = new TplGenerator(iceConfig.getActivityInvitationTplId(), cfg.getString("url"), message.getOpenId());
+        TplGenerator generator = new TplGenerator(cfg.getString("tpl"), cfg.getString("url"), message.getOpenId());
         generator.put("first",cfg.getString("title"));
         generator.put("keyword1",cfg.getString("content"));
         generator.put("keyword2",cfg.getString("reason"));

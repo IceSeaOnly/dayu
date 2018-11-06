@@ -36,7 +36,7 @@ public class TurnGameTicketAddListener extends BaseBean implements WxTplMessageH
         ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url.split("\\?")[1]));
         // 活动邀约
         JSONObject cfg = JSONObject.parseObject(diamondService.get(DiamondKey.TURN_GAME_INVATION_TPL));
-        TplGenerator generator = new TplGenerator(iceConfig.getActivityInvitationTplId(), cfg.getString("url"), message.getOpenId());
+        TplGenerator generator = new TplGenerator(cfg.getString("tpl"), cfg.getString("url"), message.getOpenId());
         generator.put("first",cfg.getString("title"));
         generator.put("keyword1",cfg.getString("activityName"));
         generator.put("keyword2",cfg.getString("auditStatus"));

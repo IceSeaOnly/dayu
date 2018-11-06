@@ -41,7 +41,6 @@ public class IceConfig implements InitializingBean {
     private String paySuccessTplId;
     private String orderCancelTplId;
     private String statisticsResultTplId;
-    private String activityInvitationTplId;
 
     private static Map<String, String> setupParams = new HashMap<>();
 
