@@ -27,20 +27,20 @@ public class TurnTableGameController extends BaseController {
     public Object listWinners(Long time) {
         List<Ticket> tickets = emptyList();
 
-        if (time == null) {
+        if (time != null) {
             tickets.addAll(ticketService.listTodayWinners(time));
         } else {
             tickets.addAll(ticketService.listWinners());
         }
         tickets.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
-        StringBuilder html = new StringBuilder(String.format("<h3>中奖人数:%d</h3>", tickets.size()));
+        StringBuilder html = new StringBuilder(String.format("<h1>中奖人数:%d</h1>", tickets.size()));
         int counter = 1;
         for (Ticket v : tickets) {
-            html.append(String.format("<h4>%d / 姓名：%s<h4>", counter++, v.getUserName()));
-            html.append(String.format("手机号:%s <br/>", v.getUserPhone()));
-            html.append(String.format("中奖时间:%s <br/>", v.getGameTimeString()));
-            html.append(String.format("奖品:%s <br/>", v.getPrize()));
-            html.append(String.format("关联订单号:%s <br/><br/><br/>", v.getRelationNo()));
+            html.append(String.format("<h1>%d / 姓名：%s</h1>", counter++, v.getUserName()));
+            html.append(String.format("<h1>手机号:%s</h1> <br/>", v.getUserPhone()));
+            html.append(String.format("<h1>中奖时间:%s </h1><br/>", v.getGameTimeString()));
+            html.append(String.format("<h1>奖品:%s </h1><br/>", v.getPrize()));
+            html.append(String.format("<h1>关联订单号:%s </h1><br/><br/><br/>", v.getRelationNo()));
         }
 
         return html.toString();
