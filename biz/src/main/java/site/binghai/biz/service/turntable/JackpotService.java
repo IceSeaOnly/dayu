@@ -27,8 +27,6 @@ public class JackpotService extends BaseService<Jackpot> {
         Random random = new Random();
         int pos = random.nextInt(total) - 1;
 
-        logger.info("play pos :{}", pos);
-
         Long retId = null;
         for (Jackpot jackpot : jackpots) {
             int rng = jackpot.getFakeRemains() + jackpot.getRemains();
@@ -36,7 +34,6 @@ public class JackpotService extends BaseService<Jackpot> {
             if (pos > 0) {
                 continue;
             }
-            logger.info("cur play pos is :{}", pos);
             Random r = new Random();
             int it = r.nextInt(rng);
             if (it > jackpot.getRemains()) {
@@ -47,8 +44,7 @@ public class JackpotService extends BaseService<Jackpot> {
             break;
         }
 
-        logger.info("after play pos is :{}", pos);
-        if (total > 0) {
+        if (pos > 0) {
             return null;
         }
 
