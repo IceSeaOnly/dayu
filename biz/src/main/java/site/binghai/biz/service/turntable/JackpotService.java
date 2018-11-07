@@ -36,7 +36,7 @@ public class JackpotService extends BaseService<Jackpot> {
             if (pos > 0) {
                 continue;
             }
-
+            logger.info("cur play pos is :{}", pos);
             Random r = new Random();
             int it = r.nextInt(rng);
             if (it > jackpot.getRemains()) {
@@ -47,6 +47,7 @@ public class JackpotService extends BaseService<Jackpot> {
             break;
         }
 
+        logger.info("after play pos is :{}", pos);
         if (total > 0) {
             return null;
         }
