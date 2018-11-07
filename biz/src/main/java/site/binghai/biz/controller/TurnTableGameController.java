@@ -37,11 +37,12 @@ public class TurnTableGameController extends BaseController {
         } else {
             tickets.addAll(ticketService.listWinners());
         }
-        tickets.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
 
         if (raw != null) {
             return success(tickets, null);
         }
+
+        tickets.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
 
         StringBuilder html = new StringBuilder(String.format("<h1>中奖人数:%d</h1>", tickets.size()));
         int counter = 1;
@@ -54,11 +55,6 @@ public class TurnTableGameController extends BaseController {
         }
 
         return html.toString();
-    }
-
-    @GetMapping("getGameRule")
-    public Object getGameRule() {
-        return success(diamondService.get(DiamondKey.TURN_GAME_RULE), null);
     }
 
     @GetMapping("play")
