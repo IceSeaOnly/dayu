@@ -53,6 +53,9 @@ public class JackpotService extends BaseService<Jackpot> {
         logger.info("play ret : {}", retId);
 
         Jackpot jackpot = findById(Math.abs(retId));
+        if (jackpot.getRemains() <= 0) {
+            retId *= -1;
+        }
 
         if (retId > 0) {
             jackpot.setRemains(jackpot.getRemains() - 1);
