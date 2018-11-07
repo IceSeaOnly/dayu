@@ -38,11 +38,11 @@ public class TurnTableGameController extends BaseController {
             tickets.addAll(ticketService.listWinners());
         }
 
+        tickets.sort((a, b) -> b.getId() > a.getId() ? 0 : 1);
+
         if (raw != null) {
             return success(tickets, null);
         }
-
-        tickets.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
 
         StringBuilder html = new StringBuilder(String.format("<h1>中奖人数:%d</h1>", tickets.size()));
         int counter = 1;
