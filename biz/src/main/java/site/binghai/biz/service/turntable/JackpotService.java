@@ -59,6 +59,8 @@ public class JackpotService extends BaseService<Jackpot> {
         } else {
             jackpot.setFakeRemains(jackpot.getFakeRemains() - 1);
         }
-        return update(jackpot);
+        update(jackpot);
+
+        return retId > 0 ? jackpot : null;
     }
 }
