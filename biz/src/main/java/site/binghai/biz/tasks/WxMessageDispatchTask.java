@@ -34,7 +34,7 @@ public class WxMessageDispatchTask extends BaseBean {
 
     @Scheduled(cron = "0/5 * * * * ?")
     public void work() {
-        logger.info("(..)");
+        //logger.info("(..)");
         msgDealer();
     }
 

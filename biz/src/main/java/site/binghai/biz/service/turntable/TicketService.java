@@ -82,4 +82,13 @@ public class TicketService extends BaseService<Ticket> {
         }
         return changed;
     }
+
+    public List<Ticket> myTickets(WxUser user, boolean onlyValid) {
+        Ticket exp = new Ticket();
+        exp.setOpenId(user.getOpenId());
+        if (onlyValid) {
+            exp.setPlayed(Boolean.FALSE);
+        }
+        return query(exp);
+    }
 }

@@ -23,6 +23,11 @@ public class TurnTableGameController extends BaseController {
     @Autowired
     private DiamondService diamondService;
 
+    @GetMapping("myTickets")
+    public Object myTickets() {
+        return success(ticketService.myTickets(getUser(), true), null);
+    }
+
     @GetMapping("listWinners")
     public Object listWinners(Long time) {
         List<Ticket> tickets = emptyList();
