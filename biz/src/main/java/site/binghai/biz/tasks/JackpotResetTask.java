@@ -40,8 +40,7 @@ public class JackpotResetTask extends BaseBean implements ManualInvoke {
 
         String list = diamondService.get(DiamondKey.RESET_JACKPOT_LIST);
         List<Jackpot> arr = JSONArray.parseArray(list, Jackpot.class);
-        jackpotService.batchSave(all);
-
+        jackpotService.batchSave(arr);
 
         String conf = diamondService.get(DiamondKey.TURN_GAME_DAILY_REPORT_CONF);
         JSONObject cfg = JSONObject.parseObject(conf);
@@ -49,20 +48,19 @@ public class JackpotResetTask extends BaseBean implements ManualInvoke {
         for (int i = 0; i < receivers.size(); i++) {
             TplGenerator generator = new TplGenerator(cfg.getString("tpl"), cfg.getString("baseUrl") + now(),
                 receivers.getString(i));
-            generator.put("first", "奖池重置提醒")
+            generator.put("first", String.format("奖池重置提醒，管理员可见，%d/%d联", i, receivers.size()))
                 .put("keyword1", "今日大转盘奖池重置提醒")
                 .put("keyword2", TimeTools.now())
                 .put("keyword3", arr.size() + "条记录已重置");
 
             StringBuilder sb = new StringBuilder();
             for (Jackpot v : arr) {
-                sb.append(String.format("%s 备奖 %d个，空包 %d; ", v.getName(), v.getRemains(), v.getFakeRemains()));
+                sb.append(String.format("%s 备奖%d个，空包 %d个; ", v.getName(), v.getRemains(), v.getFakeRemains()));
             }
             generator.put("remark", sb.toString(), "#FF0000");
 
             wxTplMessageService.send(generator.build());
         }
-
 
         logger.info("jackpot reset as {}", list);
         return arr;
