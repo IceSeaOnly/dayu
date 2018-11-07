@@ -79,7 +79,7 @@ public class TurnTableGameController extends BaseController {
         }
 
         ticketService.update(ticket);
-        return ret == null ? fail(diamondService.get(DiamondKey.TURN_GAME_MISS_PRIZE)) : success(ret, null);
+        return success(ret,diamondService.get(DiamondKey.TURN_GAME_MISS_PRIZE));
     }
 
     @PostMapping("updateUserNameAndPhone")

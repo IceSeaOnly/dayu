@@ -17,15 +17,17 @@ public class JackpotService extends BaseService<Jackpot> {
         }
 
         Integer total = jackpots.stream()
-                .mapToInt(v -> v.getRemains() + v.getFakeRemains())
-                .sum();
+            .mapToInt(v -> v.getRemains() + v.getFakeRemains())
+            .sum();
 
-        if(total == 0){
+        if (total == 0) {
             return null;
         }
 
         Random random = new Random();
         int pos = random.nextInt(total) - 1;
+
+        logger.info("play pos :{}", pos);
 
         Long retId = null;
         for (Jackpot jackpot : jackpots) {
@@ -45,9 +47,11 @@ public class JackpotService extends BaseService<Jackpot> {
             break;
         }
 
-        if(total > 0){
+        if (total > 0) {
             return null;
         }
+
+        logger.info("play ret : {}", retId);
 
         Jackpot jackpot = findById(Math.abs(retId));
 
