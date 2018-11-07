@@ -4,12 +4,14 @@ import org.springframework.stereotype.Service;
 import site.binghai.biz.entity.turntable.Jackpot;
 import site.binghai.lib.service.BaseService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Random;
 
 @Service
 public class JackpotService extends BaseService<Jackpot> {
 
+    @Transactional
     public Jackpot play() {
         List<Jackpot> jackpots = findAll(999);
         if (isEmptyList(jackpots)) {
