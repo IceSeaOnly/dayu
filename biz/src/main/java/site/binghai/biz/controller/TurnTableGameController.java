@@ -29,7 +29,7 @@ public class TurnTableGameController extends BaseController {
     }
 
     @GetMapping("listWinners")
-    public Object listWinners(Long time) {
+    public Object listWinners(Long time, String raw) {
         List<Ticket> tickets = emptyList();
 
         if (time != null) {
@@ -38,6 +38,11 @@ public class TurnTableGameController extends BaseController {
             tickets.addAll(ticketService.listWinners());
         }
         tickets.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
+
+        if (raw != null) {
+            return success(tickets, null);
+        }
+
         StringBuilder html = new StringBuilder(String.format("<h1>中奖人数:%d</h1>", tickets.size()));
         int counter = 1;
         for (Ticket v : tickets) {
@@ -79,7 +84,7 @@ public class TurnTableGameController extends BaseController {
         }
 
         ticketService.update(ticket);
-        return success(ret,diamondService.get(DiamondKey.TURN_GAME_MISS_PRIZE));
+        return success(ret, diamondService.get(DiamondKey.TURN_GAME_MISS_PRIZE));
     }
 
     @PostMapping("updateUserNameAndPhone")
