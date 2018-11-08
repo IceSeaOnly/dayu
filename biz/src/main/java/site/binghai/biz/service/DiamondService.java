@@ -2,8 +2,10 @@ package site.binghai.biz.service;
 
 import com.alibaba.edas.acm.ConfigService;
 import com.alibaba.edas.acm.exception.ConfigException;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
+import site.binghai.biz.consts.DiamondKey;
 import site.binghai.lib.service.AbastractMultiKVCacheService;
 
 import java.util.Properties;
@@ -26,6 +28,10 @@ public class DiamondService extends AbastractMultiKVCacheService<String, String>
             logger.error("load data from diamond error! key:{}", key, e);
         }
         return null;
+    }
+
+    public JSONObject getConf(String key) {
+        return JSONObject.parseObject(get(key));
     }
 
     @Override

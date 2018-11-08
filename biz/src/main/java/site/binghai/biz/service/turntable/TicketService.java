@@ -1,33 +1,34 @@
 package site.binghai.biz.service.turntable;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.biz.entity.turntable.Ticket;
+import site.binghai.biz.service.dao.TicketDao;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.BaseService;
 import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
+import java.sql.Time;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TicketService extends BaseService<Ticket> {
+    @Autowired
+    private TicketDao ticketDao;
+
+    @Override
+    protected JpaRepository<Ticket, Long> getDao() {
+        return ticketDao;
+    }
+
     public List<Ticket> listWinners() {
-        Ticket exp = new Ticket();
-        exp.setWin(true);
-        List<Ticket> ret = query(exp);
-        if (isEmptyList(ret)) {
-            return ret;
-        }
-
-        //ret.forEach(v -> {
-        //    v.setRelationNo(null);
-        //    v.setUserPhone(null);
-        //    v.setOpenId(null);
-        //    v.setRelationNo(null);
-        //});
-
-        return ret;
+        Ticket ticket = new Ticket();
+        ticket.setWin(Boolean.TRUE);
+        return query(ticket);
     }
 
     public Ticket play(WxUser user) {
@@ -67,10 +68,12 @@ public class TicketService extends BaseService<Ticket> {
             today[1] = cur + 86400000;
         }
 
-        List<Ticket> winners = listWinners();
-        winners = winners.stream().filter(v -> today[0] <= v.getGameTime() && v.getGameTime() <= today[1])
-            .collect(Collectors.toList());
-        return winners;
+        List<Ticket> ret = ticketDao.findByPlayedAndGameTimeBetween(Boolean.TRUE, today[0], today[1]);
+        if (isEmptyList(ret)) {
+            return emptyList();
+        }
+
+        return ret.stream().filter(v -> v.getWin()).collect(Collectors.toList());
     }
 
     @Transactional
@@ -98,5 +101,10 @@ public class TicketService extends BaseService<Ticket> {
             exp.setPlayed(Boolean.FALSE);
         }
         return query(exp);
+    }
+
+    public List<Ticket> listTodayTickets() {
+        Long[] today = TimeTools.today();
+        return ticketDao.findByCreatedBetween(today[0], today[1]);
     }
 }

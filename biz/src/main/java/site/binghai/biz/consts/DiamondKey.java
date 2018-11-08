@@ -15,6 +15,10 @@ public class DiamondKey {
     public static final String TURN_GAME_DAILY_REPORT_CONF = "TURN_GAME_DAILY_REPORT_CONF";
     //大转盘游戏邀约
     public static final String TURN_GAME_INVATION_TPL = "TURN_GAME_INVATION_TPL";
+    //大转盘游戏邀约
+    public static final String TURN_GAME_CONGRATULATION_TPL = "TURN_GAME_CONGRATULATION_TPL";
+    //大转盘游戏邀约
+    public static final String TURN_GAME_WINLIST_PUBLISH_TPL = "TURN_GAME_WINLIST_PUBLISH_TPL";
     //大转盘游戏游戏机会作废
     public static final String TURN_GAME_TICKET_CANCEL = "TURN_GAME_TICKET_CANCEL";
     //大转盘游戏每天重置奖池配置
