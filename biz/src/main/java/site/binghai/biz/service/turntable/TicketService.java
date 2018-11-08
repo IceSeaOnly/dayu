@@ -56,11 +56,19 @@ public class TicketService extends BaseService<Ticket> {
         save(exp);
     }
 
-    public List<Ticket> listTodayWinners(long now) {
+    public List<Ticket> listTodayWinners(Long now) {
         Long[] today = TimeTools.today();
+        if (now == null) {
+        } else {
+            String date = TimeTools.format(now);
+            date = date.split(" ")[0] + " 00:00:00";
+            Long cur = TimeTools.data2Timestamp(date);
+            today[0] = cur;
+            today[1] = cur + 86400000;
+        }
 
         List<Ticket> winners = listWinners();
-        winners = winners.stream().filter(v -> today[0] <= v.getGameTime() && v.getGameTime() <= now)
+        winners = winners.stream().filter(v -> today[0] <= v.getGameTime() && v.getGameTime() <= today[1])
             .collect(Collectors.toList());
         return winners;
     }
