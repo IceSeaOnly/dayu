@@ -21,4 +21,6 @@ public class Jackpot extends BaseEntity {
     private Integer remains;
     private Integer fakeRemains;//空奖数量用来调节中奖概率
     private String msg; // 获奖提示
+    // 场景
+    private String jackpotScene;
 }

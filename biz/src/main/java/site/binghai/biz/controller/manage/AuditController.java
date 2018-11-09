@@ -40,13 +40,17 @@ public class AuditController extends BaseController {
             return fail("记录不存在!");
         }
 
-        //if (AuditStatusEnum.INIT != AuditStatusEnum.valueOf(record.getAuditStatus())) {
-        //    return fail("已判决，无法更改!");
-        //}
+        if (AuditStatusEnum.INIT != AuditStatusEnum.valueOf(record.getAuditStatus())) {
+            return fail("已判决，无法更改!");
+        }
 
         logger.warn("{} change audit record {} from status {} to {},msg:{}",
             manager, record, AuditStatusEnum.valueOf(record.getAuditStatus()),
             passed ? AuditStatusEnum.PASS : AuditStatusEnum.REJECT, msg);
+
+        if (passed) {
+
+        }
 
         record.setAuditStatus(passed ? AuditStatusEnum.PASS.code : AuditStatusEnum.REJECT.code);
         record.setMessage(appendMessage(record.getMessage(), msg));

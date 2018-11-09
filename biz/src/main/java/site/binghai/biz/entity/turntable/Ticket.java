@@ -26,5 +26,6 @@ public class Ticket extends BaseEntity {
     private String prize;//奖品
     private String gameTimeString;
     private Long gameTime;
+    private String jackpotScene;
 
 }

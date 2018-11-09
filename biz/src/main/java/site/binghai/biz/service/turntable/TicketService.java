@@ -5,6 +5,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.biz.entity.turntable.Ticket;
+import site.binghai.biz.enums.JackpotScene;
 import site.binghai.biz.service.dao.TicketDao;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.BaseService;
@@ -44,7 +45,7 @@ public class TicketService extends BaseService<Ticket> {
     }
 
     @Transactional
-    public void newTicket(String openId, String txId) {
+    public void newTicket(String openId, String txId, JackpotScene jackpotScene) {
         Ticket exp = new Ticket();
         exp.setRelationNo(txId);
         if (!isEmptyList(query(exp))) {
@@ -54,6 +55,7 @@ public class TicketService extends BaseService<Ticket> {
         exp.setOpenId(openId);
         exp.setWin(false);
         exp.setPlayed(false);
+        exp.setJackpotScene(jackpotScene.name());
         save(exp);
     }
 

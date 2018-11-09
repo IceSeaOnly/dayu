@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.def.WxTplMessageHandler;
 import site.binghai.biz.entity.jdy.WxTplMsg;
+import site.binghai.biz.enums.JackpotScene;
 import site.binghai.biz.service.DiamondService;
 import site.binghai.biz.service.WxTplMessageService;
 import site.binghai.biz.service.turntable.TicketService;
@@ -36,7 +37,7 @@ public class TurnGameTicketAddListener extends BaseBean implements WxTplMessageH
         if (hasEmptyString(url) || !url.contains("?")) {
             return;
         }
-        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url.split("\\?")[1]));
+        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url.split("\\?")[1]), JackpotScene.BY_JDY_TAKE_ORDER);
         // 活动邀约
         JSONObject cfg = JSONObject.parseObject(diamondService.get(DiamondKey.TURN_GAME_INVATION_TPL));
         TplGenerator generator = new TplGenerator(cfg.getString("tpl"), cfg.getString("url"), message.getOpenId());

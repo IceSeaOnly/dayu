@@ -18,26 +18,5 @@ import site.binghai.lib.utils.MD5;
 public class ExternalListener extends BaseController {
     @Autowired
     private IceConfig iceConfig;
-    @Autowired
-    private TicketService ticketService;
-
-    /**
-     * 大转盘游戏监听支付成功消息
-     */
-    @PostMapping("turnGameListener")
-    public Object turnGameListener(@RequestParam String openId,
-                                   @RequestParam String txId,
-                                   @RequestParam String sign) {
-        if (hasEmptyString(openId, txId, sign)) {
-            return fail("all parameters is required.");
-        }
-
-        if (!MD5.encryption(openId + txId + iceConfig.getWxValidateMD5Key()).equals(sign)) {
-            return fail("Illegal signature");
-        }
-
-        ticketService.newTicket(openId,txId);
-        return success();
-    }
 
 }
