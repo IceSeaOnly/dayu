@@ -42,7 +42,7 @@ public class JackpotService extends BaseService<Jackpot> {
         for (Jackpot jackpot : jackpots) {
             int rng = jackpot.getFakeRemains() + jackpot.getRemains();
             pos -= rng;
-            if (pos > 0) {
+            if (pos > 0 || rng <= 0) {
                 continue;
             }
             Random r = new Random();
@@ -55,7 +55,7 @@ public class JackpotService extends BaseService<Jackpot> {
             break;
         }
 
-        if (pos > 0) {
+        if (pos >= 0 || retId == null) {
             return null;
         }
 
