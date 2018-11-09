@@ -36,7 +36,6 @@ public class WinnerListPublishTask extends BaseBean implements ManualInvoke {
         JSONObject cfg = diamondService.getConf(DiamondKey.TURN_GAME_WINLIST_PUBLISH_TPL);
         List<Ticket> today = ticketService.listTodayTickets();
 
-        logger.info("today tickets :{}", today);
         Set<String> openids = new HashSet<>();
         today.forEach(v -> openids.add(v.getOpenId()));
         openids.addAll(cfg.getJSONArray("extraOpenIds").toJavaList(String.class));
