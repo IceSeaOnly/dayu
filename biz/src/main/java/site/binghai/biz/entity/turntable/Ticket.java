@@ -28,7 +28,4 @@ public class Ticket extends BaseEntity {
     private Long gameTime;
     private String jackpotScene;
 
-    public Ticket() {
-        super();
-    }
 }

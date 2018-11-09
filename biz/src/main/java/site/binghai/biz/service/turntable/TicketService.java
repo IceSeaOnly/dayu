@@ -51,7 +51,9 @@ public class TicketService extends BaseService<Ticket> {
         if (!isEmptyList(query(exp))) {
             return;
         }
-
+        // fix created is null
+        exp = new Ticket();
+        exp.setRelationNo(txId);
         exp.setOpenId(openId);
         exp.setWin(false);
         exp.setPlayed(false);
