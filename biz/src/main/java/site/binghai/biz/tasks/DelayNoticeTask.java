@@ -24,7 +24,7 @@ public class DelayNoticeTask extends BaseBean implements ManualInvoke {
     @Autowired
     private WxTplMessageService wxTplMessageService;
 
-    @Scheduled(cron = "0 0/30 * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     @Override
     public Object invoke() {
         List<DelayNotice> list = delayNoticeService.findAvailable();
