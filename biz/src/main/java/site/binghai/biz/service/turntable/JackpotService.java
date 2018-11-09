@@ -10,9 +10,18 @@ import java.util.Random;
 
 @Service
 public class JackpotService extends BaseService<Jackpot> {
-
     @Transactional
     public Jackpot play() {
+        try {
+            return play_();
+        } catch (Exception e) {
+            logger.error("play error !", e);
+        }
+        return null;
+    }
+
+    @Transactional
+    public Jackpot play_() {
         List<Jackpot> jackpots = findAll(999);
         if (isEmptyList(jackpots)) {
             return null;
