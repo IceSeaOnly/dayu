@@ -7,9 +7,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.def.ManualInvoke;
+import site.binghai.biz.entity.turntable.Jackpot;
 import site.binghai.biz.entity.turntable.Ticket;
 import site.binghai.biz.service.DiamondService;
 import site.binghai.biz.service.WxTplMessageService;
+import site.binghai.biz.service.turntable.JackpotService;
 import site.binghai.biz.service.turntable.TicketService;
 import site.binghai.lib.utils.BaseBean;
 import site.binghai.lib.utils.TimeTools;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 @Component
 @EnableScheduling
 public class WinnerListPublishTask extends BaseBean implements ManualInvoke {
+    @Autowired
+    private JackpotService jackpotService;
     @Autowired
     private TicketService ticketService;
     @Autowired
@@ -58,6 +62,10 @@ public class WinnerListPublishTask extends BaseBean implements ManualInvoke {
             logger.info("WinnerListPublishTask published to :{}", v);
         });
 
+        List<Jackpot> all = jackpotService.findAll(9999);
+        for (Jackpot jackpot : all) {
+            jackpotService.delete(jackpot.getId());
+        }
         return today;
     }
 }
