@@ -23,4 +23,6 @@ public class DiamondKey {
     public static final String TURN_GAME_TICKET_CANCEL = "TURN_GAME_TICKET_CANCEL";
     //大转盘游戏每天重置奖池配置
     public static final String RESET_JACKPOT_LIST = "RESET_JACKPOT_LIST";
+
+    public static final String ANY_WISH_AUDIT_NOTIFY_CONF = "ANY_WISH_AUDIT_NOTIFY_CONF";
 }

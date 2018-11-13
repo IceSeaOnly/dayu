@@ -16,7 +16,7 @@ public class AuditRecord extends BaseEntity {
     @GeneratedValue
     private Long id;
     /**
-     * 外部id，根据auditItemEnum确定是哪个表里的数据
+     * 外部id
      */
     private Long externalId;
 
@@ -46,5 +46,7 @@ public class AuditRecord extends BaseEntity {
      * */
     @Column(columnDefinition = "TEXT")
     private String message;
+
+    private Boolean synced;
 
 }

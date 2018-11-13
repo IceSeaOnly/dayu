@@ -5,9 +5,10 @@ import java.util.Map;
 
 /**
  * 审核分类
- * */
+ */
 public enum AuditTypeEnum {
-    TREE_HOLD(0,"树洞"),
+    TREE_HOLD(0, "树洞"),
+    ANY_WISH(1, "任意门"),
     ;
 
     public int code;

@@ -48,13 +48,11 @@ public class AuditController extends BaseController {
             manager, record, AuditStatusEnum.valueOf(record.getAuditStatus()),
             passed ? AuditStatusEnum.PASS : AuditStatusEnum.REJECT, msg);
 
-        if (passed) {
-
-        }
 
         record.setAuditStatus(passed ? AuditStatusEnum.PASS.code : AuditStatusEnum.REJECT.code);
         record.setMessage(appendMessage(record.getMessage(), msg));
         record.setManagerId(manager.getId());
+        record.setSynced(Boolean.FALSE);
 
         auditRecordService.update(record);
         return success();

@@ -18,6 +18,7 @@ public class AuditRecordService extends BaseService<AuditRecord> {
         record.setAuditStatus(AuditStatusEnum.INIT.code);
         record.setAuditType(type.code);
         record.setExternalId(externalId);
+        record.setSynced(Boolean.TRUE);
         return save(record);
     }
 
@@ -25,5 +26,11 @@ public class AuditRecordService extends BaseService<AuditRecord> {
         AuditRecord exp = new AuditRecord();
         exp.setAuditStatus(status.code);
         return sortQuery(exp, "id", true);
+    }
+
+    public List<AuditRecord> findBySync(Boolean synced) {
+        AuditRecord exp = new AuditRecord();
+        exp.setSynced(synced);
+        return query(exp);
     }
 }
