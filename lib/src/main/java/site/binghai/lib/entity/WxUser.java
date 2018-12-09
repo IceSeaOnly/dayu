@@ -42,5 +42,5 @@ public class WxUser extends BaseEntity implements SessionPersistent {
 
     private String address;
 
-    private Boolean expDeliverySuperAuth = false;
+    private Boolean expDeliverySuperAuth;
 }

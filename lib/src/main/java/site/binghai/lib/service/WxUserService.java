@@ -33,6 +33,7 @@ public class WxUserService extends BaseService<WxUser> {
         wxUser.setSubscribeTime(info.getSubscribe_time());
         wxUser.setSubscribeScene(info.getSubscribe_scene());
         wxUser.setSubscribed(true);
+        wxUser.setExpDeliverySuperAuth(false);
         return save(wxUser);
     }
 
