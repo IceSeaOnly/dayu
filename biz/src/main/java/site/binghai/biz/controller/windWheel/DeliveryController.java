@@ -86,7 +86,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
     @GetMapping("manageIndex")
     public Object manageIndex() {
-        WxUser user = wxUserService.findById(getUser().getId());
+        WxUser user = getLastestUser();
         List<ExpressBrand> expressBrands = null;
         if (user.getExpDeliverySuperAuth()) {
             expressBrands = expressBrandService.findAll(999);
@@ -104,7 +104,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
     @PostMapping("createNewExpress")
     public Object createNewExpress(@RequestBody Map map) {
-        WxUser user = wxUserService.findById(getUser().getId());
+        WxUser user = getLastestUser();
         if (!user.getExpDeliverySuperAuth()) {
             return fail("权限不足");
         }
@@ -130,7 +130,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
      */
     @GetMapping("authMap")
     public Object authMap() {
-        WxUser user = getUser();
+        WxUser user = getLastestUser();
         List<ExpressOwner> all = expressOwnerService.findAll(9999);
         Map<Long, ExpressOwner> ret = new HashMap<>();
         boolean changed = true;
@@ -157,7 +157,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
     @GetMapping("manageOrderList")
     public Object manageOrderList(@RequestParam Long eid, @RequestParam Integer status) {
-        WxUser user = getUser();
+        WxUser user = getLastestUser();
         if (!user.getExpDeliverySuperAuth()) {
             ExpressOwner owner = expressOwnerService.findByUserIdAndBrandId(user.getId(), eid);
             if (owner == null) {
@@ -177,7 +177,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
     @GetMapping("manageCancelOrder")
     public Object manageCancelOrder(@RequestParam Long id) {
-        WxUser user = getUser();
+        WxUser user = getLastestUser();
 
         DeliveryOrder order = deliveryOrderService.findById(id);
         if (order == null) {
@@ -196,7 +196,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
     @GetMapping("manageCompleteOrder")
     public Object manageCompleteOrder(@RequestParam Long id) {
-        WxUser user = getUser();
+        WxUser user = getLastestUser();
 
         DeliveryOrder order = deliveryOrderService.findById(id);
         if (order == null) {
@@ -218,7 +218,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
     @GetMapping("shareAuth")
     public Object shareAuth(@RequestParam Long eid) {
-        WxUser user = getUser();
+        WxUser user = getLastestUser();
 
         if (!user.getExpDeliverySuperAuth()) {
             ExpressOwner owner = expressOwnerService.findByUserIdAndBrandId(user.getId(), eid);
@@ -275,7 +275,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
     @GetMapping("cancelAuth")
     public Object cancelAuth(@RequestParam Long authId) {
         ExpressOwner expressOwner = expressOwnerService.findById(authId);
-        WxUser user = getUser();
+        WxUser user = getLastestUser();
         if (!user.getExpDeliverySuperAuth()) {
             if (expressOwner == null || !expressOwner.getShareFromUserId().equals(user.getId())) {
                 return fail("未授权");
@@ -310,5 +310,11 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         });
 
         return success();
+    }
+
+    private WxUser getLastestUser(){
+        WxUser wxUser = wxUserService.findById(getUser().getId());
+        persistent(wxUser);
+        return wxUser;
     }
 }
