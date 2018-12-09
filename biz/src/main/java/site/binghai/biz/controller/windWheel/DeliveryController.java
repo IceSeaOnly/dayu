@@ -14,6 +14,7 @@ import site.binghai.biz.service.ExpressOwnerService;
 import site.binghai.biz.service.SharePageService;
 import site.binghai.biz.service.jdy.JdyLogService;
 import site.binghai.lib.controller.AbstractPayBizController;
+import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.UnifiedOrderService;
@@ -216,6 +217,10 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
         order.setStatus(OrderStatusEnum.COMPLETE.getCode());
         deliveryOrderService.update(order);
+
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(order.getUnifiedId());
+        unifiedOrder.setStatus(OrderStatusEnum.COMPLETE.getCode());
+        unifiedOrderService.update(unifiedOrder);
         return success();
     }
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.def.UnifiedOrderMethods;
+import site.binghai.lib.def.WxEventHandler;
 import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
@@ -18,9 +19,12 @@ public class PayBizServiceFactory extends BaseBean {
     private static Map<PayBizEnum, UnifiedOrderMethods> serviceMap;
 
     @Autowired
+    private WxEventHandler wxEventHandler;
+    @Autowired
     private IceConfig iceConfig;
     @Autowired
     private UnifiedOrderService unifiedOrderService;
+
 
     public UnifiedOrderMethods get(PayBizEnum payBizEnum) {
         return serviceMap.get(payBizEnum);

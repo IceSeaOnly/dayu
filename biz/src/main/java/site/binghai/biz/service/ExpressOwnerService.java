@@ -32,4 +32,10 @@ public class ExpressOwnerService extends BaseService<ExpressOwner> {
         exp.setBrandId(eid);
         return queryOne(exp);
     }
+
+    public List<ExpressOwner> findByBrandId(Long expressId) {
+        ExpressOwner exp = new ExpressOwner();
+        exp.setBrandId(expressId);
+        return query(exp);
+    }
 }
