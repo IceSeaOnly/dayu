@@ -167,14 +167,12 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
 
         JSONObject ret = newJSONObject();
         List list = deliveryOrderService.findByIdBrandIdAndStatus(eid, status);
-        if (isEmptyList(list)) {
-            return fail("无订单");
-        }
         ExpressBrand brand = expressBrandService.findById(eid);
 
         ret.put("list", list);
         ret.put("brand", brand);
-        return success(ret, null);
+
+        return success(ret, isEmptyList(list) ? "无订单" : "已加载");
     }
 
     @Autowired
