@@ -48,7 +48,7 @@ public class PayBizServiceFactory extends BaseBean {
     }
 
     public String buildCallbackUrl(UnifiedOrder unifiedOrder) {
-        return "&callBack=" + iceConfig.getAppRoot() + "/user/unified/detail?unifiedId=" + unifiedOrder.getId();
+        return "&callBack=" + iceConfig.getAppRoot() + "/user/view/page/OrderDetailPage?uid=" + unifiedOrder.getId();
     }
 
     @Autowired
