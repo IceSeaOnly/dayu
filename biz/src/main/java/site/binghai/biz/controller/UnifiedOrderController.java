@@ -1,13 +1,11 @@
 package site.binghai.biz.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.def.UnifiedOrderMethods;
@@ -18,9 +16,10 @@ import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.PayBizServiceFactory;
 import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
+
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/user/unified/")
 public class UnifiedOrderController extends BaseController {
 
@@ -34,16 +33,33 @@ public class UnifiedOrderController extends BaseController {
     private PayBizServiceFactory payBizServiceFactory;
 
     @GetMapping("detail")
-    public String detail(@RequestParam Long unifiedId, ModelMap map) {
+    public Object detail(@RequestParam Long unifiedId) {
         WxUser wxUser = getSessionPersistent(WxUser.class);
         UnifiedOrder order = unifiedOrderService.findById(unifiedId);
         if (order == null || !order.getUserId().equals(wxUser.getId())) {
-            return "authenticationFail";
+            return fail("鉴权失败");
         }
 
+        JSONObject map = newJSONObject();
         map.put("order", order);
-        map.put("payUrl", payBizServiceFactory.buildPayUrl(order));
-        return "detail";
+        map.put("extra", loadMoreInfo(order));
+        map.put("payOptions", multiPay(order));
+        return success(map, null);
+    }
+
+    private JSONArray loadMoreInfo(UnifiedOrder order) {
+        JSONArray ret = newJSONArray();
+        payBizServiceFactory.get(order.getAppCode()).moreInfo(order)
+            .forEach((k, v) -> {
+                if (hasEmptyString(v)) {
+                    return;
+                }
+                JSONObject item = new JSONObject();
+                item.put("key", k);
+                item.put("value", v);
+                ret.add(item);
+            });
+        return ret;
     }
 
     @GetMapping("walletPay")
@@ -68,11 +84,10 @@ public class UnifiedOrderController extends BaseController {
         return "redirect:" + (callBack == null ? "detail?unifiedId=" + unifiedId : callBack);
     }
 
-    @GetMapping("multiPay")
-    public String multiPay(@RequestParam Long unifiedId, ModelMap map) {
-        UnifiedOrder order = unifiedOrderService.findById(unifiedId);
-        WxUser wxUser = updateSessionUser();
+    public JSONObject multiPay(UnifiedOrder order) {
+        JSONObject map = newJSONObject();
 
+        WxUser wxUser = updateSessionUser();
         boolean enableWalletPay = PayBizEnum.valueOf(order.getAppCode()).isWalletPay();
         if (wxUser.getWallet() == null || wxUser.getWallet() < order.getShouldPay()) {
             enableWalletPay = false;
@@ -81,46 +96,36 @@ public class UnifiedOrderController extends BaseController {
         map.put("enableWalletPay", enableWalletPay);
         map.put("wxPayUrl", payBizServiceFactory.buildWxPayUrl(order));
         map.put("walletPayUrl",
-            "/user/unified/walletPay?unifiedId=" + unifiedId + payBizServiceFactory.buildCallbackUrl(order));
-        return "multiPay";
+            "/user/unified/walletPay?unifiedId=" + order.getId() + payBizServiceFactory.buildCallbackUrl(order));
+        return map;
     }
 
     private WxUser updateSessionUser() {
-        WxUser user = getSessionPersistent(WxUser.class);
+        WxUser user = getUser();
         user = wxUserService.findById(user.getId());
         persistent(user);
         return user;
     }
 
     @GetMapping("list")
-    public String list(ModelMap map) {
-        List orderParts = emptyList();
-        List all = emptyList();
-        List completed = emptyList();
-        List created = emptyList();
-        WxUser user = getSessionPersistent(WxUser.class);
+    public Object list(ModelMap map) {
+        JSONArray arr = newJSONArray();
+        WxUser user = getUser();
         List<UnifiedOrder> data = unifiedOrderService.findByUserIdOrderByIdDesc(user.getId(), 0, 1000);
         data.forEach(v -> {
             JSONObject extra = newJSONObject();
-            extra.put("payUrl", payBizServiceFactory.buildPayUrl(v));
-            v.setOrderId(v.getOrderId());
-            switch (OrderStatusEnum.valueOf(v.getStatus())) {
-                case COMPLETE:
-                    completed.add(v);
-                    break;
-                case CREATED:
-                    created.add(v);
-                    break;
-            }
-            all.add(v);
+            extra.put("img", PayBizEnum.valueOf(v.getAppCode()).getImg());
+            extra.put("title", v.getTitle());
+            extra.put("orderNo", v.getOrderId());
+            extra.put("created", v.getCreatedTime());
+            extra.put("orderStatus", OrderStatusEnum.valueOf(v.getStatus()).getName());
+            extra.put("shouldPay", v.getShouldPay());
+            extra.put("unifiedId", v.getId());
+
+            arr.add(extra);
         });
-        orderParts.add(all);
-        orderParts.add(completed);
-        orderParts.add(created);
 
-        map.put("orderParts", orderParts);
-
-        return "orders";
+        return success(arr, null);
     }
 
     @GetMapping("pay")
@@ -166,12 +171,12 @@ public class UnifiedOrderController extends BaseController {
     /**
      * 取消未处理的订单: 退款+取消
      */
-    private Object cancelUnifiedOrder(UnifiedOrder unifiedOrder) {
+    public Object cancelUnifiedOrder(UnifiedOrder unifiedOrder) {
         if (OrderStatusEnum.valueOf(unifiedOrder.getStatus()) == OrderStatusEnum.PAIED) {
             if (refund(unifiedOrder)) {
                 return cancelBizOrder(unifiedOrder);
             }
-            return fail("取消失败-REFUND-FAIL");
+            return fail("取消失败-不支持退款");
         } else {
             unifiedOrder.setStatus(OrderStatusEnum.CANCELED.getCode());
             unifiedOrderService.update(unifiedOrder);
@@ -197,6 +202,8 @@ public class UnifiedOrderController extends BaseController {
      * 退款
      */
     private boolean refund(UnifiedOrder unifiedOrder) {
-        return unifiedOrderService.cancel(unifiedOrder.getId());
+        //TODO 退款逻辑
+        //unifiedOrderService.cancel(unifiedOrder.getId());
+        return false;
     }
 }

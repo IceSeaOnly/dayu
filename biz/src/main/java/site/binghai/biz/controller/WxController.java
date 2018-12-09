@@ -52,6 +52,17 @@ public class WxController extends BaseController {
         persistent(wxUser);
 
         backUrl = getStringFromSession(SessionDataBundle.BACK_URL);
+
+        if (needCompleteInfo(wxUser)) {
+            return "redirect:/user/view/page/completeUserInfo?backUrl=" + backUrl;
+        }
         return backUrl == null ? "redirect:/" : "redirect:" + backUrl;
+    }
+
+    private boolean needCompleteInfo(WxUser wxUser) {
+        if (hasEmptyString(wxUser.getUserName(), wxUser.getPhone(), wxUser, wxUser.getAddress())) {
+            return true;
+        }
+        return false;
     }
 }

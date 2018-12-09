@@ -1,6 +1,7 @@
 package site.binghai.lib.def;
 
 
+import com.alibaba.fastjson.JSONObject;
 import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.enums.PayBizEnum;
 
@@ -12,7 +13,8 @@ import java.util.Map;
  * 统一订单的具体子订单实体需实现该接口
  */
 public interface UnifiedOrderMethods<T> {
-    T moreInfo(UnifiedOrder order);
+    JSONObject moreInfo(UnifiedOrder order);
+    T loadByUnifiedOrder(UnifiedOrder order);
     T cancel(UnifiedOrder order);
     void onPaid(UnifiedOrder order);
     Class<T> getTypeArguement();

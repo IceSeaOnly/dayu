@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class AuditSyncTask extends BaseBean implements ManualInvoke {
     @Autowired
     private Map<AuditTypeEnum, AuditSyncService> map;

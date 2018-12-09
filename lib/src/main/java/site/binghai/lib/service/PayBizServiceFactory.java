@@ -47,7 +47,7 @@ public class PayBizServiceFactory extends BaseBean {
         return "&callBack=" + iceConfig.getAppRoot() + "/user/unified/detail?unifiedId=" + unifiedOrder.getId();
     }
 
-    //@Autowired
+    @Autowired
     public void setAll(List<UnifiedOrderMethods> bizs) {
         serviceMap = new HashMap<>();
         if (isEmptyList(bizs)) {

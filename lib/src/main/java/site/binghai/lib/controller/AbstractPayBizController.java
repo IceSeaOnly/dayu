@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * 具有支付需求的controller继承此controller
- * */
+ */
 public abstract class AbstractPayBizController<T extends PayBizEntity> extends BaseController {
     private T instance;
 
@@ -51,7 +51,7 @@ public abstract class AbstractPayBizController<T extends PayBizEntity> extends B
      * 获取T的实际类型
      */
     public Class<T> getTypeArguement() {
-        Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return tClass;
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractPayBizController<T extends PayBizEntity> extends B
     }
 
     public JSONObject create(Map map, int fee) throws Exception {
-        if(sysConfigService.isSystemClosed()){
+        if (sysConfigService.isSystemClosed()) {
             return fail(sysConfigService.getCloseReason());
         }
 
@@ -76,10 +76,10 @@ public abstract class AbstractPayBizController<T extends PayBizEntity> extends B
         uorder.setUserId(user.getId());
 
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(
-                getBizType(),
-                user,
-                getBizType().getName(),
-                fee);
+            getBizType(),
+            user,
+            getBizType().getName(),
+            fee);
 
         uorder.setUnifiedId(unifiedOrder.getId());
 
@@ -88,7 +88,11 @@ public abstract class AbstractPayBizController<T extends PayBizEntity> extends B
     }
 
     public JSONObject create(T uorder, int fee) throws Exception {
-        if(sysConfigService.isSystemClosed()){
+        return create(uorder, getBizType().getName(), fee);
+    }
+
+    public JSONObject create(T uorder, String title, int fee) throws Exception {
+        if (sysConfigService.isSystemClosed()) {
             return fail(sysConfigService.getCloseReason());
         }
 
@@ -101,7 +105,7 @@ public abstract class AbstractPayBizController<T extends PayBizEntity> extends B
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(
             getBizType(),
             user,
-            getBizType().getName(),
+            title,
             fee);
 
         uorder.setUnifiedId(unifiedOrder.getId());

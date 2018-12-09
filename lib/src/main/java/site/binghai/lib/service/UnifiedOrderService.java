@@ -10,6 +10,7 @@ import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.dao.UnifiedOrderDao;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -99,7 +100,11 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         return dao.findAllByUserIdOrderByIdDesc(userId, new PageRequest(page, pageSize));
     }
 
+    @Transactional
     public boolean cancel(Long id) {
-        return false;
+        UnifiedOrder order = findById(id);
+        order.setStatus(OrderStatusEnum.CANCELED.getCode());
+        update(order);
+        return true;
     }
 }

@@ -9,19 +9,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * 树洞记录
- * */
-@Entity
+ * @author huaishuo
+ * @date 2018/11/28 下午5:03
+ **/
 @Data
-public class TreeHole extends BaseEntity {
+@Entity
+public class ExcelConvertEntity extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+    /*
+    * update secret
+    * */
+    private String secret;
+    private String token;
+
     @Column(columnDefinition = "TEXT")
     private String content;
-    private Long auditId;
-    private Long payId;
-    private Long userId;
-    private String openId;
-    private Boolean passed;
+    @Column(columnDefinition = "TEXT")
+    private String previousContent;
 }

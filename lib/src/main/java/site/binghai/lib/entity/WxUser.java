@@ -32,11 +32,15 @@ public class WxUser extends BaseEntity implements SessionPersistent {
     private String subscribeScene;
     /**
      * 余额
-     * */
+     */
     private Integer balance;
     /**
      * 推荐人id
-     * */
+     */
     private Long refereeId;
     private Boolean subscribed;
+
+    private String address;
+
+    private Boolean expDeliverySuperAuth = false;
 }

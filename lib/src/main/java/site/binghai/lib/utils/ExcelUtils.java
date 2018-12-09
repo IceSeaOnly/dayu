@@ -105,23 +105,11 @@ public class ExcelUtils {
 
 
 
-    /**
-     * 使用规范
-     * 输入的表格格式，第一行为T 类内的对应的字段名，第二行为对应的字段释义，用来方便阅读，工具不会读入第2行
-     * 接下来的每一行输入对应的记录值接口，例：
-     * ----------------------
-     * | name | age | score |
-     * ----------------------
-     * | 姓名  | 年龄 |  分数 |
-     * ----------------------
-     * | Tom  |  11 |  100  |
-     * ----------------------
-     * | Bob  |  11 |  100  |
-     */
-    public static <T> List<T> readExcelData(MultipartFile file, Class<T> clazz) throws Exception {
+
+    public static List<JSONObject> excel2Json(MultipartFile file) throws Exception {
         checkFile(file);
         Workbook workbook = getWorkBook(file);
-        List<T> list = new ArrayList<>();
+        List<JSONObject> list = new ArrayList<>();
         String[] mapper = null;
         if (workbook != null) {
             for (int sheetNum = 0; sheetNum < workbook.getNumberOfSheets(); sheetNum++) {
@@ -158,11 +146,30 @@ public class ExcelUtils {
                         }
                     }
                     if (rowNum != firstRowNum) {
-                        list.add(item.toJavaObject(clazz));
+                        list.add(item);
                     }
                 }
             }
         }
+        return list;
+    }
+    /**
+     * 使用规范
+     * 输入的表格格式，第一行为T 类内的对应的字段名，第二行为对应的字段释义，用来方便阅读，工具不会读入第2行
+     * 接下来的每一行输入对应的记录值接口，例：
+     * ----------------------
+     * | name | age | score |
+     * ----------------------
+     * | 姓名  | 年龄 |  分数 |
+     * ----------------------
+     * | Tom  |  11 |  100  |
+     * ----------------------
+     * | Bob  |  11 |  100  |
+     */
+    public static <T> List<T> readExcelData(MultipartFile file, Class<T> clazz) throws Exception {
+        List<T> list = new ArrayList<>();
+        List<JSONObject> tmp = excel2Json(file);
+        tmp.forEach(t -> list.add(t.toJavaObject(clazz)));
         return list;
     }
 

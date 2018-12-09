@@ -7,14 +7,16 @@ import java.util.Map;
 
 @Getter
 public enum PayBizEnum {
-    TREE_HOLE_WRITER_FEE(0, "树洞原创作品费", true),
-    COMMON_BUY_EVIDENCE(1, "通用购买凭证", true),
-    TREE_HOLE_BUY_FEE(2, "树洞作品购买", true),
-    VIP_CHARGE(3, "会员充值", false),
+    TREE_HOLE_WRITER_FEE(0, "树洞原创作品费", null, true),
+    COMMON_BUY_EVIDENCE(1, "通用购买凭证", null, true),
+    TREE_HOLE_BUY_FEE(2, "树洞作品购买", null, true),
+    VIP_CHARGE(3, "会员充值", null, false),
+    EXPRESS_DELIVERY(4, "代寄快递", "http://cdn.binghai.site/o_1cu5qp3aq2fn1lae1qlc12a0bqea.jpg", true),
     ;
 
     private int code;
     private String name;
+    private String img;
     private boolean walletPay;
 
     private static Map<Integer, PayBizEnum> maps;
@@ -30,7 +32,8 @@ public enum PayBizEnum {
         return maps.get(code);
     }
 
-    PayBizEnum(int code, String name, boolean walletPay) {
+    PayBizEnum(int code, String name, String img, boolean walletPay) {
+        this.img = img;
         this.code = code;
         this.name = name;
         this.walletPay = walletPay;

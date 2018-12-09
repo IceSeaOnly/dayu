@@ -29,6 +29,10 @@ public class IceConfig implements InitializingBean {
     private String aliyunMQAccessKeySecret;
     private String aliyunMQAccountEndpoint;
 
+    private String aliyunAcmNamespace;
+    private String aliyunAcmAccessKey;
+    private String aliyunAcmSecretKey;
+
     private String wxAppid;
     private String wxSecret;
     private String wxAuthenticationUrl;

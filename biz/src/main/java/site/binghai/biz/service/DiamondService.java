@@ -4,8 +4,10 @@ import com.alibaba.edas.acm.ConfigService;
 import com.alibaba.edas.acm.exception.ConfigException;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.binghai.biz.consts.DiamondKey;
+import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.service.AbastractMultiKVCacheService;
 
 import java.util.Properties;
@@ -15,6 +17,10 @@ import java.util.Properties;
  */
 @Service
 public class DiamondService extends AbastractMultiKVCacheService<String, String> implements InitializingBean {
+    @Autowired
+    protected IceConfig iceConfig;
+    protected final static String DEFAULT_GROUP = "DEFAULT_GROUP";
+
     @Override
     protected long setExpiredSecs() {
         return 300;
@@ -23,7 +29,7 @@ public class DiamondService extends AbastractMultiKVCacheService<String, String>
     @Override
     protected String load(String key) {
         try {
-            return ConfigService.getConfig(key, "DEFAULT_GROUP", 3000);
+            return ConfigService.getConfig(key, DEFAULT_GROUP, 3000);
         } catch (ConfigException e) {
             logger.error("load data from diamond error! key:{}", key, e);
         }
@@ -38,9 +44,9 @@ public class DiamondService extends AbastractMultiKVCacheService<String, String>
     public void afterPropertiesSet() throws Exception {
         Properties properties = new Properties();
         properties.put("endpoint", "acm.aliyun.com");
-        properties.put("namespace", "0db50897-d72a-4511-9b94-471bb5417909");
-        properties.put("accessKey", "LTAIbAtcJCgmnpCo");
-        properties.put("secretKey", "s2pLvP2evIsjE1uxkv4s6GA1N7VLL3");
+        properties.put("namespace", iceConfig.getAliyunAcmNamespace());
+        properties.put("accessKey", iceConfig.getAliyunAcmAccessKey());
+        properties.put("secretKey", iceConfig.getAliyunAcmSecretKey());
         ConfigService.init(properties);
         logger.info("=========== DiamondService started ===========");
     }
