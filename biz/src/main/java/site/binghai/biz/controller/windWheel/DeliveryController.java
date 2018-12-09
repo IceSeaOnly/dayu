@@ -165,10 +165,15 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
             }
         }
 
-        List ret = deliveryOrderService.findByIdBrandIdAndStatus(eid, status);
-        if (isEmptyList(ret)) {
+        JSONObject ret = newJSONObject();
+        List list = deliveryOrderService.findByIdBrandIdAndStatus(eid, status);
+        if (isEmptyList(list)) {
             return fail("无订单");
         }
+        ExpressBrand brand = expressBrandService.findById(eid);
+
+        ret.put("list", list);
+        ret.put("brand", brand);
         return success(ret, null);
     }
 
@@ -312,7 +317,24 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         return success();
     }
 
-    private WxUser getLastestUser(){
+    @GetMapping("optDeliveryStatus")
+    public Object optDeliveryStatus(@RequestParam Long eid) {
+        WxUser user = getLastestUser();
+
+        if (!user.getExpDeliverySuperAuth()) {
+            ExpressOwner owner = expressOwnerService.findByUserIdAndBrandId(user.getId(), eid);
+            if (owner == null) {
+                return fail("未授权");
+            }
+        }
+
+        ExpressBrand brand = expressBrandService.findById(eid);
+        brand.setEnableSend(!brand.getEnableSend());
+        expressBrandService.update(brand);
+        return success();
+    }
+
+    private WxUser getLastestUser() {
         WxUser wxUser = wxUserService.findById(getUser().getId());
         persistent(wxUser);
         return wxUser;

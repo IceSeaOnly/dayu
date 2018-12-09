@@ -29,7 +29,7 @@ public class SharePageController extends BaseController {
             return fail("页面已过期");
         }
 
-        if (page.getInvalidTs() > now()) {
+        if (page.getInvalidTs() < now()) {
             sharePageService.invalid(pid);
             return fail("分享已过期");
         }

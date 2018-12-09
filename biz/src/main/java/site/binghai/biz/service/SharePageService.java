@@ -43,7 +43,7 @@ public class SharePageService extends BaseService<SharePage> {
             return null;
         }
 
-        if(sharePage.getInvalidTs() > now()){
+        if(sharePage.getInvalidTs() < now()){
             sharePage.setValid(false);
             update(sharePage);
             return null;
