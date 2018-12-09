@@ -135,7 +135,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     public T queryOne(T example) {
         example.setCreated(null);
         example.setCreatedTime(null);
-        example.setDeleted(null);
+        example.setDeleted(false);
         example.setUpdated(null);
         example.setUpdatedTime(null);
         Example<T> ex = Example.of(example);
