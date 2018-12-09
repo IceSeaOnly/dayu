@@ -12,6 +12,7 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.BaseService;
+import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.TimeTools;
 import site.binghai.lib.utils.TplGenerator;
 
@@ -28,6 +29,9 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
     private ExpressOwnerService expressOwnerService;
     @Autowired
     private WxTplMessageService wxTplMessageService;
+    @Autowired
+    private WxUserService wxUserService;
+
     @Autowired
     private IceConfig iceConfig;
 
@@ -96,6 +100,24 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
                 .build();
             wxTplMessageService.send(msg);
         });
+
+        List<WxUser> users = wxUserService.findAllDeliverySuperUser();
+        users.forEach(u -> {
+            JSONObject msg = new TplGenerator(
+                iceConfig.getAppointmentOrderTplId(),
+                iceConfig.getAppRoot() + "/user/view/page/UnFinishedDeliveryList?eid=" + deliveryOrder.getExpressId(),
+                u.getOpenId()
+            ).put("first", u.getUserName() + "，你好!")
+                .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单，请尽快处理！")
+                .put("Good", order.getTitle())
+                .put("expDate", TimeTools.now())
+                .put("name", u.getUserName())
+                .put("menu", order.getShouldPay() / 100.0 + "元")
+                .put("remark", "订单详情请点击本消息查看!")
+                .build();
+            wxTplMessageService.send(msg);
+        });
+
     }
 
     @Override

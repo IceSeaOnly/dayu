@@ -81,5 +81,6 @@ public class PayBizServiceFactory extends BaseBean {
 
     private void payEvent(UnifiedOrder unifiedOrder) {
         get(unifiedOrder.getAppCode()).onPaid(unifiedOrder);
+        wxEventHandler.onPaid(unifiedOrder);
     }
 }

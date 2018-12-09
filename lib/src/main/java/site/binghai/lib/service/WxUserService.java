@@ -62,4 +62,9 @@ public class WxUserService extends BaseService<WxUser> {
         return null;
     }
 
+    public List<WxUser> findAllDeliverySuperUser() {
+        WxUser user = new WxUser();
+        user.setExpDeliverySuperAuth(true);
+        return query(user);
+    }
 }
