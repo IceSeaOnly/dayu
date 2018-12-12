@@ -24,6 +24,8 @@ public class DeliveryOrder extends PayBizEntity {
     private String userAddress;
     private String expressBrand;
     private Long expressId;
+    //寄出日期
+    private String expressOutDate;
     //快递联系电话
     private String expressPhone;
     private String remark;
