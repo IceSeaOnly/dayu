@@ -53,6 +53,7 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
         ret.put("快递名称", deliveryOrder.getExpressBrand());
         ret.put("快递电话", deliveryOrder.getExpressPhone());
         ret.put("客户备注", deliveryOrder.getRemark());
+        ret.put("寄出日期", deliveryOrder.getExpressOutDate());
         return ret;
     }
 
