@@ -89,13 +89,15 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
         DeliveryOrder deliveryOrder = loadByUnifiedOrder(order);
         List<ExpressOwner> owners = expressOwnerService.findByBrandId(deliveryOrder.getExpressId());
 
+        String notice = hasEmptyString(deliveryOrder.getExpressOutDate()) ? "今天寄出，请尽快处理！"
+            : "预约寄出时间为" + deliveryOrder.getExpressOutDate();
         owners.forEach(one -> {
             JSONObject msg = new TplGenerator(
                 iceConfig.getAppointmentOrderTplId(),
-                iceConfig.getAppRoot() + "/user/view/page/UnFinishedDeliveryList?eid=" + deliveryOrder.getExpressId(),
+                iceConfig.getAppRoot() + "/user/view/page/AllDeliveryList?eid=" + deliveryOrder.getExpressId(),
                 one.getOpenId()
             ).put("first", one.getUserName() + "，你好!")
-                .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单，请尽快处理！")
+                .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单," + notice)
                 .put("Good", order.getTitle())
                 .put("expDate", TimeTools.now())
                 .put("name", one.getUserName())
@@ -112,11 +114,11 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
             .forEach(u -> {
                 JSONObject msg = new TplGenerator(
                     iceConfig.getAppointmentOrderTplId(),
-                    iceConfig.getAppRoot() + "/user/view/page/UnFinishedDeliveryList?eid=" + deliveryOrder
+                    iceConfig.getAppRoot() + "/user/view/page/AllDeliveryList?eid=" + deliveryOrder
                         .getExpressId(),
                     u.getOpenId()
                 ).put("first", u.getUserName() + "，你好!")
-                    .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单，请尽快处理！")
+                    .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单," + notice)
                     .put("Good", order.getTitle())
                     .put("expDate", TimeTools.now())
                     .put("name", u.getUserName())
