@@ -13,7 +13,6 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.UnifiedOrderService;
 
-import javax.persistence.Entity;
 import java.util.Map;
 
 /**

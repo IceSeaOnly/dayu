@@ -179,7 +179,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         JSONObject ret = newJSONObject();
         List<DeliveryOrder> list = deliveryOrderService.findByIdBrandIdAndStatusAndBookDate(eid, status, date);
         if (!isEmptyList(list)) {
-            list.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
+            list.sort((a, b) -> b.getId() > a.getId() ? 0 : 1);
         }
         ExpressBrand brand = expressBrandService.findById(eid);
 
