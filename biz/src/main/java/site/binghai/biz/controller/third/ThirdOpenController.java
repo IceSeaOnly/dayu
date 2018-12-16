@@ -2,10 +2,7 @@ package site.binghai.biz.controller.third;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import site.binghai.biz.entity.third.ThirdOpen;
 import site.binghai.biz.entity.third.ThirdOpenOrder;
 import site.binghai.biz.service.third.ThirdOpenOrderSerivice;
@@ -23,8 +20,8 @@ import java.util.Map;
  * @author huaishuo
  * @date 2018/12/16 上午10:58
  **/
-@Entity
-@Data
+@RestController
+@RequestMapping("/user/third/service/")
 public class ThirdOpenController extends AbstractPayBizController<ThirdOpenOrder> {
     @Autowired
     private ThirdOpenSerivice thirdOpenSerivice;
