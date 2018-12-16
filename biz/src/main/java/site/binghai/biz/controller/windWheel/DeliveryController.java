@@ -178,7 +178,15 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         }
 
         JSONObject ret = newJSONObject();
-        List<DeliveryOrder> list = deliveryOrderService.findByIdBrandIdAndStatusAndBookDate(eid, status, date);
+        // -1 表示取所有已支付、已完成的单子
+        List<DeliveryOrder> list;
+        if (status == -1) {
+            list = deliveryOrderService.findByIdBrandIdAndStatus(eid, OrderStatusEnum.PAIED.getCode());
+            list.addAll(deliveryOrderService.findByIdBrandIdAndStatus(eid, OrderStatusEnum.COMPLETE.getCode()));
+        } else {
+            list = deliveryOrderService.findByIdBrandIdAndStatusAndBookDate(eid, status, date);
+        }
+
         if (!isEmptyList(list)) {
             list.sort((a, b) -> b.getId() > a.getId() ? 1 : -1);
         }
