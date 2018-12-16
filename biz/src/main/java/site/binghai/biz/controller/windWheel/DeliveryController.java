@@ -21,6 +21,7 @@ import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.TimeTools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +180,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         JSONObject ret = newJSONObject();
         List<DeliveryOrder> list = deliveryOrderService.findByIdBrandIdAndStatusAndBookDate(eid, status, date);
         if (!isEmptyList(list)) {
-            list.sort((a, b) -> b.getId() > a.getId() ? 0 : 1);
+            list.sort((a, b) -> b.getId() > a.getId() ? 1 : -1);
         }
         ExpressBrand brand = expressBrandService.findById(eid);
 
