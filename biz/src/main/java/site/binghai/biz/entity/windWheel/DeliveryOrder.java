@@ -1,9 +1,14 @@
 package site.binghai.biz.entity.windWheel;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import site.binghai.lib.entity.PayBizEntity;
 import site.binghai.lib.enums.PayBizEnum;
+import site.binghai.lib.utils.TimeTools;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,9 +34,31 @@ public class DeliveryOrder extends PayBizEntity {
     //快递联系电话
     private String expressPhone;
     private String remark;
+    //管理员备注,json
+    @Column(columnDefinition = "TEXT")
+    private String manageRemark;
 
     @Override
     public PayBizEnum getBizType() {
         return PayBizEnum.EXPRESS_DELIVERY;
+    }
+
+    /**
+     * 管理员追加备注
+     */
+    public void appendManageRemark(String userName, String text) {
+        JSONArray array;
+        if (StringUtils.isBlank(manageRemark)) {
+            array = new JSONArray();
+        } else {
+            array = JSONArray.parseArray(manageRemark);
+        }
+        JSONObject remark = new JSONObject();
+        remark.put("time", TimeTools.now());
+        remark.put("who", userName);
+        remark.put("content", text);
+        array.add(remark);
+
+        manageRemark = array.toJSONString();
     }
 }

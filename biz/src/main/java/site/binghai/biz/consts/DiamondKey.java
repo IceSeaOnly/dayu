@@ -25,4 +25,6 @@ public class DiamondKey {
     public static final String RESET_JACKPOT_LIST = "RESET_JACKPOT_LIST";
 
     public static final String ANY_WISH_AUDIT_NOTIFY_CONF = "ANY_WISH_AUDIT_NOTIFY_CONF";
+    // 寄件提醒免打扰列表
+    public static final String DELIVERY_NOTICE_MUTE_LIST = "DELIVERY_NOTICE_MUTE_LIST";
 }

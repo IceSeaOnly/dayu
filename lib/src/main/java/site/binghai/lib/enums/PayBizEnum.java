@@ -12,6 +12,7 @@ public enum PayBizEnum {
     TREE_HOLE_BUY_FEE(2, "树洞作品购买", null, true),
     VIP_CHARGE(3, "会员充值", null, false),
     EXPRESS_DELIVERY(4, "代寄快递", "http://cdn.binghai.site/o_1cu5qp3aq2fn1lae1qlc12a0bqea.jpg", true),
+    THIRD_OPEN_SERVICE(5, "开放服务", "http://cdn.binghai.site/o_1cuqefqdvmuf179fsj2v6j1rnda.png", true),
     ;
 
     private int code;

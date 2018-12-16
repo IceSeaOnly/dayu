@@ -19,6 +19,7 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
+import site.binghai.lib.utils.TimeTools;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,15 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         DeliveryOrder order = deliveryOrderService.newInstance(map);
         if (hasEmptyString(order.getExpressId(), order.getUserName(), order.getUserAddress(), order.getUserPhone())) {
             return fail("请输入完整信息!");
+        }
+        // 检查预约日期是否晚于当前时间
+        if (!hasEmptyString(order.getExpressOutDate())) {
+            Long bookingTs = TimeTools.data2Timestamp(order.getExpressOutDate());
+            Long todayMorning = TimeTools.getTimesmorning();
+
+            if (bookingTs < todayMorning) {
+                return fail(order.getExpressOutDate() + "预约时间似乎不对哦");
+            }
         }
         ExpressBrand brand = expressBrandService.findById(order.getExpressId());
         if (brand == null || !brand.getEnableSend()) {
@@ -157,7 +167,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
     }
 
     @GetMapping("manageOrderList")
-    public Object manageOrderList(@RequestParam Long eid, @RequestParam Integer status) {
+    public Object manageOrderList(@RequestParam Long eid, @RequestParam Integer status, String date) {
         WxUser user = getLastestUser();
         if (!user.getExpDeliverySuperAuth()) {
             ExpressOwner owner = expressOwnerService.findByUserIdAndBrandId(user.getId(), eid);
@@ -167,7 +177,10 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         }
 
         JSONObject ret = newJSONObject();
-        List list = deliveryOrderService.findByIdBrandIdAndStatus(eid, status);
+        List<DeliveryOrder> list = deliveryOrderService.findByIdBrandIdAndStatusAndBookDate(eid, status, date);
+        if (!isEmptyList(list)) {
+            list.sort((a, b) -> b.getId() > a.getId() ? 1 : 0);
+        }
         ExpressBrand brand = expressBrandService.findById(eid);
 
         ret.put("list", list);
@@ -334,6 +347,33 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         ExpressBrand brand = expressBrandService.findById(eid);
         brand.setEnableSend(!brand.getEnableSend());
         expressBrandService.update(brand);
+        return success();
+    }
+
+    /**
+     * 对订单执行备注
+     */
+    @PostMapping("remarkOrder")
+    public Object remarkOrder(@RequestBody Map map) {
+        Long orderId = getLong(map, "orderId");
+        String text = getString(map, "remark");
+
+        if (hasEmptyString(orderId, text)) {
+            return fail("参数错误");
+        }
+
+        DeliveryOrder order = deliveryOrderService.findById(orderId);
+        WxUser user = getLastestUser();
+
+        if (!user.getExpDeliverySuperAuth()) {
+            ExpressOwner owner = expressOwnerService.findByUserIdAndBrandId(user.getId(), order.getExpressId());
+            if (owner == null) {
+                return fail("未授权");
+            }
+        }
+
+        order.appendManageRemark(user.getUserName(), text);
+        deliveryOrderService.update(order);
         return success();
     }
 

@@ -3,6 +3,7 @@ package site.binghai.biz.service;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.entity.windWheel.DeliveryOrder;
 import site.binghai.biz.entity.windWheel.ExpressOwner;
 import site.binghai.lib.config.IceConfig;
@@ -34,6 +35,8 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
 
     @Autowired
     private IceConfig iceConfig;
+    @Autowired
+    private DiamondService diamondService;
 
     public DeliveryOrder getLastOrder(WxUser user) {
         DeliveryOrder exp = new DeliveryOrder();
@@ -102,22 +105,26 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
             wxTplMessageService.send(msg);
         });
 
+        JSONObject muteList = diamondService.getConf(DiamondKey.DELIVERY_NOTICE_MUTE_LIST);
         List<WxUser> users = wxUserService.findAllDeliverySuperUser();
-        users.forEach(u -> {
-            JSONObject msg = new TplGenerator(
-                iceConfig.getAppointmentOrderTplId(),
-                iceConfig.getAppRoot() + "/user/view/page/UnFinishedDeliveryList?eid=" + deliveryOrder.getExpressId(),
-                u.getOpenId()
-            ).put("first", u.getUserName() + "，你好!")
-                .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单，请尽快处理！")
-                .put("Good", order.getTitle())
-                .put("expDate", TimeTools.now())
-                .put("name", u.getUserName())
-                .put("menu", order.getShouldPay() / 100.0 + "元")
-                .put("remark", "订单详情请点击本消息查看!")
-                .build();
-            wxTplMessageService.send(msg);
-        });
+        users.stream()
+            .filter(v -> !muteList.containsKey(v.getOpenId()))
+            .forEach(u -> {
+                JSONObject msg = new TplGenerator(
+                    iceConfig.getAppointmentOrderTplId(),
+                    iceConfig.getAppRoot() + "/user/view/page/UnFinishedDeliveryList?eid=" + deliveryOrder
+                        .getExpressId(),
+                    u.getOpenId()
+                ).put("first", u.getUserName() + "，你好!")
+                    .put("Content1", deliveryOrder.getExpressBrand() + "有新的代寄订单，请尽快处理！")
+                    .put("Good", order.getTitle())
+                    .put("expDate", TimeTools.now())
+                    .put("name", u.getUserName())
+                    .put("menu", order.getShouldPay() / 100.0 + "元")
+                    .put("remark", "订单详情请点击本消息查看!")
+                    .build();
+                wxTplMessageService.send(msg);
+            });
 
     }
 
@@ -126,10 +133,15 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
         return PayBizEnum.EXPRESS_DELIVERY;
     }
 
-    public List<DeliveryOrder> findByIdBrandIdAndStatus(Long eid, Integer status) {
+    public List<DeliveryOrder> findByIdBrandIdAndStatusAndBookDate(Long eid, Integer status, String bookDate) {
         DeliveryOrder exp = new DeliveryOrder();
         exp.setExpressId(eid);
         exp.setStatus(status);
+        exp.setExpressOutDate(bookDate);
         return query(exp);
+    }
+
+    public List<DeliveryOrder> findByIdBrandIdAndStatus(Long eid, Integer status) {
+        return findByIdBrandIdAndStatusAndBookDate(eid, status, null);
     }
 }
