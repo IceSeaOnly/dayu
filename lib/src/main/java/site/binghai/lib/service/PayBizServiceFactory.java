@@ -9,6 +9,7 @@ import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.utils.BaseBean;
+
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,6 @@ public class PayBizServiceFactory extends BaseBean {
     private IceConfig iceConfig;
     @Autowired
     private UnifiedOrderService unifiedOrderService;
-
 
     public UnifiedOrderMethods get(PayBizEnum payBizEnum) {
         return serviceMap.get(payBizEnum);
@@ -70,7 +70,8 @@ public class PayBizServiceFactory extends BaseBean {
         UnifiedOrder unifiedOrder = unifiedOrderService.findByOrderId(orderId);
 
         if (unifiedOrder == null || unifiedOrder.getStatus() >= OrderStatusEnum.PAIED.getCode()) {
-            throw new Exception("status not right!");
+            logger.error("status of order {} is no longer paid!", orderId);
+            return;
         }
 
         unifiedOrder.setStatus(OrderStatusEnum.PAIED.getCode());
