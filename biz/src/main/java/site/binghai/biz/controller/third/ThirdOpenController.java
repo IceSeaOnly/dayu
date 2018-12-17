@@ -34,7 +34,7 @@ public class ThirdOpenController extends AbstractPayBizController<ThirdOpenOrder
         return success(thirdOpenSerivice.findAll(999), null);
     }
 
-    @PostMapping
+    @PostMapping("booking")
     public Object booking(@RequestBody Map map) {
         WxUser user = getUser();
         ThirdOpenOrder order = thirdOpenOrderSerivice.newInstance(map);
