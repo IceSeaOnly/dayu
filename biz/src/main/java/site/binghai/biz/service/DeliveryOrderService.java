@@ -1,11 +1,13 @@
 package site.binghai.biz.service;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.entity.windWheel.DeliveryOrder;
 import site.binghai.biz.entity.windWheel.ExpressOwner;
+import site.binghai.biz.utils.NumberUtil;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.def.UnifiedOrderMethods;
 import site.binghai.lib.entity.UnifiedOrder;
@@ -18,7 +20,10 @@ import site.binghai.lib.utils.TimeTools;
 import site.binghai.lib.utils.TplGenerator;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author huaishuo
@@ -145,5 +150,29 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
 
     public List<DeliveryOrder> findByIdBrandIdAndStatus(Long eid, Integer status) {
         return findByIdBrandIdAndStatusAndBookDate(eid, status, null);
+    }
+
+    public List<DeliveryOrder> search(String content) {
+        Map<Long, DeliveryOrder> ret = new HashMap<>();
+        if (NumberUtils.isDigits(content)) {
+            DeliveryOrder order = findById(Long.parseLong(content));
+            if (order != null) {
+                ret.put(order.getId(), order);
+            }
+            //1
+            DeliveryOrder exp = new DeliveryOrder();
+            exp.setUserPhone(content);
+            query(exp).forEach(v -> ret.put(v.getId(), v));
+            //2
+            exp.setUserPhone(null);
+            exp.setExpressPhone(content);
+            query(exp).forEach(v -> ret.put(v.getId(), v));
+        } else {
+            //1
+            DeliveryOrder exp = new DeliveryOrder();
+            exp.setUserName(content);
+            query(exp).forEach(v -> ret.put(v.getId(), v));
+        }
+        return new ArrayList<>(ret.values());
     }
 }

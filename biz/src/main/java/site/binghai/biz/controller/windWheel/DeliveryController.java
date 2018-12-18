@@ -386,6 +386,29 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         return success();
     }
 
+    @PostMapping("search")
+    public Object search(@RequestBody Map map) {
+        WxUser user = getLastestUser();
+        Long eid = getLong(map,"eid");
+        String content = getString(map, "content");
+        if(hasEmptyString(eid,content)){
+            return fail("参数错误!");
+        }
+
+        if (!user.getExpDeliverySuperAuth()) {
+            ExpressOwner owner = expressOwnerService.findByUserIdAndBrandId(user.getId(), eid);
+            if (owner == null) {
+                return fail("未授权");
+            }
+        }
+
+        List<DeliveryOrder> orders = deliveryOrderService.search(content);
+        if(isEmptyList(orders)){
+            return fail("无匹配订单");
+        }
+        return success(orders, null);
+    }
+
     private WxUser getLastestUser() {
         WxUser wxUser = wxUserService.findById(getUser().getId());
         persistent(wxUser);
