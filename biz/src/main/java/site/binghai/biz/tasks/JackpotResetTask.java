@@ -18,8 +18,8 @@ import site.binghai.lib.utils.TplGenerator;
 
 import java.util.List;
 
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class JackpotResetTask extends BaseBean implements ManualInvoke {
     @Autowired
     private JackpotService jackpotService;

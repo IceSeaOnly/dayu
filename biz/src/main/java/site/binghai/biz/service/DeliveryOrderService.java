@@ -1,5 +1,6 @@
 package site.binghai.biz.service;
 
+import com.alibaba.acm.shaded.com.google.common.collect.Lists;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,11 +142,27 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
     }
 
     public List<DeliveryOrder> findByIdBrandIdAndStatusAndBookDate(Long eid, Integer status, String bookDate) {
+        Map<Long, DeliveryOrder> orderMap = new HashMap<>();
         DeliveryOrder exp = new DeliveryOrder();
         exp.setExpressId(eid);
         exp.setStatus(status);
         exp.setExpressOutDate(bookDate);
-        return query(exp);
+        List<DeliveryOrder> orders = query(exp);
+        if (!isEmptyList(orders)) {
+            orders.forEach(v -> orderMap.put(v.getId(), v));
+        }
+        // 取未完成订单时追加历史未完成订单
+        if (OrderStatusEnum.valueOf(status) == OrderStatusEnum.PAIED) {
+            exp.setExpressOutDate(null);
+            List<DeliveryOrder> uns = query(exp);
+            if (isEmptyList(uns)) {
+                return Lists.newArrayList(orderMap.values());
+            }
+            uns.stream()
+                .filter(v -> TimeTools.data2Timestamp(v.getExpressOutDate()) <= now())
+                .forEach(v -> orderMap.put(v.getId(), v));
+        }
+        return Lists.newArrayList(orderMap.values());
     }
 
     public List<DeliveryOrder> findByIdBrandIdAndStatus(Long eid, Integer status) {

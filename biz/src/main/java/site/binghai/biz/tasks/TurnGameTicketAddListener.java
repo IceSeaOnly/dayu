@@ -33,11 +33,16 @@ public class TurnGameTicketAddListener extends BaseBean implements WxTplMessageH
 
     @Override
     public void accept(WxTplMsg message) {
+        // 暂停发放大转盘抽奖券
+        if (true) {
+            return;
+        }
         String url = message.getUrl();
         if (hasEmptyString(url) || !url.contains("?")) {
             return;
         }
-        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url.split("\\?")[1]), JackpotScene.BY_JDY_TAKE_ORDER);
+        ticketService.newTicket(message.getOpenId(), NumberUtil.getNumber(url.split("\\?")[1]),
+            JackpotScene.BY_JDY_TAKE_ORDER);
         // 活动邀约
         JSONObject cfg = JSONObject.parseObject(diamondService.get(DiamondKey.TURN_GAME_INVATION_TPL));
         TplGenerator generator = new TplGenerator(cfg.getString("tpl"), cfg.getString("url"), message.getOpenId());

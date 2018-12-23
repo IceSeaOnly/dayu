@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class WinnerListPublishTask extends BaseBean implements ManualInvoke {
     @Autowired
     private JackpotService jackpotService;

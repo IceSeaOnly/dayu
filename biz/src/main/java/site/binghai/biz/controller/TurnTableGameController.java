@@ -68,6 +68,10 @@ public class TurnTableGameController extends BaseController {
 
     @GetMapping("play")
     public Object play() {
+        if (true) {
+            return fail("抽奖活动暂停，您已经中得的奖品将照常配送，感谢您的支持!");
+        }
+
         Ticket ticket = ticketService.play(getUser());
         if (ticket == null) {
             return fail(diamondService.get(DiamondKey.TURN_GAME_NO_TICKET_NOTICE));
