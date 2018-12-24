@@ -159,10 +159,20 @@ public class DeliveryOrderService extends BaseService<DeliveryOrder> implements 
                 return Lists.newArrayList(orderMap.values());
             }
             uns.stream()
-                .filter(v -> TimeTools.data2Timestamp(v.getExpressOutDate()) <= now())
+                .filter(v -> isNotFinished(v))
                 .forEach(v -> orderMap.put(v.getId(), v));
         }
         return Lists.newArrayList(orderMap.values());
+    }
+
+    private boolean isNotFinished(DeliveryOrder order) {
+        if (hasEmptyString(order.getExpressOutDate())) {
+            return true;
+        }
+        if (TimeTools.data2Timestamp(order.getExpressOutDate()) <= now()) {
+            return true;
+        }
+        return false;
     }
 
     public List<DeliveryOrder> findByIdBrandIdAndStatus(Long eid, Integer status) {
