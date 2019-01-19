@@ -98,7 +98,7 @@ public class OpenApiController extends BaseController {
             return fail("认证失败");
         }
 
-        if (api.getOnline()) {
+        if (!api.getOnline()) {
             return fail("服务已下线!");
         }
 
