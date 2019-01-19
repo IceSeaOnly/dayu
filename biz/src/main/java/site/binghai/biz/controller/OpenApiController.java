@@ -90,7 +90,7 @@ public class OpenApiController extends BaseController {
             return fail("非法访问");
         }
 
-        if (api.getName().equals("WXTPL")) {
+        if (!api.getName().equals("WXTPL")) {
             return fail("前台服务不允许api调用");
         }
 
