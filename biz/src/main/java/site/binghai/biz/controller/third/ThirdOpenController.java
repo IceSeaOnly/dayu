@@ -42,6 +42,15 @@ public class ThirdOpenController extends AbstractPayBizController<ThirdOpenOrder
             return fail("选择的服务有误");
         }
         ThirdOpen thirdOpen = thirdOpenSerivice.findById(order.getServiceId());
+
+        if (!thirdOpen.getOnline()) {
+            return fail("服务暂时下线");
+        }
+
+        if (thirdOpen.getName().equals("WXTPL")) {
+            return fail("仅供API调用");
+        }
+
         order.setServiceName(thirdOpen.getName());
         order.setServiceUrl(thirdOpen.getUrl());
         order.setUserName(user.getUserName());
