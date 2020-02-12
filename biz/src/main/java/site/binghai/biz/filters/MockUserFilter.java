@@ -8,12 +8,8 @@ import site.binghai.lib.service.WxUserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.ParameterizedType;
 
-/**
- * @author huaishuo
- * @date 2018/12/8 上午11:56
- **/
+
 public class MockUserFilter extends HandlerInterceptorAdapter {
     @Autowired
     private WxUserService wxUserService;

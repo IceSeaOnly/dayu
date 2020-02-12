@@ -11,6 +11,7 @@ import site.binghai.lib.entity.SessionDataBundle;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.interfaces.SessionPersistent;
 import site.binghai.lib.utils.BaseBean;
+import site.binghai.lib.utils.HttpUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,10 @@ public class BaseController extends BaseBean {
     }
 
     private static Map<Class, SessionPersistent> instanceHolder = new HashMap<>();
+
+    public String e500(String err) {
+        return "redirect:/500?error=" + HttpUtils.encode(err);
+    }
 
     /**
      * 从thread local获取网络上下文

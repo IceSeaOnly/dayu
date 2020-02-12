@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/11/28 下午5:07
  **/
 @CrossOrigin("*")

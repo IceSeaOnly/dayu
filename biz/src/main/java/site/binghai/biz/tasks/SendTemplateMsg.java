@@ -2,7 +2,6 @@ package site.binghai.biz.tasks;
 
 import com.alibaba.fastjson.JSONObject;
 import site.binghai.lib.service.AccessTokenService;
-import site.binghai.lib.utils.IoUtils;
 
 public class SendTemplateMsg extends PostSendBase {
     private String data;
@@ -17,7 +16,7 @@ public class SendTemplateMsg extends PostSendBase {
         if (this.token == null) {
             return null;
         }
-        setPostUrl("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + this.token);
+        setPostUrl("https://api.weixin.qq.com/cgi-bin/message/templates/send?access_token=" + this.token);
         setContent(this.data);
         return postSend();
     }

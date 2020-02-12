@@ -5,7 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.def.UnifiedOrderMethods;
@@ -17,9 +20,10 @@ import site.binghai.lib.service.PayBizServiceFactory;
 import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
 
+import java.net.URLEncoder;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/user/unified/")
 public class UnifiedOrderController extends BaseController {
 
@@ -33,6 +37,7 @@ public class UnifiedOrderController extends BaseController {
     private PayBizServiceFactory payBizServiceFactory;
 
     @GetMapping("detail")
+    @ResponseBody
     public Object detail(@RequestParam Long unifiedId) {
         WxUser wxUser = getSessionPersistent(WxUser.class);
         UnifiedOrder order = unifiedOrderService.findById(unifiedId);
@@ -45,6 +50,23 @@ public class UnifiedOrderController extends BaseController {
         map.put("extra", loadMoreInfo(order));
         map.put("payOptions", multiPay(order));
         return success(map, null);
+    }
+
+    @GetMapping("cashier")
+    public String cashier(@RequestParam Long unifiedId, ModelMap map) throws Exception {
+        UnifiedOrder order = unifiedOrderService.findById(unifiedId);
+        WxUser user = getUser();
+        if (order == null || !order.getUserId().equals(user.getId())) {
+            return "redirect:/500?error=" + URLEncoder.encode("非法访问", "UTF-8");
+        }
+        if (order.getStatus() > 1) {
+            return e500(
+                "订单状态错误:" + OrderStatusEnum.valueOf(order.getStatus()).getName());
+        }
+        map.put("order", order);
+        map.put("user", user);
+        map.put("payOptions", multiPay(order));
+        return "cashier";
     }
 
     private JSONArray loadMoreInfo(UnifiedOrder order) {
@@ -66,6 +88,9 @@ public class UnifiedOrderController extends BaseController {
     public String walletPay(@RequestParam Long unifiedId, String callBack, ModelMap map) {
         WxUser wxUser = updateSessionUser();
         UnifiedOrder order = unifiedOrderService.findById(unifiedId);
+        if (order.getStatus() > 1) {
+            return "redirect:" + (callBack == null ? "detail?unifiedId=" + unifiedId : callBack);
+        }
         boolean enableWalletPay = PayBizEnum.valueOf(order.getAppCode()).isWalletPay();
 
         if (wxUser.getWallet() == null || wxUser.getWallet() < order.getShouldPay() || !enableWalletPay) {
@@ -108,22 +133,24 @@ public class UnifiedOrderController extends BaseController {
     }
 
     @GetMapping("list")
+    @ResponseBody
     public Object list(ModelMap map) {
         JSONArray arr = newJSONArray();
         WxUser user = getUser();
         List<UnifiedOrder> data = unifiedOrderService.findByUserIdOrderByIdDesc(user.getId(), 0, 1000);
-        data.forEach(v -> {
-            JSONObject extra = newJSONObject();
-            extra.put("img", PayBizEnum.valueOf(v.getAppCode()).getImg());
-            extra.put("title", v.getTitle());
-            extra.put("orderNo", v.getOrderId());
-            extra.put("created", v.getCreatedTime());
-            extra.put("orderStatus", OrderStatusEnum.valueOf(v.getStatus()).getName());
-            extra.put("shouldPay", v.getShouldPay());
-            extra.put("unifiedId", v.getId());
+        data.stream().filter(u -> !u.getAppCode().equals(PayBizEnum.MERGE_PAY.getCode()))
+            .forEach(v -> {
+                JSONObject extra = newJSONObject();
+                extra.put("img", PayBizEnum.valueOf(v.getAppCode()).getImg());
+                extra.put("title", v.getTitle());
+                extra.put("orderNo", v.getOrderId());
+                extra.put("created", v.getCreatedTime());
+                extra.put("orderStatus", OrderStatusEnum.valueOf(v.getStatus()).getName());
+                extra.put("shouldPay", v.getShouldPay());
+                extra.put("unifiedId", v.getId());
 
-            arr.add(extra);
-        });
+                arr.add(extra);
+            });
 
         return success(arr, null);
     }

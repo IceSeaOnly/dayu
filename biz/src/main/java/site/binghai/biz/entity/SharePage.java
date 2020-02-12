@@ -8,10 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-/**
- * @author huaishuo
- * @date 2018/12/8 上午11:16
- **/
+
 @Data
 @Entity
 public class SharePage extends BaseEntity {

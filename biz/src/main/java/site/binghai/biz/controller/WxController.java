@@ -2,8 +2,9 @@ package site.binghai.biz.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.SessionDataBundle;
@@ -12,10 +13,6 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.WxCommonService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.MD5;
-import site.binghai.lib.utils.UrlUtil;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/wx/")
@@ -43,9 +40,9 @@ public class WxController extends BaseController {
         WxUser wxUser = wxUserService.findByOpenId(openId);
         if (wxUser == null) {
             WxInfo info = wxCommonService.getUserInfo(openId);
-            if (info == null || !info.isSubscribed()) {
-                return "redirect:" + iceConfig.getSubscribePage();
-            }
+            //if (info == null || !info.isSubscribed()) {
+            //    return "redirect:" + iceConfig.getSubscribePage();
+            //}
             wxUser = wxUserService.newUser(openId, info);
         }
 
@@ -54,13 +51,13 @@ public class WxController extends BaseController {
         backUrl = getStringFromSession(SessionDataBundle.BACK_URL);
 
         if (needCompleteInfo(wxUser)) {
-            return "redirect:/user/view/page/completeUserInfo?backUrl=" + backUrl;
+            return "redirect:/shop/myInfo";
         }
         return backUrl == null ? "redirect:/" : "redirect:" + backUrl;
     }
 
     private boolean needCompleteInfo(WxUser wxUser) {
-        if (hasEmptyString(wxUser.getUserName(), wxUser.getPhone(), wxUser, wxUser.getAddress())) {
+        if (hasEmptyString(wxUser.getUserName(), wxUser.getPhone())) {
             return true;
         }
         return false;

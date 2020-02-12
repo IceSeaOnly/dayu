@@ -11,7 +11,7 @@ import javax.persistence.Id;
 /**
  * 第三方开放服务
  *
- * @author huaishuo
+ *
  * @date 2018/12/16 上午10:39
  **/
 @Data

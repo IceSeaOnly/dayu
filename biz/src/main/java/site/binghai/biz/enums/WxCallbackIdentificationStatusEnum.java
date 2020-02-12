@@ -1,7 +1,7 @@
 package site.binghai.biz.enums;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/12/2 下午11:33
  **/
 public enum WxCallbackIdentificationStatusEnum {

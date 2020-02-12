@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/12/3 下午11:03
  **/
-@Service
+//@Service
 public class DeliveryOrderService extends BaseService<DeliveryOrder> implements UnifiedOrderMethods<DeliveryOrder> {
     @Autowired
     private ExpressOwnerService expressOwnerService;

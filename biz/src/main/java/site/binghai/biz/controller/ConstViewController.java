@@ -4,21 +4,17 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import site.binghai.biz.service.DiamondService;
 import site.binghai.biz.utils.DecodeUtil;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.utils.GroovyEngineUtils;
 import site.binghai.lib.utils.UrlUtil;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Map;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("/view/")
+//@RestController
+//@RequestMapping("/view/")
 public class ConstViewController extends BaseController {
     @Autowired
     private DiamondService diamondService;

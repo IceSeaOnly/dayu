@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a onclick="javascript:history.back(-1)" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p>购物车</p>
+        </div>
+        <div class="headerR"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="kbox"></div>
+<div class="paysuccess">
+    <div class="pay30">
+        <img src="/images/gwc.jpg"/>
+        <p>购物车还是空的</p>
+    </div>
+    <div class="pay40">
+        <a href="category">去逛逛</a>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="kbox"></div>
+<div class="likebox">
+    <div class="likeTit">
+        <img src="/images/heart.png"/><span>猜你喜欢</span>
+    </div>
+    <ul>
+        <li th:each="prd:${products}">
+            <a th:href="${'detail?productId='+prd.id}">
+                <img th:src="${prd.imgUrl}" class="proimg"/>
+                <p class="tit" th:text="${prd.brand+' '+prd.title}">三利 毛巾家纺纯棉吸水 提缎面巾两条装</p>
+                <p class="price"><b th:text="${'￥'+prd.price/100.0}">￥29.9</b><span
+                        th:text="${'￥'+prd.previousPrice/100.0}">￥49.9</span></p>
+            </a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

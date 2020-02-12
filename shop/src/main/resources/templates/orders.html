@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a href="my" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p>我的订单</p>
+        </div>
+        <div class="headerR"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="myddstatu">
+    <ul>
+        <li th:class="${type == null?'on':''}">
+            <a href="orders" th:text="${'全部('+allSize+')'}">全部(6)</a>
+        </li>
+        <li th:class="${type == 'CREATED'?'on':''}">
+            <a href="orders?type=CREATED" th:text="${'待付款('+payingSize+')'}">全部(6)</a>
+        </li>
+        <li th:class="${type == 'PAIED'?'on':''}">
+            <a href="orders?type=PAIED" th:text="${'待发货('+shippingSize+')'}">待发货(1)</a>
+        </li>
+        <li th:class="${type == 'PROCESSING'?'on':''}">
+            <a href="orders?type=PROCESSING" th:text="${'待收货('+shippedSize+')'}">待收货(3)</a>
+        </li>
+        <li th:class="${type == 'COMPLETE'?'on':''}">
+            <a href="orders?type=COMPLETE" th:text="${'待评价('+feedingSize+')'}">待评价(2)</a>
+        </li>
+    </ul>
+</div>
+<div class="clear"></div>
+<div class="myddcon">
+    <div style="text-align: center;padding-top: 40px" th:if="${orders == null || orders.size() == 0}">
+        <img src="http://cdn.binghai.site/o_1e05c70co1863k451uvol6p1u19a.png" style="width: 30%"/>
+        <br/>
+        <h3>居然什么都没有...</h3>
+    </div>
+    <div class="myddcon1" th:each="item:${orders}">
+        <div class="dpbox">
+            <!--<div class="dpL">-->
+            <!--<a href="dpxq">-->
+            <!--<span>皇宫婚纱旗舰店</span>-->
+            <!--<img src="/images/mre1.png">-->
+            <!--</a>-->
+            <!--</div>-->
+            <div class="dpR"><a href="shouhuoNo" th:text="${typeEnum.valueOf(item.status).name}">待收货</a></div>
+        </div>
+        <div class="shopbox">
+            <div class="shopboxL">
+                <img th:src="${item.productImgUrl}"/>
+            </div>
+            <div class="shopboxR">
+                <div class="shopboxR_1">
+                    <div class="sbr1_1" th:text="${item.title}">2015秋季新款羽毛蕾丝抹胸长拖尾镶钻拉链婚纱</div>
+                    <div class="sbr1_2">
+                        <!--<p class="p1" >￥98.57</p>-->
+                        <p class="p2" th:text="${'￥'+item.price/100.0}">￥69.00</p>
+                    </div>
+                </div>
+                <div class="shopboxR_2">
+                    <p class="p3" th:text="${item.standardInfo}">颜色：白色；尺码：均码；</p>
+                    <p class="p4" th:text="${'x'+item.size}">×1</p>
+                </div>
+            </div>
+        </div>
+        <div class="dphjbox">
+            <p class="p5">合计:<span th:text="${'￥'+item.totalPrice/100.0}">￥69.00</span></p>
+        </div>
+        <div class="dpbtn">
+            <!--<div class="dpbtn1">-->
+            <!--<img src="/images/dat.png"/>-->
+            <!--<span>剩余9天05小时16分</span>-->
+            <!--</div>-->
+            <div class="dpbtn2">
+                <a th:href="${'/user/unified/cashier?unifiedId='+item.unifiedId}" th:if="${item.status <= 1}">立即支付</a>
+                <a th:href="${'confirmReceivedGood?orderId='+item.id}" th:if="${item.status == 2||item.status == 3}">确认收货</a>
+                <a th:href="${'leaveComment?orderId='+item.id}" th:if="${item.status == 4}">立即评价</a>
+            </div>
+            <div class="dpbtn3" th:if="${item.status > 1 && item.status < 4}">
+                <a href="wuliu">查看物流</a>
+            </div>
+            <div class="dpbtn3" th:if="${item.status > 4}">
+                <a th:href="${'/shop/detail?productId='+item.productId}">再次购买</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

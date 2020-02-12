@@ -1,25 +1,21 @@
 package site.binghai.biz.tasks;
 
-import com.aliyun.mns.client.CloudAccount;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import site.binghai.biz.service.WxTplMessageService;
-import site.binghai.biz.service.jdy.JdyLogService;
-import site.binghai.biz.service.jdy.WxTplMsgLogService;
-import site.binghai.lib.config.IceConfig;
-import site.binghai.lib.utils.BaseBean;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.model.Message;
 import com.aliyuncs.exceptions.ClientException;
-import site.binghai.lib.utils.IoUtils;
-import site.binghai.lib.utils.TimeTools;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import site.binghai.biz.service.WxTplMessageService;
+import site.binghai.biz.service.jdy.JdyLogService;
+import site.binghai.lib.config.IceConfig;
+import site.binghai.lib.utils.BaseBean;
 
-@Component
+//@Component
 public class WxMessageDispatchTask extends BaseBean {
 
     private static String _product = "Push";

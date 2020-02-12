@@ -20,8 +20,8 @@ import site.binghai.lib.utils.TplGenerator;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/user/turngame/")
+//@RestController
+//@RequestMapping("/user/turngame/")
 public class TurnTableGameController extends BaseController {
     @Autowired
     private TicketService ticketService;

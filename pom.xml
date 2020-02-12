@@ -10,6 +10,7 @@
         <module>app</module>
         <module>lib</module>
         <module>biz</module>
+        <module>shop</module>
     </modules>
     <packaging>pom</packaging>
 

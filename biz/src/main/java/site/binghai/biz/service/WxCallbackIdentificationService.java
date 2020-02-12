@@ -8,13 +8,9 @@ import site.binghai.biz.enums.WxCallbackIdentificationStatusEnum;
 import site.binghai.lib.service.BaseService;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.UUID;
 
-/**
- * @author huaishuo
- * @date 2018/12/2 下午11:35
- **/
+
 @Service
 public class WxCallbackIdentificationService extends BaseService<WxCallbackIdentification> {
     //过期时间 3分钟

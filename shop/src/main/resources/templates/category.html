@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var b = document.body.clientHeight;
+            //alert(b);
+            b = b - 45.8;
+            $('.shoptypebox').css('height', b);
+
+
+            $(".shtypeLeft ul li").click(function () {
+                $('.shtypeLeft ul li').removeClass('on');
+                $(this).addClass('on');
+            })
+        })
+    </script>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a href="index" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC0">
+            <div class="ssdiv">
+                <form action="search" method="get" id="searchForm">
+                    <input name="content" type="text" th:placeholder="${searchPlaceholder}"/>
+                    <a onclick="document.getElementById('searchForm').submit();"><img src="/images/ss.png"/></a>
+                </form>
+            </div>
+        </div>
+        <div class="headerR">
+            <a href="index">取消</a>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="shoptypebox">
+    <div class="shtypeLeft">
+        <ul>
+            <li class="on"><a href="#m1">热门推荐</a></li>
+            <li th:each="item,stat:${categories}">
+                <a th:href="${'#m'+(stat.index+2)}"
+                   th:text="${item.key.title}">潮流女装</a>
+            </li>
+        </ul>
+    </div>
+    <div class="shtypeRight">
+        <div class="boxOne">
+            <div class="box1" th:if="${ad != null}">
+                <img th:src="${ad}"/>
+            </div>
+            <a name="m1">
+                <div class="box2 botrtop">
+                    <p>热门分类</p>
+                </div>
+            </a>
+            <div class="box3">
+                <ul>
+                    <li th:each="child:${hotCategories}">
+                        <a th:href="${'productCategoryList?category='+child.id}">
+                            <img th:src="${child.imgUrl}"/>
+                            <p th:text="${child.title}">毛呢外套</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div th:each="item,stat:${categories}">
+                <a th:name="${'m'+(stat.index+2)}">
+                    <div class="box2">
+                        <p th:text="${item.key.title}">潮流女装</p>
+                    </div>
+                </a>
+                <div class="box3">
+                    <ul>
+                        <li th:each="child:${item.value}">
+                            <a th:href="${'productCategoryList?category='+child.id}">
+                                <img th:src="${child.imgUrl}"/>
+                                <p th:text="${child.title}">毛呢外套</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+</body>
+</html>

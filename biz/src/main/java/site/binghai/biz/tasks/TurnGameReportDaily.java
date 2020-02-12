@@ -3,9 +3,7 @@ package site.binghai.biz.tasks;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.def.ManualInvoke;
 import site.binghai.biz.entity.turntable.Ticket;
@@ -18,8 +16,8 @@ import site.binghai.lib.utils.TplGenerator;
 
 import java.util.List;
 
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class TurnGameReportDaily extends BaseBean implements ManualInvoke {
     @Autowired
     private TicketService ticketService;

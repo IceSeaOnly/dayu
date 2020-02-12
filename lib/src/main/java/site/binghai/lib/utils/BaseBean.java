@@ -13,8 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by IceSea on 2018/4/8.
- * GitHub: https://github.com/IceSeaOnly
+ * Created by IceSea on 2018/4/8. GitHub: https://github.com/IceSeaOnly
  */
 public abstract class BaseBean extends MapUtils {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -39,9 +38,21 @@ public abstract class BaseBean extends MapUtils {
         return CollectionUtils.isEmpty(list);
     }
 
+    public <T> List<T> empty(List<T> items) {
+        return isEmptyList(items) ? emptyList() : items;
+    }
+
+    public <T> List<T> subList(List<T> items, int size) {
+        List<T> all = empty(items);
+        if (isEmptyList(all)) {
+            return emptyList();
+        }
+        return all.size() >= size ? all : all.subList(0, Math.min(all.size(), size));
+    }
+
     public <T> T safeGet(List<T> list, int index) {
-        if (isEmptyList(list)) return null;
-        if (list.size() < index) return null;
+        if (isEmptyList(list)) { return null; }
+        if (list.size() < index) { return null; }
         return list.get(index);
     }
 
@@ -61,17 +72,15 @@ public abstract class BaseBean extends MapUtils {
 
     protected boolean hasEmptyString(Collection<String> strs) {
         for (String str : strs) {
-            if (StringUtils.isEmpty(str))
-                return false;
+            if (StringUtils.isEmpty(str)) { return false; }
         }
         return true;
     }
 
     protected boolean hasEmptyString(Object... strs) {
         for (Object str : strs) {
-            if (str == null) return true;
-            if (StringUtils.isEmpty(str.toString()))
-                return true;
+            if (str == null) { return true; }
+            if (StringUtils.isEmpty(str.toString())) { return true; }
         }
         return false;
     }

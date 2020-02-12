@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import site.binghai.lib.entity.Coupon;
 import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
@@ -20,6 +21,10 @@ import java.util.List;
 public class UnifiedOrderService extends BaseService<UnifiedOrder> {
     @Autowired
     private UnifiedOrderDao dao;
+    @Autowired
+    private CouponService couponService;
+    @Autowired
+    private WxUserService wxUserService;
 
     @Override
     protected JpaRepository<UnifiedOrder, Long> getDao() {
@@ -54,10 +59,15 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
             new PageRequest(page, pageSize));
     }
 
-    public UnifiedOrder newOrder(PayBizEnum biz, WxUser user, String title, int payMuch) {
+    @Transactional
+    public UnifiedOrder newOrderWithCoupon(PayBizEnum biz, WxUser user, String title, int payMuch, Long couponId) {
+        if (couponService.consume(user.getId(), couponId)) {
+            Coupon coupon = couponService.findById(couponId);
+            payMuch -= coupon.getCouponValue();
+        }
         UnifiedOrder order = new UnifiedOrder();
         order.setAppCode(biz.getCode());
-        order.setCouponId(null);
+        order.setCouponId(couponId);
         order.setOpenId(user.getOpenId());
         order.setUserId(user.getId());
         order.setUserName(user.getUserName());
@@ -66,6 +76,27 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         order.setShouldPay(payMuch);
         order.setOriginalPrice(payMuch);
         return save(order);
+    }
+
+    @Transactional
+    public UnifiedOrder newOrder(PayBizEnum biz, WxUser user, String title, int payMuch) {
+        return newOrderWithCoupon(biz, user, title, payMuch, null);
+    }
+
+    @Transactional
+    public void bindCoupon(UnifiedOrder order, Coupon coupon) {
+        int shouldPay = order.getShouldPay();
+        if (couponService.consume(order.getUserId(), coupon.getId())) {
+            shouldPay -= coupon.getCouponValue();
+        }
+
+        if (order.getCouponId() != null) {
+            shouldPay += couponService.unuse(order.getCouponId()).getCouponValue();
+        }
+
+        order.setShouldPay(shouldPay);
+        order.setCouponId(coupon.getId());
+        update(order);
     }
 
     public UnifiedOrder findByOrderId(String orderKey) {
@@ -95,8 +126,8 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
     }
 
     public List<UnifiedOrder> findByUserIdOrderByIdDesc(Long userId, Integer page, Integer pageSize) {
-        if (page == null || page < 0) page = 0;
-        if (pageSize == null || pageSize < 0) pageSize = 100;
+        if (page == null || page < 0) { page = 0; }
+        if (pageSize == null || pageSize < 0) { pageSize = 100; }
         return dao.findAllByUserIdOrderByIdDesc(userId, new PageRequest(page, pageSize));
     }
 
@@ -105,6 +136,12 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         UnifiedOrder order = findById(id);
         order.setStatus(OrderStatusEnum.CANCELED.getCode());
         update(order);
+        if (order.getCouponId() != null) {
+            couponService.unuse(order.getCouponId());
+        }
+        if (order.getPoints() != null && order.getPoints() > 0) {
+            wxUserService.recoveryShoppingPoints(order.getUserId(), order.getPoints());
+        }
         return true;
     }
 }

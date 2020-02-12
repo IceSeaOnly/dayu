@@ -2,7 +2,6 @@ package site.binghai.biz.tasks;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import site.binghai.biz.consts.DiamondKey;
 import site.binghai.biz.def.WxTplMessageHandler;
 import site.binghai.biz.entity.jdy.WxTplMsg;
@@ -14,7 +13,7 @@ import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.utils.BaseBean;
 import site.binghai.lib.utils.TplGenerator;
 
-@Component
+//@Component
 public class TurnGameTicketCancelListener extends BaseBean implements WxTplMessageHandler {
     @Autowired
     private IceConfig iceConfig;

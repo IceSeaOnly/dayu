@@ -48,7 +48,10 @@ public class PayBizServiceFactory extends BaseBean {
     }
 
     public String buildCallbackUrl(UnifiedOrder unifiedOrder) {
-        return "&callBack=" + iceConfig.getAppRoot() + "/user/view/page/OrderDetailPage?uid=" + unifiedOrder.getId();
+        String callback = serviceMap.get(PayBizEnum.valueOf(unifiedOrder.getAppCode())).buildPayCallbackUrl(
+            unifiedOrder);
+        return "&callBack=" + iceConfig.getAppRoot() + (callback == null ? "/user/view/page/OrderDetailPage?uid="
+            + unifiedOrder.getId() : callback);
     }
 
     @Autowired
@@ -80,8 +83,13 @@ public class PayBizServiceFactory extends BaseBean {
         payEvent(unifiedOrder);
     }
 
-    private void payEvent(UnifiedOrder unifiedOrder) {
+    public void payEvent(UnifiedOrder unifiedOrder) {
         get(unifiedOrder.getAppCode()).onPaid(unifiedOrder);
         wxEventHandler.onPaid(unifiedOrder);
+    }
+
+    public void cancel(UnifiedOrder unifiedOrder) {
+        get(unifiedOrder.getAppCode()).onPaid(unifiedOrder);
+        wxEventHandler.onCanceled(unifiedOrder);
     }
 }

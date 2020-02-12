@@ -13,8 +13,8 @@ import site.binghai.lib.utils.UrlUtil;
 
 import java.util.Map;
 
-@RequestMapping("/user/view/")
-@RestController
+//@RequestMapping("/user/view/")
+//@RestController
 public class UserViewController extends BaseController {
     @Autowired
     private DiamondService diamondService;

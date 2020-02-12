@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/09/28
  */
 public class QrMaker extends AbstractQRCode {

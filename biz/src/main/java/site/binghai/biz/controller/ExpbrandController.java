@@ -10,10 +10,7 @@ import site.binghai.lib.controller.BaseController;
 
 import java.util.List;
 
-/**
- * @author huaishuo
- * @date 2018/12/8 下午12:42
- **/
+
 @RestController
 @RequestMapping("/user/exp/brand")
 public class ExpbrandController extends BaseController {

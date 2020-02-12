@@ -10,7 +10,7 @@ import javax.persistence.Id;
 /**
  * 微信回调认证
  *
- * @author huaishuo
+ *
  * @date 2018/12/2 下午11:30
  **/
 @Data

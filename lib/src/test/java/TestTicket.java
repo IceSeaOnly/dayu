@@ -1,11 +1,10 @@
 import com.alibaba.fastjson.JSONObject;
-import org.junit.Test;
 import site.binghai.lib.utils.HttpUtils;
 
 import java.util.UUID;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/12/5 下午11:18
  **/
 public class TestTicket {

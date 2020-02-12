@@ -2,14 +2,17 @@ package site.binghai.biz.controller.windWheel;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import site.binghai.biz.controller.UnifiedOrderController;
 import site.binghai.biz.entity.SharePage;
-import site.binghai.biz.entity.windWheel.ExpressBrand;
 import site.binghai.biz.entity.windWheel.DeliveryOrder;
+import site.binghai.biz.entity.windWheel.ExpressBrand;
 import site.binghai.biz.entity.windWheel.ExpressOwner;
-import site.binghai.biz.service.ExpressBrandService;
 import site.binghai.biz.service.DeliveryOrderService;
+import site.binghai.biz.service.ExpressBrandService;
 import site.binghai.biz.service.ExpressOwnerService;
 import site.binghai.biz.service.SharePageService;
 import site.binghai.biz.service.jdy.JdyLogService;
@@ -21,18 +24,17 @@ import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.TimeTools;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/12/3 下午11:01
  **/
-@RestController
-@RequestMapping("/user/exp/delivery/")
+//@RestController
+//@RequestMapping("/user/exp/delivery/")
 public class DeliveryController extends AbstractPayBizController<DeliveryOrder> {
     @Autowired
     private DeliveryOrderService deliveryOrderService;

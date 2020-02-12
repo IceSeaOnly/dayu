@@ -33,6 +33,9 @@ public class WxUserService extends BaseService<WxUser> {
         wxUser.setSubscribeTime(info.getSubscribe_time());
         wxUser.setSubscribeScene(info.getSubscribe_scene());
         wxUser.setSubscribed(true);
+        wxUser.setBalance(0);
+        wxUser.setWallet(0);
+        wxUser.setShoppingPoints(0);
         wxUser.setExpDeliverySuperAuth(false);
         return save(wxUser);
     }
@@ -66,5 +69,12 @@ public class WxUserService extends BaseService<WxUser> {
         WxUser user = new WxUser();
         user.setExpDeliverySuperAuth(true);
         return query(user);
+    }
+
+    @Transactional
+    public void recoveryShoppingPoints(Long userId, Integer points) {
+        WxUser user = findById(userId);
+        user.setShoppingPoints(user.getShoppingPoints() + points);
+        update(user);
     }
 }

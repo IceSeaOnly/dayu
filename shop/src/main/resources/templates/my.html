@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<meta name="renderer" content="webkit"/>
+<meta name="force-rendering" content="webkit"/>
+<script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+<title></title>
+<link type="text/css" rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+<div class="m0myheader">
+  <div class="conbox">
+    <div class="conboxL">
+      <img th:src="${user.avatar}" class="tt"/>
+      <div class="btR">
+        <p class="p1" th:text="${user.userName}">seeallgood</p>
+        <!--<div class="v1">-->
+          <!--<img src="/images/mmm.png" />-->
+          <!--<p>我的亲情账号 ></p>-->
+        <!--</div>-->
+      </div>
+    </div>
+    <div class="conboxR">
+       <a href="myInfo">设置</a>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <div class="conbox2">
+    <ul>
+      <li>
+        <a href="javascript:void(0)">
+          <p class="p1" th:text="${collectCnt}">13</p>
+          <p class="p2">收藏夹</p>
+        </a>
+      </li>
+      <li>
+        <a href="javascript:void(0)">
+          <p class="p1">0</p>
+          <p class="p2">拼单记录</p>
+        </a>
+      </li>
+      <li>
+        <a href="javascript:void(0)">
+          <p class="p1" th:text="${footPrints}">3</p>
+          <p class="p2">浏览记录</p>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="clear"></div>
+<div class="mypart1">
+  <ul>
+    <li>
+      <a href="jifen">
+      <p class="p1" th:text="${user.shoppingPoints}">0</p>
+      <p class="p2">我的积分</p>
+      </a>
+    </li>
+    <li>
+      <a href="coupon">
+      <p class="p1" th:text="0">1</p>
+      <p class="p2">优惠券</p>
+      </a>
+    </li>
+    <li>
+      <a href="orders">
+      <p class="p1" th:text="${orderCnt}">0.00</p>
+      <p class="p2">订单数量</p>
+      </a>
+    </li>
+    <li>
+      <a href="orders">
+      <p class="p1" th:text="${shipping}">0.00</p>
+      <p class="p2">支付订单</p>
+      </a>
+    </li>
+    <li>
+      <a href="orders">
+      <img src="/images/my01.png" />
+      <p class="p2">消费记录</p>
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="kbox"></div><div class="kbox"></div>
+<div class="clear"></div>
+<div class="mypart2">
+  <div class="con">
+    <div class="pa2_tit">
+      <p>我的订单</p>
+      <a href="orders">查看更多订单 ></a>
+    </div>
+    <ul>
+      <li>
+        <a href="/shop/orders?type=CREATED">
+          <div class="ddimg">
+            <img src="/images/my02.png" />
+            <div class="num" th:if="${created > 0}" th:text="${created}">2</div>
+          </div>
+          <p>待付款</p>
+        </a>
+      </li>
+      <li>
+        <a href="/shop/orders?type=PAIED">
+          <div class="ddimg">
+            <img src="/images/my03.png" />
+            <div class="num" th:if="${shipping > 0}" th:text="${shipping}">2</div>
+          </div>
+          <p>待发货</p>
+        </a>
+      </li>
+      <li>
+        <a href="/shop/orders?type=PROCESSING">
+          <div class="ddimg">
+            <img src="/images/my04.png" />
+            <div class="num" th:if="${shipped > 0}" th:text="${shipped}">2</div>
+          </div>
+          <p>待收货</p>
+        </a>
+      </li>
+      <li>
+        <a href="/shop/orders?type=COMPLETE">
+          <div class="ddimg">
+            <img src="/images/my05.png" />
+            <div class="num" th:if="${feeding > 0}" th:text="${feeding}">2</div>
+          </div>
+          <p>待评价</p>
+        </a>
+      </li>
+      <!--<li>-->
+        <!--<a href="orders">-->
+          <!--<div class="ddimg">-->
+            <!--<img src="/images/my06.png" />-->
+          <!--</div>-->
+          <!--<p>退款/售后</p>-->
+        <!--</a>-->
+      <!--</li>-->
+    </ul>
+  </div>
+</div>
+<div class="kbox"></div><div class="kbox"></div>
+<div class="clear"></div>
+<div class="mypart3">
+  <ul>
+    <!--<li>-->
+      <!--<a href="javascript:void(0)">-->
+      <!--<img src="/images/my11.png" />-->
+      <!--<p>我的活动</p>-->
+      <!--</a>-->
+    <!--</li>-->
+    <!--<li>-->
+      <!--<a href="javascript:void(0)">-->
+      <!--<img src="/images/my12.png" />-->
+      <!--<p>社区</p>-->
+      <!--</a>-->
+    <!--</li>-->
+    <!--<li>-->
+      <!--<a href="javascript:void(0)">-->
+      <!--<img src="/images/my13.png" />-->
+      <!--<p>客户服务</p>-->
+      <!--</a>-->
+    <!--</li>-->
+    <!--<li>-->
+      <!--<a href="javascript:void(0)">-->
+      <!--<img src="/images/my14.png" />-->
+      <!--<p>京东超市</p>-->
+      <!--</a>-->
+    <!--</li>-->
+    <li>
+      <a href="coupon">
+      <img src="/images/my7.png" />
+      <p>我的优惠券</p>
+      </a>
+    </li>
+    <li>
+      <a href="addressSelect">
+      <img src="/images/my8.png" />
+      <p>收获地址</p>
+      </a>
+    </li>
+    <li>
+      <a href="jifen">
+      <img src="/images/my9.png" />
+      <p>我的积分</p>
+      </a>
+    </li>
+    <li>
+      <a href="customerService">
+      <img src="/images/my10.png" />
+      <p>我的客服</p>
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="clear"></div>
+<div class="kbox"></div><div class="kbox"></div>
+<div class="clear"></div>
+<div class="mypart2">
+  <div class="con">
+    <div class="pa2_tit">
+      <p>平台钱包</p>
+      <a href="javascript:void(0)">立刻充值 ></a>
+    </div>
+    <div class="pa2con">
+      <img src="/images/my00.jpg" />
+      <p th:text="${'账户余额：￥'+user.wallet/100.0}">账户余额：￥0.00</p>
+    </div>
+  </div>
+</div>
+<div class="kbox"></div><div class="kbox"></div>
+<div class="clear"></div>
+<div class="mypart4">
+  <img src="/images/my15.png" />
+</div>
+<div class="likebox my">
+  <ul>
+    <li th:each="cmm:${recommends}">
+      <a th:href="${'detail?productId='+cmm.id}">
+        <img th:src="${cmm.imgUrl}" class="proimg"/>
+        <p class="tit" th:text="${cmm.brand+' '+cmm.title}">三利 毛巾家纺纯棉吸水 提缎面巾两条装</p>
+        <p class="price"><b th:text="${'￥'+cmm.price/100.0}">￥29.9</b>
+          <span th:text="${'￥'+cmm.previousPrice/100.0}">￥49.9</span><img src="/images/f3.png"/></p>
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="clear"></div>
+<div class="fbox"></div>
+<div class="footbox">
+  <div class="footer">
+    <ul>
+      <li>
+        <a href="index">
+          <img src="/images/f01.png" />
+          <p>首页</p>
+        </a>
+      </li>
+      <li>
+        <a href="category">
+          <img src="/images/f02.png" />
+          <p>分类</p>
+        </a>
+      </li>
+      <li>
+        <a href="cart">
+          <img src="/images/f03.png" />
+          <p>购物车</p>
+        </a>
+      </li>
+      <li class="on">
+        <a href="my">
+          <img src="/images/f4.png" />
+          <p>我的</p>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

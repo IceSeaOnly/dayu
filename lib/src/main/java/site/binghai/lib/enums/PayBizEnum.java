@@ -13,6 +13,8 @@ public enum PayBizEnum {
     VIP_CHARGE(3, "会员充值", null, false),
     EXPRESS_DELIVERY(4, "代寄快递", "http://cdn.binghai.site/o_1cu5qp3aq2fn1lae1qlc12a0bqea.jpg", true),
     THIRD_OPEN_SERVICE(5, "开放服务申请", "http://cdn.binghai.site/o_1cuqefqdvmuf179fsj2v6j1rnda.png", true),
+    SCHOOL_SHOP(6, "校园商城", "http://cdn.binghai.site/o_1e0238ia21uoc1lf0dpbk2gcva.png", true),
+    MERGE_PAY(7, "合并支付", "http://cdn.binghai.site/o_1e08a7v27cihv7m1l6i150hqeua.png", true),
     ;
 
     private int code;

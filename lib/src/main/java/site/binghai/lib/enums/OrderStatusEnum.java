@@ -19,6 +19,7 @@ public enum OrderStatusEnum {
     REFUNDING(5, "退款申请中"),
     CANCELED(6, "已取消"),
     OUTOFDATE(7, "已超时/已取消"),
+    FEED_DONE(8, "评价完成"),
     ;
 
 

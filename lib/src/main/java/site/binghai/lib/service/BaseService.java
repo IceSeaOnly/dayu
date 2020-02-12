@@ -8,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import site.binghai.lib.entity.BaseEntity;
-import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.utils.BaseBean;
 
 import javax.persistence.EntityManager;
@@ -86,12 +85,12 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
 
     @Transactional
     public void delete(Long id) {
-        //getDao().deleteById(id);
-        T t = findById(id);
-        if (t != null) {
-            t.setDeleted(Boolean.TRUE);
-            update(t);
-        }
+        getDao().deleteById(id);
+        //T t = findById(id);
+        //if (t != null) {
+        //    t.setDeleted(Boolean.TRUE);
+        //    update(t);
+        //}
     }
 
     @Transactional
@@ -122,6 +121,16 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             .collect(Collectors.toList());
     }
 
+    public List<T> pageQuery(T example, int page, int size) {
+        example.setCreated(null);
+        example.setCreatedTime(null);
+        example.setDeleted(null);
+        example.setUpdated(null);
+        example.setUpdatedTime(null);
+        Example<T> ex = Example.of(example);
+        return filterDeleted(getDao().findAll(ex, new PageRequest(page, size)).getContent());
+    }
+
     public List<T> query(T example) {
         example.setCreated(null);
         example.setCreatedTime(null);
@@ -145,6 +154,18 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return t.getDeleted() ? null : t;
     }
 
+    public void delete(T example) {
+        example.setCreated(null);
+        example.setCreatedTime(null);
+        example.setDeleted(null);
+        example.setUpdated(null);
+        example.setUpdatedTime(null);
+        example = queryOne(example);
+        if (example != null) {
+            delete(example.getId());
+        }
+    }
+
     public List<T> sortQuery(T example, String sortField, Boolean desc) {
         example.setCreated(null);
         example.setCreatedTime(null);
@@ -166,6 +187,21 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     public long count() {
         try {
             T exp = getTypeArguement().newInstance();
+            exp.setDeleted(Boolean.FALSE);
+            exp.setCreated(null);
+            exp.setCreatedTime(null);
+            exp.setUpdated(null);
+            exp.setUpdatedTime(null);
+            Example<T> ex = Example.of(exp);
+            return getDao().count(ex);
+        } catch (Exception e) {
+            logger.error("count error! ", e);
+        }
+        return 0;
+    }
+
+    public long count(T exp) {
+        try {
             exp.setDeleted(Boolean.FALSE);
             exp.setCreated(null);
             exp.setCreatedTime(null);

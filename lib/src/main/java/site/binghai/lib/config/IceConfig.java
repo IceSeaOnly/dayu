@@ -45,6 +45,9 @@ public class IceConfig implements InitializingBean {
     // ------------- weixin tpl -------------
     private String paySuccessTplId;
     private String orderCancelTplId;
+    private String orderUpdateTplId;
+    private String userPointsGotNoticeTplId;
+    private String userPointsConsumeNoticeTplId;
     private String statisticsResultTplId;
     //预约单提醒
     private String appointmentOrderTplId;

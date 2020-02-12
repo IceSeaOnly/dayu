@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <!--fy-alert-->
+    <link type="text/css" rel="stylesheet" href="/css/fy-alert.css"/>
+    <script type="text/javascript" src="/js/fy-alert.js"></script>
+
+    <script th:inline="javascript">
+        var submitForm = $.parseJSON([[${detail.submitForm}]]);
+        var action = "buy";
+        var buyLimit = [[${buyLimit}]];
+        var buyCnt = 1;
+        var pid = [[${detail.product.id}]];
+
+        function successInfo(msg) {
+            fyAlert.msg(msg, {icon: 1, animateType: 1});
+        }
+
+        function warnInfo(msg) {
+            fyAlert.msg(msg, {icon: 2, animateType: 1});
+        }
+
+        function errorInfo(msg) {
+            fyAlert.msg(msg, {icon: 3, animateType: 1});
+        }
+
+        $(document).ready(function () {
+            $('.sizetype').click(function () {
+                action = $(this).attr('value');
+                $("#size").animate({bottom: "0"}, 500);
+                $('.f_mask0').show();
+                $("body").css({'height': '100%', 'overflow': 'hidden'});
+            })
+
+            $('.size3 a').click(function () {
+                //提交
+                for (key in submitForm) {
+                    if (submitForm[key] == "") {
+                        warnInfo('还没有选择[' + key + ']!');
+                        return;
+                    }
+                }
+                $('.f_mask0').hide();
+                $('#size').animate({bottom: "-80%"}, 500);
+                $("body").css({'height': 'auto', 'overflow': ''});
+
+                if (action == 'buy') {
+                    submitForm.hidden = true;
+                    $.ajax({
+                        type: "post",
+                        url: '/shop/addCart/' + pid + '/' + buyCnt,
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(submitForm),
+                        success: function (resp) {
+                            if (resp.status == 'SUCCESS') {
+                                window.location.href = 'buyConfirm?cartIds='+resp.data.id
+                            } else {
+                                errorInfo(resp.msg);
+                            }
+                        }
+                    });
+                    // $.ajax({
+                    //     type: "post",
+                    //     url: '/shop/submit/' + pid + '/' + buyCnt,
+                    //     contentType: "application/json",
+                    //     dataType: "json",
+                    //     data: JSON.stringify(submitForm),
+                    //     success: function (resp) {
+                    //         if (resp.status == 'SUCCESS') {
+                    //             window.location.href = "/user/unified/cashier?unifiedId=" + resp.data.unifiedId;
+                    //         } else {
+                    //             errorInfo(resp.msg);
+                    //         }
+                    //     }
+                    // });
+                } else if (action == 'addCart') {
+                    $.ajax({
+                        type: "post",
+                        url: '/shop/addCart/' + pid + '/' + buyCnt,
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(submitForm),
+                        success: function (resp) {
+                            if (resp.status == 'SUCCESS') {
+                                successInfo("成功添加购物车")
+                            } else {
+                                errorInfo(resp.msg);
+                            }
+                        }
+                    });
+                }
+            })
+
+            $('.size1_3 img').click(function () {
+                $('.f_mask0').hide();
+                $('#size').animate({bottom: "-80%"}, 500);
+                $("body").css({'height': 'auto', 'overflow': ''});
+            })
+
+            //
+            $('.hdbox_2 ul li').click(function () {
+                $('.hdbox_2 ul li').removeClass('on');
+                $(this).addClass('on');
+            })
+
+            $('.size2_1 a').click(function () {
+                if ($(this).hasClass('on')) {
+                    var k = $(this).parent().children('.tit').text();
+                    submitForm[k] = "";
+                    console.log(submitForm);
+                    $(this).siblings().removeClass('on');
+                } else {
+                    var k = $(this).parent().children('.tit').text();
+                    submitForm[k] = $(this).text();
+                    console.log(submitForm);
+                    $(this).siblings().removeClass('on');
+                    $(this).addClass('on');
+                }
+            })
+
+        })
+
+        function addItem(size) {
+            var cnt = parseInt($("#numberCnt").text()) + size;
+            buyCnt = cnt > buyLimit ? buyLimit : cnt;
+            buyCnt = cnt > 0 ? cnt : 1;
+            $("#numberCnt").text(buyCnt);
+        }
+    </script>
+    <script type="text/javascript">
+        //选项卡
+        function setTab(name, cursel, n) {
+            for (i = 1; i <= n; i++) {
+                var menu = document.getElementById(name + i);
+                var con = document.getElementById("con_" + name + "_" + i);
+                menu.className = i == cursel ? "hover" : "";
+                con.style.display = i == cursel ? "block" : "none";
+            }
+        }
+    </script>
+</head>
+
+<body>
+<div class="hdbox">
+    <div class="hdbox0">
+        <div class="hdbox_1"><a onclick="javascript:history.back(-1)" class="goback"><img src="/images/goback.png"></a>
+        </div>
+        <div class="hdbox_2">
+            <ul>
+                <li class="on"><a href="#m1">商品</a></li>
+                <li><a href="#m2">详情</a></li>
+                <li><a href="#m3">评价</a></li>
+            </ul>
+        </div>
+        <div class="hdbox_3">
+            <!--<a onclick="javascript:history.back(-1)"><img src="/images/h2.png"/></a>-->
+            <a href="cart"><img src="/images/h1.png"/></a>
+        </div>
+    </div>
+</div>
+<div class="hbox"></div>
+<a name="m1">
+    <div class="xqbox1">
+        <img th:src="${detail.product.imgUrl}" width="100%"/>
+        <p class="tit" th:text="${detail.product.brand+' '+detail.product.title+' '+detail.product.simpleDesc}">Pristian
+            zouboutin 2015秋季新款羽毛蕾丝抹胸长拖尾镶钻拉链婚纱</p>
+        <div class="qita">
+            <p class="p1"><b th:text="${'￥'+detail.product.price/100.0}">￥489</b>
+                <g th:each="tag:${detail.product.tags.split(',')}"><span th:text="${tag}">包邮</span>&nbsp;</g>
+            <p class="p2" th:text="${'销量'+detail.product.sold}">销量488</p>
+        </div>
+    </div>
+</a>
+<a th:href="${couponUrl}" th:if="${couponUrl != null}">
+    <div class="xqbox2">
+        <div class="xqbox2L">
+            <img src="/images/my3.png"/>
+            <span>领取优惠券</span>
+        </div>
+        <div class="xqbox2R">
+            <img src="/images/more.png">
+        </div>
+    </div>
+</a>
+<div class="clear"></div>
+<div class="kbox"></div>
+<div class="xqbox2 sizetype">
+    <div class="xqbox2L">
+        <span>请选择规格</span>
+    </div>
+    <div class="xqbox2R">
+        <img src="/images/more.png">
+    </div>
+</div>
+<div class="clear"></div>
+<div class="kbox"></div>
+<a name="m3">
+    <div class="xqpj">
+        <a th:href="${'productComments?productId='+detail.product.id}" th:if="${commentCnt > 0}">
+            <div class="xqpjtit">
+                <div class="xqbox2L">
+                    <span th:text="${'商品评价('+commentCnt+')'}">商品评价(99)</span>
+                </div>
+                <div class="xqbox2R" th:if="${commentCnt > 1}">
+                    <img src="/images/more.png">
+                </div>
+            </div>
+        </a>
+        <div class="xqpjtit" th:if="${commentCnt == 0}">
+            <div class="xqbox2L">
+                <span>暂无评价</span>
+            </div>
+        </div>
+
+        <div class="xqpjbox" th:each="cmm:${detail.comments}">
+            <div class="pj1">
+                <img th:src="${cmm.buyerAvatarUrl}"/>
+                <span th:text="${cmm.buyerName}">喵星人</span>
+            </div>
+            <div class="pj2" th:text="${cmm.comment}">收到了，费了老大劲才穿上，但是非常合身，效果特别好，家里人都说很美，太棒了，五分好评。</div>
+            <div class="pj3" th:text="${cmm.date+' '+cmm.standardInfo}">2015-12-28 颜色：白色 尺码：S</div>
+        </div>
+        <div class="morepj" th:if="${commentCnt > 1}">
+            <a th:href="${'productComments?productId='+detail.product.id}">查看更多评价</a>
+        </div>
+    </div>
+</a>
+<div class="clear"></div>
+<!--<div class="kbox"></div>-->
+<!--<div class="xqdp">-->
+<!--<div class="xqdp_1">-->
+<!--<div class="xqdp1_1">-->
+<!--<div class="dpimg"><img src="/images/dp1.png"></div>-->
+<!--<div class="dptxt">-->
+<!--<p class="p1">天使婚纱礼服馆</p>-->
+<!--<p class="p2">总销量：1368 收藏数：987</p>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="xqdp1_2">-->
+<!--<div class="scbox">-->
+<!--<img src="/images/xq4.png">-->
+<!--<span>收藏店铺</span>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="dpdengji">-->
+<!--<ul>-->
+<!--<li>-->
+<!--<div class="v1">描述相符<span>4.7</span></div>-->
+<!--<div class="v2">高</div>-->
+<!--</li>-->
+<!--<li>-->
+<!--<div class="v1">质量满意<span>4.7</span></div>-->
+<!--<div class="v2">高</div>-->
+<!--</li>-->
+<!--<li>-->
+<!--<div class="v1">价格合理<span>4.7</span></div>-->
+<!--<div class="v2">高</div>-->
+<!--</li>-->
+<!--</ul>-->
+<!--</div>-->
+<!--<div class="xqbtn">-->
+<!--<a href="dqxq2">全部商品(78)</a>-->
+<!--<a href="dpxq">进店逛逛</a>-->
+<!--</div>-->
+<!--</div>-->
+<div class="clear"></div>
+<div class="kbox"></div>
+<div class="xgtj" th:if="${recommends.size() > 0}">
+    <div class="tjtit">相关推荐</div>
+    <div class="tjcon">
+        <ul>
+            <li th:each="r:${recommends}">
+                <a th:href="${'detail?productId='+r.id}">
+                    <img th:src="${r.imgUrl}"/>
+                    <div class="tit"><span th:text="${'￥'+r.price/100.0}">￥88.8</span></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="clear"></div>
+<a name="m2">
+    <div class="kbox"></div>
+</a>
+
+<div class="xqtab">
+    <div class="Menubox">
+        <ul>
+            <li class="hover" onclick="setTab('two',1,3)" id="two1">图文详情</li>
+            <li class="" onclick="setTab('two',2,3)" id="two2">产品参数</li>
+            <li class="" onclick="setTab('two',3,3)" id="two3">热卖推荐</li>
+        </ul>
+    </div>
+    <div class="Contentbox">
+        <div id="con_two_1">
+            <div class="xqsub" th:utext="${detail.html}">
+                <!--html here-->
+            </div>
+        </div>
+        <div style="display:none" id="con_two_2">
+            <div class="canshu" th:each="kv:${detail.infos}">
+                <div class="canshu_1">
+                    <p class="pl" th:text="${kv.key}">袖长</p>
+                    <p class="pr" th:text="${kv.value}">七分袖</p>
+                </div>
+            </div>
+        </div>
+        <div style="display:none" id="con_two_3">
+            <div class="likebox bort">
+                <ul>
+                    <li th:each="r:${recommends}">
+                        <a th:href="${'detail?productId='+r.id}">
+                            <img th:src="${r.imgUrl}" class="proimg"/>
+                            <p class="tit" th:text="${r.brand+' '+r.title}">三利 毛巾家纺纯棉吸水 提缎面巾两条装</p>
+                            <p class="price"><b th:text="${'￥'+r.price/100.0}">￥29.9</b><span
+                                    th:text="${'￥'+r.previousPrice/100.0}">￥49.9</span><img src="/images/f3.png"/></p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="xqbotbox">
+    <div class="xqbotbox0">
+        <div class="xqbotboxL">
+            <ul>
+                <li>
+                    <a href="javascript:void(0)">
+                        <img src="/images/xqf1.png"/>
+                        <p>客服</p>
+                    </a>
+                </li>
+                <!--<li>-->
+                <!--<a href="dpxq">-->
+                <!--<img src="/images/xqf2.png"/>-->
+                <!--<p>店铺</p>-->
+                <!--</a>-->
+                <!--</li>-->
+                <li>
+                    <a th:href="${'collect?pid='+detail.productId+(collected?'&type=0':'&type=1')}">
+                        <img th:src="${collected?'http://cdn.binghai.site/o_1e04ldb261ivt42m18qbhlq36ua.png':'http://cdn.binghai.site/o_1e04lcv635b5j3215jglt5143ca.png'}"/>
+                        <p th:text="${collected?'取消收藏':'收藏'}">收藏</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="xqbotboxR">
+            <a class="a2 sizetype" value="buy">立即购买</a>
+            <a class="a1 sizetype" value="addCart">加入购物车</a>
+        </div>
+    </div>
+</div>
+<div class="xzsize">
+    <div class="xzsize0">
+        <div class="f_mask0"></div>
+        <div id="size">
+            <div class="size1">
+                <div class="size1_1">
+                    <img th:src="${detail.product.imgUrl}"/>
+                </div>
+                <div class="size1_2">
+                    <p class="p1" th:text="${'￥'+detail.product.price/100.0}">￥489.00</p>
+                    <p class="p2" th:text="${'商品编号：'+detail.product.productNo}">2015125412654</p>
+                    <p class="p3" th:text="${'库存'+detail.product.stock+'件'}">库存13540件</p>
+                </div>
+                <div class="size1_3">
+                    <img src="/images/close.png"/>
+                </div>
+            </div>
+            <div class="size2">
+                <div class="size2_1">
+                    <div>
+                        <div class="size2_1" th:each="std:${detail.standards}">
+                            <p class="tit" th:text="${std.key}">颜色</p>
+                            <a href="javascript:void(0)" th:each="ls:${std.value}" th:text="${ls}">白色</a>
+                        </div>
+                        <p class="tit">数量</p>
+                        <div class="lnums">
+                            <div class="num1" onclick="addItem(-1)">-</div>
+                            <div class="num2" id="numberCnt">1</div>
+                            <div class="num3" onclick="addItem(1)">+</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="size3">
+                    <a href="javascript:void(0)">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

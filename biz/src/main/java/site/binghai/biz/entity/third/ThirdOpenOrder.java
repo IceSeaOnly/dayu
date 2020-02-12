@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/12/16 上午11:00
  **/
 @Data

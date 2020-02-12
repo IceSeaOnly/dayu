@@ -5,8 +5,6 @@ import com.alibaba.edas.acm.exception.ConfigException;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import site.binghai.biz.consts.DiamondKey;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.service.AbastractMultiKVCacheService;
 
@@ -15,7 +13,7 @@ import java.util.Properties;
 /**
  * 阿里云KV服务
  */
-@Service
+//@Service
 public class DiamondService extends AbastractMultiKVCacheService<String, String> implements InitializingBean {
     @Autowired
     protected IceConfig iceConfig;

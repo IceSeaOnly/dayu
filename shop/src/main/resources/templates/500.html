@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title>500</title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            var h = $(".wlbox3 ul li:first-child").height() / 2;
+            <!--第一个li高度的一半-->
+            var h1 = $(".wlbox3 ul li:last-child").height() / 2;
+            <!--最后一个li高度的一半-->
+            $(".line").css("top", h);
+            $(".line").height($(".wlbox3").height() - h1 - h);
+        });
+    </script>
+</head>
+
+<body style="background:#fff">
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a onclick="javascript:history.back(-1)" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p>错误</p>
+        </div>
+        <div class="headerR"></div>
+    </div>
+</div>
+<div align="center" style="padding-top: 80px">
+    <img src="http://cdn.binghai.site/o_1e085mfqa7au3av1nhepak18v2a.png">
+    <h3 style="padding-top: 30px" th:text="${errorMsg}">目标页面不存在或已下架</h3>
+</div>
+
+
+</body>
+</html>

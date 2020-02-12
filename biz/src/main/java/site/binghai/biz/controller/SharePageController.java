@@ -11,10 +11,6 @@ import site.binghai.biz.service.SharePageService;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.WxUser;
 
-/**
- * @author huaishuo
- * @date 2018/12/9 下午3:33
- **/
 @RestController
 @RequestMapping("/user/sharepage/")
 public class SharePageController extends BaseController {

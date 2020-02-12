@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public MockUserFilter mockUserFilter(){
+    public MockUserFilter mockUserFilter() {
         return new MockUserFilter();
     }
 
@@ -33,8 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //registry.addInterceptor(mockUserFilter()).addPathPatterns("/user/**");
-        registry.addInterceptor(wxLoginFilter()).addPathPatterns("/user/**");
+        //registry.addInterceptor(mockUserFilter()).addPathPatterns("/user/**", "/shop/**");
+        registry.addInterceptor(wxLoginFilter()).addPathPatterns("/user/**", "/shop/**");
         //registry.addInterceptor(userSubscribeFilter()).addPathPatterns("/user/**");
     }
 }

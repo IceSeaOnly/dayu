@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>site.binghai</groupId>
-            <artifactId>lib</artifactId>
+            <artifactId>shop</artifactId>
             <version>${projectVersion}</version>
         </dependency>
         <dependency>

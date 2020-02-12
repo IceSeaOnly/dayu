@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body style="background:#fff">
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a onclick="javascript:history.back(-1)" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC0">
+            <div class="ssdiv">
+                <form action="search" method="get" id="searchForm">
+                    <input name="content" type="text" th:placeholder="${placeholder}"/>
+                    <a onclick="document.getElementById('searchForm').submit();"><img src="/images/ss.png"/></a>
+                </form>
+            </div>
+        </div>
+        <div class="headerR">
+            <a href="index">取消</a>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="zjssbox" th:if="${myTop20.size() > 0}">
+    <img src="/images/s.png" class="i1"/>
+    <p class="sstxt">最近搜索</p>
+    <a href="cleanSearch"> <img src="/images/del.png" class="i2"/></a>
+</div>
+<div class="clear"></div>
+<div class="ssbox">
+    <a th:href="${'fastSearch?id='+s.id}" th:each="s:${myTop20}" th:text="${s.content}">羽绒服</a>
+</div>
+<div class="clear"></div>
+<div class="linebox"  th:if="${myTop20.size() > 0}">
+    <div class="line0"></div>
+</div>
+<div class="zjssbox"  th:if="${hot20.size() > 0}">
+    <img src="/images/huo.png" class="i1"/>
+    <p class="sstxt">热门搜索</p>
+</div>
+<div class="clear"></div>
+<div class="ssbox" th:if="${hot20.size() > 0}">
+    <a th:href="${'fastSearch?id='+s.id}" th:each="s:${hot20}" th:text="${s.content}">羽绒服</a>
+</div>
+</body>
+</html>

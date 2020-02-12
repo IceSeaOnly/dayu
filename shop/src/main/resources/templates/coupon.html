@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a href="my" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p>我的优惠券</p>
+        </div>
+        <div class="headerR"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="quannewsbox">
+    <ul>
+        <li th:class="${type=='INIT'?'on':''}">
+            <a href="coupon">已领取</a>
+        </li>
+        <li th:class="${type=='USED'?'on':''}">
+            <a href="coupon?type=USED">已使用</a>
+        </li>
+        <li th:class="${type=='EXPIRED'?'on':''}">
+            <a href="coupon?type=EXPIRED">已过期</a>
+        </li>
+    </ul>
+</div>
+<div class="clear"></div>
+<div class="quannewsbox1">
+    <div style="text-align: center;padding-top: 40px" th:if="${coupons == null || coupons.size() == 0}">
+        <img src="http://cdn.binghai.site/o_1e079n6rk19701ukmdl2oc7iq8a.png" style="width: 30%"/>
+        <br/>
+        <br/>
+        <br/>
+        <h3>这里空荡荡的，连只老鼠都没有</h3>
+    </div>
+    <div class="quannews_1" th:each="cp:${coupons}">
+        <div class="quanbg"><img src="/images/q1.png"/></div>
+        <div class="quanb">
+            <div class="quanL">
+                <p class="p1" th:text="${cp.title}">实付满69元使用</p>
+                <p class="p2" th:text="${cp.validTime}">2018年7月20日至2018年8月20日</p>
+            </div>
+            <div class="quanR">
+                <p class="p3" th:text="${'￥'+cp.couponValue/100.0}">￥10元</p>
+                <a href="category" class="a1">立即使用</a>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="quanbg"><img src="/images/q3.png"/></div>
+        <div class="quanstate"><img src="/images/q5.png"/></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="fbox"></div>
+<div class="footbox">
+    <div class="footer">
+        <ul>
+            <li>
+                <a href="index">
+                    <img src="/images/f01.png"/>
+                    <p>首页</p>
+                </a>
+            </li>
+            <li>
+                <a href="category">
+                    <img src="/images/f02.png"/>
+                    <p>分类</p>
+                </a>
+            </li>
+            <li>
+                <a href="cart">
+                    <img src="/images/f03.png"/>
+                    <p>购物车</p>
+                </a>
+            </li>
+            <li class="on">
+                <a href="my">
+                    <img src="/images/f4.png"/>
+                    <p>我的</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

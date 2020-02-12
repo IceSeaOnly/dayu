@@ -9,10 +9,7 @@ import javax.persistence.Id;
 
 /**
  * 快递品牌
- *
- * @author huaishuo
- * @date 2018/12/3 下午10:53
- **/
+ ***/
 @Entity
 @Data
 public class ExpressBrand extends BaseEntity {

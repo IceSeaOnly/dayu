@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <!--fy-alert-->
+    <link type="text/css" rel="stylesheet" href="/css/fy-alert.css"/>
+    <script type="text/javascript" src="/js/fy-alert.js"></script>
+
+    <script type="text/javascript">
+        function successInfo(msg) {
+            fyAlert.msg(msg, {icon: 1, animateType: 1});
+        }
+
+        function warnInfo(msg) {
+            fyAlert.msg(msg, {icon: 2, animateType: 1});
+        }
+
+        function errorInfo(msg) {
+            fyAlert.msg(msg, {icon: 3, animateType: 1});
+        }
+
+        $(document).ready(function () {
+            $('.gwccheck').click(function () {
+                if ($(this).attr("class") == "gwccheck on") {
+                    if ($(this).attr("value") == "ALL") {
+                        $(".gwccheck").each(function () {
+                            $(this).removeClass('on');
+                        });
+                    } else {
+                        $("#sumAllCheck").removeClass('on');
+                        $(this).removeClass('on');
+
+                    }
+                } else {
+                    if ($(this).attr("value") == "ALL") {
+                        $(".gwccheck").each(function () {
+                            $(this).addClass('on');
+                        });
+                    } else {
+                        $(this).addClass('on');
+                    }
+                }
+
+                cal();
+            })
+        })
+
+        function cal() {
+            var tmpCartIds = "";
+            $(".gwccheck").filter(".on").each(function () {
+                tmpCartIds += ',';
+                tmpCartIds += $(this).attr("value")
+            })
+            if (tmpCartIds == "") {
+                $("#totalPriceText").text('￥0.0');
+                return;
+            }
+            $.getJSON('cartCal?ids=' + tmpCartIds.substr(1), function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    $("#totalPriceText").text('￥' + resp.data / 100.0);
+                } else {
+                    errorInfo(resp.msg);
+                }
+            })
+        }
+
+        function confirm() {
+            var tmpCartIds = "";
+            $(".gwccheck").filter(".on").each(function () {
+                if ($(this).attr("value") != "ALL") {
+                    tmpCartIds += ',';
+                    tmpCartIds += $(this).attr("value")
+                }
+            })
+            if (tmpCartIds == "") {
+                errorInfo("没有选择任何商品!");
+                return;
+            }
+
+            window.location.href = 'buyConfirm?cartIds='+tmpCartIds.substr(1);
+        }
+
+        function resize(cartId, size) {
+            $.getJSON('cartResize?cartId=' + cartId + '&size=' + size, function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    $("#cart_size_" + cartId).text(resp.data);
+                    successInfo("成功修改购物车");
+                    cal();
+                } else {
+                    errorInfo(resp.msg);
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a onclick="javascript:history.back(-1)" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p th:text="${'购物车('+carts.size()+')'}">购物车(5)</p>
+        </div>
+        <div class="headerR"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="kbox"></div>
+<div class="gwcbox">
+    <div class="gwcbox_1">
+        <!--<div class="gwc1_1">-->
+        <!--<div class="g1">-->
+        <!--<div class="gwccheck on"></div>-->
+        <!--</div>-->
+        <!--<div class="g2">-->
+        <!--<a href="dpxq">-->
+        <!--<span>皇宫婚纱旗舰店</span>-->
+        <!--<img src="/images/mre1.png" />-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="g3">-->
+        <!--<img src="/images/quanicon.png" />-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="clear"></div>
+        <div class="gwc1_2">
+            <div class="gwcone" th:each="cart:${carts}">
+                <div class="go1">
+                    <div class="gwccheck on" th:value="${cart.id}"></div>
+                </div>
+                <div class="go2"><a href="detail"><img th:src="${cart.product.imgUrl}"/></a></div>
+                <div class="go3">
+                    <div class="go3_1">
+                        <a href="detail"><p class="p1" th:text="${cart.product.title+' '+cart.product.simpleDesc}">
+                            2015新款婚纱冬季新娘结婚韩版蕾...</p></a>
+                        <p class="p2" th:text="${'￥'+cart.product.previousPrice/100.0}">￥895</p>
+                    </div>
+                    <div class="go3_2">
+                        <p class="p3" th:text="${cart.standardInfo}">颜色：白色；尺码：L</p>
+                        <p class="p4" th:text="${'￥'+cart.product.price/100.0}">￥495.9</p>
+                    </div>
+                    <div class="go3_3">
+                        <div class="num1" th:onclick="${'resize('+cart.id+',-1)'}">-</div>
+                        <div class="num2" th:text="${cart.size}" th:id="${'cart_size_'+cart.id}">1</div>
+                        <div class="num3" th:onclick="${'resize('+cart.id+',1)'}">+</div>
+                        <div class="del">
+                            <a th:href="${'deleteCart?cartId='+cart.id}">
+                                <img src="/images/del.png"/>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="kbox"></div>
+    <div class="gwcbox_1" th:if="${invalidCarts.size()>0}">
+        <div class="gwc1_1">
+            <div class="g2">
+                <a href="dpxq">
+                    <span>以下为失效的商品</span>
+                </a>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="gwc1_2">
+            <div class="gwcone" th:each="cart:${invalidCarts}">
+
+                <div class="go2"><a href="detail"><img th:src="${cart.product.imgUrl}"/></a></div>
+                <div class="go3">
+                    <div class="go3_1">
+                        <a href="detail"><b style="color: red" th:text="${'【'+cart.invalidReason+'】'}"></b>
+                            <p class="p1" th:text="${cart.product.title}"></p></a>
+                        <p class="p2" th:text="${'￥'+cart.product.price/100.0}">￥895</p>
+                    </div>
+                    <div class="go3_2">
+                        <p class="p3" th:text="${cart.standardInfo}">颜色：白色；尺码：L</p>
+                        <!--<p class="p4" th:text="${'￥'+cart.product.price/100.0}">￥495.9</p>-->
+                    </div>
+                    <div class="go3_3">
+                        <div class="num1" th:onclick="${'resize('+cart.id+',-1)'}">-</div>
+                        <div class="num2" th:text="${cart.size}" th:id="${'cart_size_'+cart.id}">1</div>
+                        <div class="num3" th:onclick="${'resize('+cart.id+',1)'}">+</div>
+                        <div class="del">
+                            <a th:href="${'deleteCart?cartId='+cart.id}">
+                                <img src="/images/del.png"/>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="fbox1"></div>
+<div class="hejiBox">
+    <div class="heji">
+        <div class="heji_1">
+            <div class="gwccheck on" value="ALL" id="sumAllCheck"></div>
+        </div>
+        <div class="heji_2">全选</div>
+        <div class="heji_3"><p>合计：<span id="totalPriceText" th:text="${'￥'+totalFee/100.0}">￥784.80</span></p></div>
+        <!--<div class="heji_4">为您节省￥605.2</div>-->
+        <div class="heji_5">
+            <a onclick="confirm()" th:text="${'去结算('+carts.size()+')'}">去结算(2)</a>
+        </div>
+    </div>
+</div>
+<div class="footbox">
+    <div class="footer">
+        <ul>
+            <li>
+                <a href="index">
+                    <img src="/images/f01.png"/>
+                    <p>首页</p>
+                </a>
+            </li>
+            <li>
+                <a href="category">
+                    <img src="/images/f02.png"/>
+                    <p>分类</p>
+                </a>
+            </li>
+            <li class="on">
+                <a href="cart">
+                    <img src="/images/f3.png"/>
+                    <p>购物车</p>
+                </a>
+            </li>
+            <li>
+                <a href="my">
+                    <img src="/images/f04.png"/>
+                    <p>我的</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

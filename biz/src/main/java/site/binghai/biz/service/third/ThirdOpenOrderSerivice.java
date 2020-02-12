@@ -17,7 +17,7 @@ import site.binghai.lib.utils.TplGenerator;
 import javax.transaction.Transactional;
 
 /**
- * @author huaishuo
+ *
  * @date 2018/12/16 上午11:01
  **/
 @Service

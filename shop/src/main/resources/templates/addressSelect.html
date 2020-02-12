@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <!--fy-alert-->
+    <link type="text/css" rel="stylesheet" href="/css/fy-alert.css"/>
+    <script type="text/javascript" src="/js/fy-alert.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.gwccheck').click(function () {
+                if ($(this).attr("class") == "gwccheck on") {
+                    $(this).removeClass('on');
+                } else {
+                    $(this).addClass('on');
+                }
+            })
+        })
+        function successInfo(msg) {
+            fyAlert.msg(msg, {icon: 1, animateType: 1});
+        }
+
+        function warnInfo(msg) {
+            fyAlert.msg(msg, {icon: 2, animateType: 1});
+        }
+
+        function errorInfo(msg) {
+            fyAlert.msg(msg, {icon: 3, animateType: 1});
+        }
+        function del(aid) {
+            $.getJSON('delAddress?id='+aid,function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    window.location.reload();
+                } else {
+                    errorInfo(resp.msg);
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a th:href="${'buyConfirm?cartIds='+cartIds+'&selectedCoupon='+selectedCoupon+'&addressId=-1'}" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p>管理收货地址</p>
+        </div>
+        <div class="headerR">
+            <a th:href="${'addAddress?cartIds='+cartIds+'&selectedCoupon='+selectedCoupon}">添加</a>
+        </div>
+    </div>
+</div>
+<div style="text-align: center;padding-top: 40px" th:if="${addrs == null || addrs.size() == 0}">
+    <img src="http://cdn.binghai.site/o_1e0avcnj2ptd1ho5ke7r0v1sira.png" style="width: 30%"/>
+    <br/>
+    <h3>居然一个地址都还没有，你是黑户吗??</h3>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div th:each="addr:${addrs}">
+    <div class="addressbox">
+        <a th:href="${'buyConfirm?cartIds='+cartIds+'&selectedCoupon='+selectedCoupon+'&addressId='+addr.id}">
+            <div class="addressbox_1">
+                <p class="p1">
+                    <g th:text="${'收货人：'+addr.receiverName}">收货人：王小萌</g>
+                    <span th:text="${'电话：'+addr.receiverPhone}">186********</span></p>
+                <p class="p2" th:text="${addr.receiverAddr}">陕西省西安市雁塔区二环南路中段绿地乐和城3号楼 </p>
+            </div>
+        </a>
+        <div class="addressbox_2">
+            <!--<div class="ad1">-->
+            <!--<div class="ad1_1">-->
+            <!--<div class="gwccheck on"></div>-->
+            <!--</div>-->
+            <!--<div class="ad1_2">设为默认</div>-->
+            <!--</div>-->
+            <div class="ad2">
+                <div class="ad2_1"><img src="/images/del.png"/></div>
+                <div class="ad2_2" th:onclick="${'del('+addr.id+')'}">删除</div>
+            </div>
+            <div class="ad2 mr">
+                <a th:href="${'editAddress?cartIds='+cartIds+'&selectedCoupon='+selectedCoupon+'&updateId='+addr.id}">
+                    <div class="ad2_1"><img src="/images/edit.png"/></div>
+                    <div class="ad2_2">编辑</div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="w100">
+        <img src="/images/addressline.png"/>
+    </div>
+</div>
+</body>
+</html>

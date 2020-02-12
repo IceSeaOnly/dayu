@@ -3,13 +3,11 @@ package site.binghai.lib.entity;
 import lombok.Data;
 import site.binghai.lib.interfaces.SessionPersistent;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 @Data
 @Entity
+@Table(indexes = {@Index(columnList = "openId", unique = true)})
 public class WxUser extends BaseEntity implements SessionPersistent {
     @Id
     @GeneratedValue
@@ -34,6 +32,10 @@ public class WxUser extends BaseEntity implements SessionPersistent {
      * 余额
      */
     private Integer balance;
+    /**
+     * 积分
+     */
+    private Integer shoppingPoints;
     /**
      * 推荐人id
      */

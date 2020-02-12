@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <title></title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <!--fy-alert-->
+    <link type="text/css" rel="stylesheet" href="/css/fy-alert.css"/>
+    <script type="text/javascript" src="/js/fy-alert.js"></script>
+    <script th:inline="javascript">
+        var totalPrice = [[${totalPrice}]];
+        var shoppingPoints = [[${user.shoppingPoints}]];
+
+
+        $(document).ready(function () {
+            $('.gwccheck').click(function () {
+                if ($(this).attr("class") == "gwccheck on") {
+                    $(this).removeClass('on');
+                    $("#displayTotalPrice").text('￥' + (totalPrice / 100.0));
+                } else {
+                    $(this).addClass('on');
+                    $("#displayTotalPrice").text('￥' + (totalPrice - shoppingPoints) / 100.0);
+                }
+            })
+        })
+
+        function successInfo(msg) {
+            fyAlert.msg(msg, {icon: 1, animateType: 1});
+        }
+
+        function warnInfo(msg) {
+            fyAlert.msg(msg, {icon: 2, animateType: 1});
+        }
+
+        function errorInfo(msg) {
+            fyAlert.msg(msg, {icon: 3, animateType: 1});
+        }
+
+        function submit() {
+            var remark = $("#remark").val();
+            var usePoint = $("#usePoint").hasClass('on');
+            var submitForm = {};
+            submitForm.cartIds = [[${cartIds}]];
+            submitForm.addrId = [[${addressId}]];
+            submitForm.couponId = [[${selectedCoupon != null?selectedCoupon.id:-1}]];
+            submitForm.remark = remark;
+            submitForm.usePoints = usePoint;
+            $.ajax({
+                type: "post",
+                url: 'mergePay',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(submitForm),
+                success: function (resp) {
+                    if (resp.status == 'SUCCESS') {
+                        window.location.href = '/user/unified/cashier?unifiedId=' + resp.data.unifiedId;
+                    } else {
+                        errorInfo(resp.msg);
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+<div class="headerbox">
+    <div class="header">
+        <div class="headerL">
+            <a onclick="javascript:history.back(-1)" class="goback"><img src="/images/goback.png"/></a>
+        </div>
+        <div class="headerC">
+            <p>确认订单</p>
+        </div>
+        <div class="headerR"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="hbox"></div>
+<div class="kbox"></div>
+<div class="jsaddress">
+    <a th:href="${'addressSelect?cartIds='+cartIds+'&selectedCoupon='+(selectedCoupon != null?selectedCoupon.id:-1)}">
+        <div class="jsaddressL" th:if="${address != null}">
+            <p class="p6">
+                <g th:text="${'收货人：'+address.receiverName}">收货人：王小萌</g>
+                <span th:text="${address.receiverPhone}">15126488999</span></p>
+            <p class="p5" th:text="${address.receiverAddr}">陕西省西安市雁塔区二环南路中段绿地乐和城3号楼 </p>
+        </div>
+        <div class="jsaddressL" th:if="${address == null}">
+            <p class="p6">点击选择地址</span></p>
+            <p class="p5">点击选择地址</p>
+        </div>
+        <div class="jsaddressR">
+            <img src="/images/more.png"/>
+        </div>
+        <div class="clear"></div>
+    </a>
+</div>
+<div class="w100">
+    <img src="/images/addressline.png"/>
+</div>
+<div class="clear"></div>
+<div class="kbox"></div>
+<div class="jsdingdan">
+    <!--<div class="jsdp">-->
+    <!--<a href="dpxq">-->
+    <!--<img src="/images/dplogo.png" />-->
+    <!--<span>皇宫婚纱旗舰店</span>-->
+    <!--</a>-->
+    <!--</div>-->
+    <div class="jsxq" th:each="cart:${cartItems}">
+        <div class="jsxq_1">
+            <img th:src="${cart.product.imgUrl}"/>
+        </div>
+        <div class="jsxq_2">
+            <div class="js_1">
+                <p class="p1" th:text="${cart.product.brand+' '+cart.product.title}">2015新款婚纱冬季新娘结婚韩版蕾...</p>
+                <p class="p2" th:text="${'￥'+cart.product.price/100.0}">￥895</p>
+            </div>
+            <div class="js_2">
+                <p class="p3" th:text="${cart.standardInfo}">颜色：白色；尺码：L</p>
+                <p class="p4" th:text="${'x'+cart.size}">×1</p>
+            </div>
+        </div>
+    </div>
+    <div class="jsyf">
+        <div class="jsyfL">配送费用：</div>
+        <div class="jsyfR" th:text="${shipFee}">全国包邮</div>
+    </div>
+    <div class="jsyf">
+        <div class="jsyfL">买家留言：</div>
+        <input class="jsyfC" id='remark' placeholder="订单补充说明..."/>
+    </div>
+    <div class="jshj">
+        <div class="jshjp">
+            <g th:text="${'共'+totalSize+'件商品'}">共一件商品</g>
+            <span class="sp1">合计：</span><span class="sp2" th:text="${'￥'+totalPrice/100.0}">￥495.9</span></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="kbox"></div>
+<div class="jsyhq">
+    <a th:href="${moreCoupon?'selectCouponForPayment?cartIds='+cartIds+'&addressId='+addressId:'#'}">
+        <div class="jsyhq_1">
+            <p class="p1">优惠券</p>
+            <p class="p2" th:if="${moreCoupon == false}">无可用</p>
+            <p class="p2" th:if="${selectedCoupon}" th:text="${selectedCoupon.title}">无可用</p>
+            <p class="p2" th:if="${moreCoupon == true && selectedCoupon == null}">点击选择</p>
+            <div style="text-align: right" th:if="${moreCoupon}">
+                <img src="/images/more.png"/>
+            </div>
+        </div>
+    </a>
+    <div class="jsyhq_2" th:if="${user.shoppingPoints>0}">
+        <div class="jsjfL">
+            <p>积分抵用<span
+                    th:text="${'共'+user.shoppingPoints+'积分，可抵'+(user.shoppingPoints/100.0)+'元'}">共150积分，可抵1.5元</span>
+            </p>
+        </div>
+        <div class="jsjfR">
+            <div id='usePoint' class="gwccheck"></div>
+        </div>
+    </div>
+    <div class="jsyhq_2" th:if="${user.shoppingPoints<1}">
+        <div class="jsjfL">
+            <p>积分抵用<span>积分不足!</span></p>
+        </div>
+    </div>
+</div>
+<div class="fbox2"></div>
+<div class="hejiBox jiesuan">
+    <div class="heji">
+        <div class="heji_3"><p>总计：<span id="displayTotalPrice" th:text="${'￥'+totalPrice/100.0}">￥784.80</span></p>
+        </div>
+        <div class="heji_5">
+            <a href="javascript:submit()">确认</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

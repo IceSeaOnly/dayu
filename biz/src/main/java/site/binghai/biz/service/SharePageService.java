@@ -8,10 +8,7 @@ import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
 
-/**
- * @author huaishuo
- * @date 2018/12/8 上午11:20
- **/
+
 @Service
 public class SharePageService extends BaseService<SharePage> {
 

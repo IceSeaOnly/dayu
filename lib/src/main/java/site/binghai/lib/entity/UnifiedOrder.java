@@ -49,6 +49,10 @@ public class UnifiedOrder extends BaseEntity {
      */
     private Integer shouldPay;
     /**
+     * 积分
+     * */
+    private Integer points;
+    /**
      * 使用的优惠券id，未使用则为-1
      */
     private Long couponId;

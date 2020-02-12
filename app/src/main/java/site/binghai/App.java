@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import site.binghai.lib.config.IceConfig;
 
-@ComponentScan(value = {"site.binghai.lib", "site.binghai.biz"})
+@ComponentScan(value = {"site.binghai.lib", "site.binghai.biz", "site.binghai.shop"})
 @SpringBootApplication
 public class App {
 
