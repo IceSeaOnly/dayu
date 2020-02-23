@@ -100,4 +100,10 @@ public class TuanService extends BaseService<Tuan> {
         return isEmptyList(all) ? null : all.stream().filter(p -> p.getCreated() < now() - 86400000L).collect(
             Collectors.toList());
     }
+
+    public Tuan findByTuanId(Long t) {
+        Tuan tuan = findById(t);
+        enrich(tuan);
+        return tuan;
+    }
 }

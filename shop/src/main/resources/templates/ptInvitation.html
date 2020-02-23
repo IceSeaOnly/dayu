@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>拼团详情</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <link type="text/css" rel="stylesheet" href="/css/base.css">
+    <link type="text/css" rel="stylesheet" href="/css/icon.css">
+    <link type="text/css" rel="stylesheet" href="/css/home.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
+
+</head>
+<body>
+
+<section class="aui-flexView">
+    <header class="aui-navBar aui-navBar-fixed">
+        <a href="javascript:history.back(-1)" class="aui-navBar-item">
+            <i class="icon icon-return"></i>
+        </a>
+        <div class="aui-center">
+            <span class="aui-center-title">拼团详情</span>
+        </div>
+        <a href="javascript:;" class="aui-navBar-item">
+            <i class="icon icon-sys"></i>
+        </a>
+    </header>
+    <section class="aui-scrollView">
+        <div class="aui-invite-box">
+            <div class="aui-invite-item">
+                <a href="javascript:;" class="aui-flex b-line">
+                    <div class="aui-fruit-img">
+                        <img th:src="${product.imgUrl}" alt="">
+                    </div>
+                    <div class="aui-flex-box">
+                        <h2 th:text="${product.title}">新疆阿克苏冰糖心苹果10斤</h2>
+                        <h3 th:text="${'￥'+product.price/100.0}">￥19.99</h3>
+                        <p >如24小时内未拼团成功,钱款、积分、优惠券将自动退回</p>
+                    </div>
+                </a>
+                <div class="aui-invite-content">
+                    <h2 th:if="${tuan.status.name() == 'INIT'}">拼团中,赶快邀请好友一起抢购</h2>
+                    <h2 th:if="${tuan.status.name() == 'FULL'}">拼团成功,请等待收货!</h2>
+                    <h2 th:if="${tuan.status.name() == 'FAIL'}">拼团失败,再来一次试试吧</h2>
+                    <div class="aui-invite-time-box" th:if="${tuan.status.name() == 'INIT'}">
+                        <div class="aui-invite-time-fl" >
+                            <h3>还差 <em th:text="${tuan.totalSize-tuan.currentSize}">3</em>人 </h3>
+                        </div>
+                        <div class="aui-limit-time clearfix">
+                            <div class="aui-fl-time">距结束</div>
+                            <div class="time-item">
+                                <span class="hour_show">00</span>
+                                <em>:</em>
+                                <span class="minute_show">00</span>
+                                <em>:</em>
+                                <span class="second_show">00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aui-invite-people">
+                        <a href="JavaScript:;" class="aui-tabBar-item">
+                                    <span class="aui-tabBar-item-icon">
+                                       <img th:src="${tuan.leaderAvatar}" alt="">
+                                        <span class="aui-invite-group">团长</span>
+                                    </span>
+                            <span class="aui-tabBar-item-text" th:text="${tuan.leaderName}">李嘉桦</span>
+                        </a>
+                        <a href="JavaScript:;" class="aui-tabBar-item" th:each="f:${follower}">
+                                    <span class="aui-tabBar-item-icon">
+                                        <img th:src="${f.avatar}" alt="">
+                                    </span>
+                            <span class="aui-tabBar-item-text" th:text="${f.userName}">待邀请</span>
+                        </a>
+                        <a href="JavaScript:;" class="aui-tabBar-item" th:each="w:${waits}">
+                                    <span class="aui-tabBar-item-icon">
+                                       <img src="http://cdn.binghai.site/o_1e1pdpm9tabd1bco17hdj9d3r9a.png" alt="">
+                                    </span>
+                            <span class="aui-tabBar-item-text">待邀请</span>
+                        </a>
+                    </div>
+                    <div class="aui-add-box" th:if="${tuan.status.name() == 'INIT'}">
+                        <button>邀请好友参团</button>
+                    </div>
+                    <div class="aui-add-box" th:if="${tuan.status.name() == 'FAIL'}">
+                        <button onclick="window.location.href='ptIndex'">再来一单</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="aui-flex b-line">
+            <div class="aui-flex-box">
+                <h4>拼团流程</h4>
+            </div>
+            <div class="aui-flex-arrow">
+                <p>详细说明</p>
+            </div>
+        </div>
+
+        <div class="aui-used-layout">
+            <a href="javascript:;" class="aui-grids-item">
+                            <span class="aui-grids-item-img">
+                                <img src="/images/icon-all-001.png" alt="">
+                            </span>
+                <span class="aui-grids-item-text">付款开团参团</span>
+            </a>
+            <a href="javascript:;" class="aui-grids-item">
+                            <span class="aui-grids-item-img">
+                                <img src="/images/icon-all-002.png" alt="">
+                            </span>
+                <span class="aui-grids-item-text">邀请好友参团</span>
+            </a>
+            <a href="javascript:;" class="aui-grids-item">
+                            <span class="aui-grids-item-img">
+                                <img src="/images/icon-all-003.png" alt="">
+                            </span>
+                <span class="aui-grids-item-text">成团等待收货</span>
+            </a>
+            <a href="javascript:;" class="aui-grids-item">
+                            <span class="aui-grids-item-img">
+                                <img src="/images/icon-all-004.png" alt="">
+                            </span>
+                <span class="aui-grids-item-text">确认收货</span>
+            </a>
+
+        </div>
+
+        <div class="divHeight"></div>
+        <div class="aui-login-line">
+            <h2>更多拼团</h2>
+        </div>
+        <div class="aui-list-theme">
+            <a th:href="${'ptDetail?item='+p.id}" class="aui-list-item" th:each="p:${products}">
+                <div class="aui-list-img">
+                    <img th:src="${p.imgUrl}" alt="">
+                </div>
+                <div class="aui-list-mes">
+                    <h3 th:text="${p.title}">江西赣南脐橙</h3>
+                    <div class="aui-list-mes-item">
+                        <div class="aui-list-mes-item-pic" th:text="${'¥'+p.price/100.0}">¥9.9</div>
+                        <div class="aui-list-mes-item-line" th:text="${'¥'+p.previousPrice/100.0}">￥29.99</div>
+                    </div>
+                </div>
+                <div class="aui-add-box">
+                    <button onclick="">去拼团</button>
+                </div>
+            </a>
+        </div>
+
+
+    </section>
+</section>
+<script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="/js/pt_slider.js"></script>
+<script type="text/javascript" src="/js/pt_tab.js"></script>
+<script th:inline="javascript">
+
+    var intDiff = parseInt([[${tuan.endTs}]]);
+    //倒计时总秒数量
+
+    function timer(intDiff) {
+        window.setInterval(function() {
+            var day = 00
+                , hour = 00
+                , minute = 00
+                , second = 00;
+            //时间默认值
+            if (intDiff > 0) {
+                day = Math.floor(intDiff / (60 * 60 * 24));
+                hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
+                minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
+                second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+            }
+            if (minute <= 9)
+                minute = '0' + minute;
+            if (second <= 9)
+                second = '0' + second;
+            $('.hour_show').html('0<s id="h"></s>' + hour + ' ');
+            $('.minute_show').html('<s></s>' + minute + ' ');
+            $('.second_show').html('<s></s>' + second + ' ');
+            intDiff--;
+        }, 1000);
+    }
+
+    $(function() {
+        timer(intDiff);
+    });
+</script>
+
+</body>
+</html>

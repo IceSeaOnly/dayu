@@ -87,7 +87,7 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
             } else {
                 Tuan tuan = tuanService.join(user, shopOrder);
                 if (tuan.getStatus() == TuanStatus.INIT) {
-                    wxEventHandler.onTuanJoin(shopOrder.getTuanId(), product.getTitle(), order.getOpenId());
+                    wxEventHandler.onTuanJoin(shopOrder.getTuanId(), product.getTitle(), order.getShouldPay(),order.getOpenId());
                 }
             }
         }

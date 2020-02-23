@@ -15,11 +15,13 @@ import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.TuanStatus;
 import site.binghai.shop.kv.PinIndexBanners;
 import site.binghai.shop.kv.PinTodayRecommend;
+import site.binghai.shop.pojo.TuanFollower;
 import site.binghai.shop.service.KvService;
 import site.binghai.shop.service.ProductDetailService;
 import site.binghai.shop.service.ProductService;
 import site.binghai.shop.service.TuanService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,6 +66,31 @@ public class PinTuanController extends BaseController {
         map.put("detail", productDetailService.findByProductId(item));
         map.put("joins", tuanService.searchByProductIdAndStatus(item, TuanStatus.INIT, 3));
         return "ptDetail";
+    }
+
+    @GetMapping("tuanDetail")
+    public String tuanDetail(@RequestParam Long t, ModelMap map) {
+        Tuan tuan = tuanService.findByTuanId(t);
+        if (tuan == null) {
+            return e500("您来错地方了");
+        }
+        Product product = productService.findById(tuan.getProductId());
+        map.put("follower", JSONObject.parseArray(tuan.getFollower(), TuanFollower.class));
+        map.put("tuan", tuan);
+        map.put("product", product);
+        map.put("endTs", (tuan.getEndTs() - now()) / 1000);
+        map.put("waits",waits(tuan.getTotalSize()-tuan.getCurrentSize()));
+        List<Product> products = productService.ptSearch();
+        map.put("products", products);
+        return "ptInvitation";
+    }
+
+    private List<Integer> waits(int i) {
+        List<Integer> ret =new ArrayList<>();
+        for (int j = 0; j < i; j++) {
+            ret.add(j);
+        }
+        return ret;
     }
 
     private List<String> getImages(Product product) {

@@ -14,7 +14,7 @@ public interface WxEventHandler {
 
     void onTuanFull(Long tuanId, String goodsName, Integer price, String openId);
 
-    void onTuanJoin(Long tuanId, String goodsName, String openId);
+    void onTuanJoin(Long tuanId, String goodsName, Integer shouldPay, String openId);
 
     void onTuanFail(Long tId, String title, Integer price,String openId);
 }

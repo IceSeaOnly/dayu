@@ -1,9 +1,7 @@
 package site.binghai.shop.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.service.PayBizServiceFactory;
 import site.binghai.lib.service.UnifiedOrderService;
@@ -19,8 +17,8 @@ import java.util.List;
  * @author huaishuo
  * @date 2020/2/23 下午11:17
  **/
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class TimeOutTask extends BaseBean {
     @Autowired
     private ShopOrderService shopOrderService;
