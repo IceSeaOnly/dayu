@@ -37,6 +37,7 @@ public class WxUserService extends BaseService<WxUser> {
         wxUser.setWallet(0);
         wxUser.setShoppingPoints(0);
         wxUser.setExpDeliverySuperAuth(false);
+        wxUser.setHistoryShoppingPoints(0);
         return save(wxUser);
     }
 

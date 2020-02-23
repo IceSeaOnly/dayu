@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>超值拼团</title>
-    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
-    <meta content="yes" name="apple-mobile-web-app-capable" />
-    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-    <meta content="telephone=no" name="format-detection" />
-    <link href="/css/pin_style.css" rel="stylesheet" type="text/css" />
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <link href="/css/pin_style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 
@@ -20,7 +19,8 @@
         <div class="aui-center">
             <span class="aui-center-title">超值拼团</span>
         </div>
-        <a href="javascript:;" class="aui-navBar-item" data-ydui-actionsheet="{target:'#actionSheet',closeElement:'#cancel'}">
+        <a href="javascript:;" class="aui-navBar-item"
+           data-ydui-actionsheet="{target:'#actionSheet',closeElement:'#cancel'}">
             <i class="icon icon-share"></i>
         </a>
     </header>
@@ -30,29 +30,9 @@
         </div>
         <div class="m-slider" data-ydui-slider>
             <div class="slider-wrapper">
-                <div class="slider-item">
-                    <a href="javascript:;">
-                        <img src="/images/banner.png" alt="">
-                    </a>
-                </div>
-                <div class="slider-item">
-                    <a href="javascript:;">
-                        <img src="/images/banner.png" alt="">
-                    </a>
-                </div>
-                <div class="slider-item">
-                    <a href="javascript:;">
-                        <img src="/images/banner.png" alt="">
-                    </a>
-                </div>
-                <div class="slider-item">
-                    <a href="javascript:;">
-                        <img src="/images/banner.png" alt="">
-                    </a>
-                </div>
-                <div class="slider-item">
-                    <a href="javascript:;">
-                        <img src="/images/banner.png" alt="">
+                <div class="slider-item" th:each="ban:${banners}">
+                    <a th:href="${ban.target}">
+                        <img th:src="${ban.url}" alt="">
                     </a>
                 </div>
             </div>
@@ -62,107 +42,21 @@
             <img src="/images/title.png" alt="">
         </div>
         <div class="aui-ass-link">
-            <a href="ptDetail" class="aui-flex">
+            <a th:href="${'ptDetail?item='+rcm.id}" class="aui-flex" th:each="rcm:${recommends}">
                 <div class="aui-ass-img">
-                    <img src="/images/pd-001.png" alt="">
+                    <img th:src="${rcm.imgUrl}" alt="">
                 </div>
                 <div class="aui-flex-box">
-                    <h2>臻爱粽子大礼包真真老老</h2>
-                    <p>鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
-                    <span><em>2人团</em>已拼2332件</span>
+                    <h2 th:text="${rcm.title}">臻爱粽子大礼包真真老老</h2>
+                    <p th:text="${rcm.simpleDesc}">鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
+                    <span><em th:text="${rcm.ptSize+'人团'}">2人团</em><g th:text="${'已拼'+rcm.sold+'件'}"></g></span>
                     <div class="aui-flex aui-flex-one">
                         <div class="aui-flex-box">
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                        <div class="aui-button-get">
-                            <button>去开团</button>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="ptDetail" class="aui-flex">
-                <div class="aui-ass-img">
-                    <img src="/images/pd-002.png" alt="">
-                </div>
-                <div class="aui-flex-box">
-                    <h2>臻爱粽子大礼包真真老老</h2>
-                    <p>鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
-                    <span><em>2人团</em>已拼2332件</span>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                        <div class="aui-button-get">
-                            <button>去开团</button>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="ptDetail" class="aui-flex">
-                <div class="aui-ass-img">
-                    <img src="/images/pd-003.png" alt="">
-                </div>
-                <div class="aui-flex-box">
-                    <h2>臻爱粽子大礼包真真老老</h2>
-                    <p>鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
-                    <span><em>2人团</em>已拼2332件</span>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                        <div class="aui-button-get">
-                            <button>去开团</button>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="ptDetail" class="aui-flex">
-                <div class="aui-ass-img">
-                    <img src="/images/pd-004.png" alt="">
-                </div>
-                <div class="aui-flex-box">
-                    <h2>臻爱粽子大礼包真真老老</h2>
-                    <p>鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
-                    <span><em>2人团</em>已拼2332件</span>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                        <div class="aui-button-get">
-                            <button>去开团</button>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="ptDetail" class="aui-flex">
-                <div class="aui-ass-img">
-                    <img src="/images/pd-005.png" alt="">
-                </div>
-                <div class="aui-flex-box">
-                    <h2>臻爱粽子大礼包真真老老</h2>
-                    <p>鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
-                    <span><em>2人团</em>已拼2332件</span>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                        <div class="aui-button-get">
-                            <button>去开团</button>
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="ptDetail" class="aui-flex">
-                <div class="aui-ass-img">
-                    <img src="/images/pd-006.png" alt="">
-                </div>
-                <div class="aui-flex-box">
-                    <h2>臻爱粽子大礼包真真老老</h2>
-                    <p>鲜肉粽子140gX4蛋黄粽子1-00gx2金丝枣粽子</p>
-                    <span><em>2人团</em>已拼2332件</span>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
+                            <h2><em><i>￥</i>
+                                <g th:text="${rcm.price/100.0}">29.99</g>
+                            </em>单买价￥
+                                <g th:text="${rcm.previousPrice/100.0}">99</g>
+                            </h2>
                         </div>
                         <div class="aui-button-get">
                             <button>去开团</button>
@@ -175,107 +69,21 @@
             <img src="/images/title1.png" alt="">
         </div>
         <div class="aui-list-theme-box">
-            <a href="javascript:;" class="aui-list-item">
+            <a th:href="${'ptDetail?item='+rcm.id}" class="aui-list-item" th:each="rcm:${products}">
                 <div class="aui-list-theme-img">
-                    <img src="/images/pd-007.png" alt="">
+                    <img th:src="${rcm.imgUrl}" alt="">
                 </div>
                 <div class="aui-list-theme-message">
-                    <h3 class="aui-list-theme-title">智能陪护让你的孩子赢在起跑线上面</h3>
-                    <h3 class="aui-list-theme-subtitle">预售商品 限时抽取三名幸运奖</h3>
+                    <h3 class="aui-list-theme-title" th:text="${rcm.title}">智能陪护让你的孩子赢在起跑线上面</h3>
+                    <h3 class="aui-list-theme-subtitle" th:text="${rcm.simpleDesc}">预售商品 限时抽取三名幸运奖</h3>
                     <div class="aui-flex aui-flex-one">
                         <div class="aui-flex-box">
-                            <span><em>2人团</em>已拼2332件</span>
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                    </div>
-                    <div class="aui-button-get aui-button-get-one">
-                        <button>去开团</button>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="aui-list-item">
-                <div class="aui-list-theme-img">
-                    <img src="/images/pd-008.png" alt="">
-                </div>
-                <div class="aui-list-theme-message">
-                    <h3 class="aui-list-theme-title">智能陪护让你的孩子赢在起跑线上面</h3>
-                    <h3 class="aui-list-theme-subtitle">预售商品 限时抽取三名幸运奖</h3>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <span><em>2人团</em>已拼2332件</span>
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                    </div>
-                    <div class="aui-button-get aui-button-get-one">
-                        <button>去开团</button>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="aui-list-item">
-                <div class="aui-list-theme-img">
-                    <img src="/images/pd-009.png" alt="">
-                </div>
-                <div class="aui-list-theme-message">
-                    <h3 class="aui-list-theme-title">智能陪护让你的孩子赢在起跑线上面</h3>
-                    <h3 class="aui-list-theme-subtitle">预售商品 限时抽取三名幸运奖</h3>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <span><em>2人团</em>已拼2332件</span>
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                    </div>
-                    <div class="aui-button-get aui-button-get-one">
-                        <button>去开团</button>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="aui-list-item">
-                <div class="aui-list-theme-img">
-                    <img src="/images/pd-010.png" alt="">
-                </div>
-                <div class="aui-list-theme-message">
-                    <h3 class="aui-list-theme-title">智能陪护让你的孩子赢在起跑线上面</h3>
-                    <h3 class="aui-list-theme-subtitle">预售商品 限时抽取三名幸运奖</h3>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <span><em>2人团</em>已拼2332件</span>
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                    </div>
-                    <div class="aui-button-get aui-button-get-one">
-                        <button>去开团</button>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="aui-list-item">
-                <div class="aui-list-theme-img">
-                    <img src="/images/pd-011.png" alt="">
-                </div>
-                <div class="aui-list-theme-message">
-                    <h3 class="aui-list-theme-title">智能陪护让你的孩子赢在起跑线上面</h3>
-                    <h3 class="aui-list-theme-subtitle">预售商品 限时抽取三名幸运奖</h3>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <span><em>2人团</em>已拼2332件</span>
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
-                        </div>
-                    </div>
-                    <div class="aui-button-get aui-button-get-one">
-                        <button>去开团</button>
-                    </div>
-                </div>
-            </a>
-            <a href="javascript:;" class="aui-list-item">
-                <div class="aui-list-theme-img">
-                    <img src="/images/pd-012.png" alt="">
-                </div>
-                <div class="aui-list-theme-message">
-                    <h3 class="aui-list-theme-title">智能陪护让你的孩子赢在起跑线上面</h3>
-                    <h3 class="aui-list-theme-subtitle">预售商品 限时抽取三名幸运奖</h3>
-                    <div class="aui-flex aui-flex-one">
-                        <div class="aui-flex-box">
-                            <span><em>2人团</em>已拼2332件</span>
-                            <h2><em><i>￥</i>29.99</em>单买价￥99</h2>
+                            <span><em th:text="${rcm.ptSize+'人团'}">2人团</em><g th:text="${'已拼'+rcm.sold+'件'}"></g></span>
+                            <h2><em><i>￥</i>
+                                <g th:text="${rcm.price/100.0}">29.99</g>
+                            </em>单买价￥
+                                <g th:text="${rcm.previousPrice/100.0}">99</g>
+                            </h2>
                         </div>
                     </div>
                     <div class="aui-button-get aui-button-get-one">
@@ -341,10 +149,10 @@
 <script type="text/javascript" src="/js/pt_layer.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         var navHeight = $("#navHead").offset().top;
         var navFix = $("#nav-wrap");
-        $(window).scroll(function() {
+        $(window).scroll(function () {
             if ($(this).scrollTop() > navHeight) {
                 navFix.addClass("aui-flex");
             } else {
@@ -353,8 +161,8 @@
         })
     });
 
-    $(document).ready(function() {
-        $(".btn-slide").click(function() {
+    $(document).ready(function () {
+        $(".btn-slide").click(function () {
             $("#show").slideToggle();
         });
     });

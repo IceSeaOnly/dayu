@@ -2,7 +2,9 @@ package site.binghai.shop.entity;
 
 import lombok.Data;
 import site.binghai.lib.entity.PayBizEntity;
+import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.enums.PayBizEnum;
+import site.binghai.shop.enums.TuanStatus;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 /**
- *
  * @date 2020/2/2 下午12:35
  **/
 @Data
@@ -22,6 +23,7 @@ public class ShopOrder extends PayBizEntity {
     private Long productId;
     private String productImgUrl;
     private String buyerName;
+    private String buyerAvatar;
     private Integer size;
     private Integer price;
     private Integer totalPrice;
@@ -34,6 +36,21 @@ public class ShopOrder extends PayBizEntity {
     private Long expiredTime;
     private Integer startOfService;
     private Integer startOfShip;
+    /**
+     * 是否是拼团订单
+     * */
+    private Boolean ptOrder;
+    /**
+     * 是否拼团成功
+     * */
+    private TuanStatus tuanStatus;
+    /**
+     * 团id
+     * */
+    private Long tuanId;
+
+    @Transient
+    private UnifiedOrder unifiedOrder;
     @Transient
     private Product product;
 

@@ -57,8 +57,8 @@ public class CommentController extends BaseController {
         try {
             order.setStatus(OrderStatusEnum.FEED_DONE.getCode());
             Product product = productService.findById(order.getProductId());
-            product.setStartOfDesc(getDouble(map, "desc_star"));
-            product.setStartOfQuality(getDouble(map, "quality_star"));
+            product.setStarOfDesc(getDouble(map, "desc_star"));
+            product.setStarOfQuality(getDouble(map, "quality_star"));
             order.setStartOfService(getInteger(map, "service_star"));
             order.setStartOfShip(getInteger(map, "ship_star"));
 

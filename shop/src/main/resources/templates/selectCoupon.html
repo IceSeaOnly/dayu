@@ -19,7 +19,7 @@
 <div class="headerbox">
     <div class="header">
         <div class="headerL">
-            <a href="my" class="goback"><img src="/images/goback.png"/></a>
+            <a th:href="${'buyConfirm?cartIds='+cartIds+'&addressId='+addressId+'&selectedCoupon=-1'}" class="goback"><img src="/images/goback.png"/></a>
         </div>
         <div class="headerC">
             <p>选择优惠券</p>
@@ -40,8 +40,9 @@
         <h3>你忘了没有可用的优惠券了吗???</h3>
     </div>
     <div class="quannews_1" th:each="cp:${coupons}">
-        <div class="quanbg"><img src="/images/q1.png"/></div>
-        <div class="quanb">
+        <div th:if="${cp.available == true}" class="quanbg"><img src="/images/q1.png"/></div>
+        <div th:if="${cp.available == false}" class="quanbg"><img src="/images/q6.png"/></div>
+        <div class="quanb" th:if="${cp.available == true}">
             <div class="quanL">
                 <p class="p1" th:text="${cp.title}">实付满69元使用</p>
                 <p class="p2" th:text="${cp.validTime}">2018年7月20日至2018年8月20日</p>
@@ -53,8 +54,21 @@
             </div>
             <div class="clear"></div>
         </div>
-        <div class="quanbg"><img src="/images/q3.png"/></div>
-        <div class="quanstate"><img src="/images/q5.png"/></div>
+        <div class="quanb bg" th:if="${cp.available == false}">
+            <div class="quanL">
+                <p class="p1" th:text="${cp.title}">实付满69元使用</p>
+                <p class="p2" th:text="${cp.disableReason}">2018年7月20日至2018年8月20日</p>
+            </div>
+            <div class="quanR">
+                <p class="p3" th:text="${'￥'+cp.couponValue/100.0}">￥10元</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="quanbg" th:if="${cp.available == true}"><img src="/images/q3.png"/></div>
+        <div class="quanstate" th:if="${cp.available == true}"><img src="/images/q5.png"/></div>
+
+        <div class="quanbg" th:if="${cp.available == false}"><img src="/images/q8.png"/></div>
+        <div class="quanstate" th:if="${cp.available == false}"><img src="/images/q9.png"/></div>
     </div>
 </div>
 </body>

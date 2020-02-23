@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- *
  * @date 2020/2/4 下午12:43
  **/
 @Service
@@ -34,7 +33,7 @@ public class CouponService extends BaseService<Coupon> {
                 p.setAvailable(true);
             }
         });
-        return list;
+        return enrich(list);
     }
 
     public boolean consume(Long userId, Long couponId) {
@@ -48,7 +47,7 @@ public class CouponService extends BaseService<Coupon> {
         if (!coupon.getUserId().equals(userId)) {
             return false;
         }
-        if (coupon.getInvalidTs() > now()) {
+        if (coupon.getInvalidTs() < now()) {
             return false;
         }
         coupon.setCouponStatus(CouponStatus.USED);
@@ -84,9 +83,13 @@ public class CouponService extends BaseService<Coupon> {
 
     private List<Coupon> enrich(List<Coupon> query) {
         for (Coupon coupon : query) {
-            coupon.setValidTime(String.format("%s - %s",
-                TimeTools.format2yyyy_MM_dd(coupon.getValidTs()),
-                TimeTools.format2yyyy_MM_dd(coupon.getInvalidTs())));
+            if (now() > coupon.getValidTs()) {
+                coupon.setValidTime(String.format("有效期至%s",
+                    TimeTools.format2yyyy_MM_dd(coupon.getInvalidTs())));
+            } else {
+                coupon.setValidTime(String.format("%s后可用",
+                    TimeTools.format2yyyy_MM_dd(coupon.getValidTs())));
+            }
         }
         return query;
     }

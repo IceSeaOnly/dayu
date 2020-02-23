@@ -1,23 +1,39 @@
 package site.binghai.shop.service;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.def.UnifiedOrderMethods;
+import site.binghai.lib.def.WxEventHandler;
 import site.binghai.lib.entity.UnifiedOrder;
+import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.BaseService;
+import site.binghai.lib.service.WxUserService;
+import site.binghai.lib.utils.CompareUtils;
+import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ShopOrder;
+import site.binghai.shop.entity.Tuan;
+import site.binghai.shop.enums.TuanStatus;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- *
  * @date 2020/2/2 下午12:47
  **/
 @Service
 public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedOrderMethods<ShopOrder> {
+    @Autowired
+    private TuanService tuanService;
+    @Autowired
+    private WxUserService wxUserService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private WxEventHandler wxEventHandler;
+
     @Override
     public JSONObject moreInfo(UnifiedOrder order) {
         ShopOrder shopOrder = loadByUnifiedOrder(order);
@@ -45,6 +61,12 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     @Transactional
     public ShopOrder cancel(UnifiedOrder order) {
         ShopOrder shopOrder = loadByUnifiedOrder(order);
+        if (CompareUtils.inAny(shopOrder.getTuanStatus(), TuanStatus.FULL, TuanStatus.FAIL)) {
+            throw new RuntimeException("拼团订单请在拼团成功后取消或等待超时自动取消");
+        } else {
+            wxEventHandler.onTuanFail(shopOrder.getTuanId(), shopOrder.getTitle(), order.getShouldPay(),
+                order.getOpenId());
+        }
         shopOrder.setStatus(OrderStatusEnum.CANCELED.getCode());
         update(shopOrder);
         return shopOrder;
@@ -54,6 +76,21 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     @Transactional
     public void onPaid(UnifiedOrder order) {
         ShopOrder shopOrder = loadByUnifiedOrder(order);
+        WxUser user = wxUserService.findById(shopOrder.getUserId());
+        Product product = productService.findById(shopOrder.getProductId());
+        if (shopOrder.getPtOrder() != null && shopOrder.getPtOrder()) {
+            if (shopOrder.getTuanId() == null) {
+                Tuan tuan = tuanService.create(user, product.getTags(), shopOrder, product.getPtSize());
+                shopOrder.setTuanId(tuan.getId());
+                wxEventHandler.onTuanCreate(tuan.getId(), product.getTitle(), user.getOpenId(), product.getPrice(),
+                    product.getPtSize());
+            } else {
+                Tuan tuan = tuanService.join(user, shopOrder);
+                if (tuan.getStatus() == TuanStatus.INIT) {
+                    wxEventHandler.onTuanJoin(shopOrder.getTuanId(), product.getTitle(), order.getOpenId());
+                }
+            }
+        }
         shopOrder.setStatus(OrderStatusEnum.PAIED.getCode());
         update(shopOrder);
     }

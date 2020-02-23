@@ -11,6 +11,7 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.CouponStatus;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.CouponService;
+import site.binghai.lib.service.WxUserService;
 import site.binghai.shop.entity.Address;
 import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.service.AddressService;
@@ -20,7 +21,6 @@ import site.binghai.shop.service.ProductService;
 import java.util.List;
 
 /**
- *
  * @date 2020/2/5 上午10:00
  **/
 @RequestMapping("shop")
@@ -34,10 +34,12 @@ public class BuyConfirmController extends BaseController {
     private CouponService couponService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private WxUserService wxUserService;
 
     @GetMapping("buyConfirm")
     public Object buyConfirm(String cartIds, Long selectedCoupon, Long addressId, ModelMap map) {
-        WxUser user = getUser();
+        WxUser user = wxUserService.findById(getUser().getId());
         List<CartItem> cartItems = emptyList();
         int total = 0;
         int size = 0;
@@ -47,7 +49,7 @@ public class BuyConfirmController extends BaseController {
                 Long cid = Long.parseLong(id);
                 CartItem item = cartItemService.findById(cid);
                 if (item == null || !item.getBuyerId().equals(user.getId())) {
-                    return e500("非法访问");
+                    return e500("订单可能已提交");
                 }
                 item.setProduct(productService.findById(item.getProductId()));
                 cartItems.add(item);
@@ -60,6 +62,7 @@ public class BuyConfirmController extends BaseController {
 
         String shipFee = "免邮费 ￥0";
         Coupon coupon = null;
+        int sourceTotal = total;
         boolean moreCoupon = true;
         if (selectedCoupon != null && selectedCoupon > 0) {
             coupon = couponService.findById(selectedCoupon);
@@ -93,8 +96,22 @@ public class BuyConfirmController extends BaseController {
         map.put("cartItems", cartItems);
         map.put("shipFee", shipFee);
         map.put("user", user);
+        map.put("maxPoints", maxPoints(user.getShoppingPoints(), total));
         map.put("totalSize", size);
         map.put("totalPrice", Math.max(total, 0));
+        map.put("sourceTotal", Math.max(sourceTotal, 0));
         return "confirm";
     }
+
+    private int maxPoints(int shoppingPoints, int total) {
+        if (shoppingPoints < 100) {
+            return shoppingPoints;
+        }
+        shoppingPoints = shoppingPoints - shoppingPoints % 100;
+        while (shoppingPoints * 5 > total) {
+            shoppingPoints -= 100;
+        }
+        return shoppingPoints;
+    }
+
 }

@@ -16,7 +16,7 @@ public class SendTemplateMsg extends PostSendBase {
         if (this.token == null) {
             return null;
         }
-        setPostUrl("https://api.weixin.qq.com/cgi-bin/message/templates/send?access_token=" + this.token);
+        setPostUrl("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + this.token);
         setContent(this.data);
         return postSend();
     }

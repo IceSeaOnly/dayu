@@ -1,7 +1,10 @@
 package site.binghai.shop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.Coupon;
 import site.binghai.lib.entity.MergePayOrder;
@@ -17,6 +20,7 @@ import site.binghai.shop.entity.Address;
 import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ShopOrder;
+import site.binghai.shop.enums.TuanStatus;
 import site.binghai.shop.service.AddressService;
 import site.binghai.shop.service.CartItemService;
 import site.binghai.shop.service.ProductService;
@@ -25,7 +29,6 @@ import site.binghai.shop.service.ShopOrderService;
 import java.util.Map;
 
 /**
- *
  * @date 2020/2/2 下午12:323
  **/
 @RestController
@@ -101,7 +104,8 @@ public class SubmitController extends BaseController {
             cartItemService.delete(item.getId());
 
             //依次下单
-            ShopOrder shopOrder = submitOrder(product, item.getSize(), item.getStandardInfo(), remark, address);
+            ShopOrder shopOrder = submitOrder(product, item, remark, address);
+
             if (ids.length == 1) {
                 bindCouponAndPoints(shopOrder.getUnifiedId(), coupon, usePoints);
                 return success(shopOrder, null);
@@ -133,23 +137,33 @@ public class SubmitController extends BaseController {
         }
         if (usePoints) {
             WxUser user = wxUserService.findById(getUser().getId());
-            int points = user.getShoppingPoints();
             int shouldPay = unifiedOrder.getShouldPay();
-            if (shouldPay >= points) {
-                shouldPay -= points;
-                points = 0;
-            } else if (shouldPay < points) {
-                points -= shouldPay;
-                shouldPay = 0;
+            int points = maxPoints(user.getShoppingPoints(), shouldPay);
+            if (points > 0) {
+                shouldPay -= points * 5;
+                user.setShoppingPoints(user.getShoppingPoints() - points);
+                unifiedOrder.setPoints(points);
             }
-            user.setShoppingPoints(points);
             unifiedOrder.setShouldPay(shouldPay);
             wxUserService.update(user);
             unifiedOrderService.update(unifiedOrder);
         }
     }
 
-    private ShopOrder submitOrder(Product product, int size, String stdInfo, String remark, Address address) {
+    private int maxPoints(int shoppingPoints, int total) {
+        if (shoppingPoints < 100) {
+            return shoppingPoints;
+        }
+        shoppingPoints = shoppingPoints - shoppingPoints % 100;
+        while (shoppingPoints * 5 > total) {
+            shoppingPoints -= 100;
+        }
+        return shoppingPoints;
+    }
+
+    private ShopOrder submitOrder(Product product, CartItem cartItem, String remark, Address address) {
+        int size = cartItem.getSize();
+
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(PayBizEnum.SCHOOL_SHOP, getUser(), product.getTitle(),
             product.getPrice() * size);
         ShopOrder order = new ShopOrder();
@@ -158,6 +172,7 @@ public class SubmitController extends BaseController {
         order.setRemark(remark);
         order.setUserId(getUser().getId());
         order.setBuyerName(getUser().getUserName());
+        order.setBuyerAvatar(getUser().getAvatar());
         order.setUnifiedId(unifiedOrder.getId());
         order.setExpiredTime(now() + 15 * 6000);
         order.setTotalPrice(product.getPrice() * size);
@@ -165,13 +180,18 @@ public class SubmitController extends BaseController {
         order.setSize(size);
         order.setPrice(product.getPrice());
         order.setProductId(product.getId());
-        order.setStandardInfo(stdInfo);
+        order.setStandardInfo(cartItem.getStandardInfo());
         order.setPaid(Boolean.FALSE);
         order.setReceiver(address.getReceiverName());
         order.setReceiverPhone(address.getReceiverPhone());
         order.setReceiverAddress(address.getReceiverAddr());
         product.setStock(product.getStock() - size);
         product.setSold(product.getSold() + size);
+        if (cartItem.getPtOrder() != null && cartItem.getPtOrder()) {
+            order.setPtOrder(Boolean.TRUE);
+            order.setTuanStatus(TuanStatus.INIT);
+            order.setTuanId(cartItem.getJoinPtId());
+        }
         productService.update(product);
         order = shopOrderService.save(order);
         return order;

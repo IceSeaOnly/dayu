@@ -144,4 +144,10 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         }
         return true;
     }
+
+
+    public List<UnifiedOrder> scanTimeOut() {
+        return dao.findAllByStatusAndCreatedBefore(OrderStatusEnum.CREATED.getCode(),
+            now() - 15 * 6000);
+    }
 }

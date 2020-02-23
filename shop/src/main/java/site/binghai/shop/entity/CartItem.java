@@ -23,6 +23,8 @@ public class CartItem extends BaseEntity {
     private Integer size;
     private String standardInfo;
     private Boolean hidden;
+    private Boolean ptOrder;
+    private Long joinPtId;
     @Transient
     private String invalidReason;
     @Transient

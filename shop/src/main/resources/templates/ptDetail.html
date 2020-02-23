@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>超值拼团</title>
@@ -14,6 +13,11 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="iTunesArtwork@2x.png" sizes="114x114" rel="apple-touch-icon-precomposed">
 
+    <script>
+        function createT(pid) {
+            window.location.href = "createTuan?productId=" + pid;
+        }
+    </script>
 </head>
 <body>
 
@@ -33,38 +37,26 @@
         <div class="img_gallery" id="commodity">
             <div class="main_img">
                 <ul>
-                    <li>
-                        <img src="/images/goods-001.png" alt="">
-                    </li>
-                    <li>
-                        <img src="/images/goods-002.png" alt="">
-                    </li>
-                    <li>
-                        <img src="/images/goods-003.png" alt="">
-                    </li>
-                    <li>
-                        <img src="/images/goods-004.png" alt="">
+                    <li th:each="img:${images}">
+                        <img th:src="${img}" alt="">
                     </li>
                 </ul>
             </div>
             <div class="img_font">
-                <span>1/4</span>
-                <span>2/4</span>
-                <span>3/4</span>
-                <span>4/4</span>
+                <span th:each="img,stat:${images}" th:text="${(stat.index+1)+'/'+images.size()}">1/4</span>
             </div>
         </div>
         <div class="aui-box-gradual">
             <div class="aui-flex">
                 <div class="aui-time-price">
                     <i>￥</i>
-                    9.9
+                    <g th:text="${product.price/100.0}">9.9</g>
                 </div>
                 <div class="aui-flex-box aui-text-lines">
-                    <h3>￥29.9</h3>
+                    <h3 th:text="${product.previousPrice/100.0}">￥29.9</h3>
                     <p>
-                        <em class="aui-one">已团7.8k</em>
-                        <em class="aui-two">2人团</em>
+                        <em class="aui-one" th:text="${'已团'+product.sold}">已团7.8k</em>
+                        <em class="aui-two" th:text="${product.ptSize+'人团'}">2人团</em>
                     </p>
                 </div>
                 <div class="aui-time-box">
@@ -81,8 +73,8 @@
         </div>
         <div class="aui-flex aui-flex-clear-line">
             <div class="aui-flex-box">
-                <h4>蒙自石榴水果*2个</h4>
-                <p>粉色玛瑙 天生丽质 好水果</p>
+                <h4 th:text="${product.title}">蒙自石榴水果*2个</h4>
+                <p th:text="${product.simpleDesc}">粉色玛瑙 天生丽质 好水果</p>
             </div>
             <div class="aui-share-box" data-ydui-actionsheet="{target:'#actionSheet',closeElement:'#cancel'}">
                 <i class="aui-icon-share"></i>
@@ -94,7 +86,7 @@
                 <div class="aui-news-cox-red">
                     <img src="/images/icon-qmt.png" alt="">
                 </div>
-                <div class="aui-flex-box">新用户和老用户可参团，开团
+                <div class="aui-flex-box" th:text="${product.tags}">新用户和老用户可参团，开团
                 </div>
             </div>
         </div>
@@ -161,35 +153,20 @@
             </ul>
         </div>
         <div class="divHeight"></div>
-        <div class="aui-friend-coll">
+        <div class="aui-friend-coll" th:if="${joins != null && joins.size() > 0}">
             <div class="aui-friend-coll-head">
                 <h2>小伙伴发起的拼团,您可以直接参与</h2>
             </div>
-            <a href="javascript:;"  class="aui-flex b-line">
+            <a th:href="${'joinTuan?tuanId='+join.id}" class="aui-flex b-line" th:each="join:${joins}">
                 <div class="aui-friend-img">
-                    <img src="/images/user-logo-003.png" alt="">
+                    <img th:src="${join.leaderAvatar}" alt="">
                 </div>
                 <div class="aui-flex-box">
-                    <h4>小二狗</h4>
+                    <h4 th:text="${join.leaderName}">小二狗</h4>
                 </div>
                 <div class="aui-friend-differ">
-                    <h4>还差 <em>1</em>人成团</h4>
-                    <h5>剩余:<em>15:44:43</em></h5>
-                </div>
-                <div class="aui-friend-button">
-                    <button>去参团</button>
-                </div>
-            </a>
-            <a href="javascript:;"  class="aui-flex">
-                <div class="aui-friend-img">
-                    <img src="/images/user-logo-004.png" alt="">
-                </div>
-                <div class="aui-flex-box">
-                    <h4>小黄狗</h4>
-                </div>
-                <div class="aui-friend-differ">
-                    <h4>还差 <em>2</em>人成团</h4>
-                    <h5>剩余:<em>15:44:43</em></h5>
+                    <h4>还差 <em th:text="${join.totalSize-join.currentSize}">1</em>人成团</h4>
+                    <h5>剩余:<em th:text="${join.last}">15:44:43</em></h5>
                 </div>
                 <div class="aui-friend-button">
                     <button>去参团</button>
@@ -200,7 +177,7 @@
         <div class="aui-login-line">
             <h2>商品详情</h2>
         </div>
-        <div class="aui-page-box">
+        <div class="aui-page-box" th:utext="${detail.html}">
             <p>
                 <img src="/images/cp-001.png" alt="">
             </p>
@@ -215,15 +192,15 @@
         </div>
     </section>
     <footer class="aui-footer aui-footer-fixed">
-        <a href="ptIndex;" class="aui-tabBar-item aui-tabBar-item-active">
+        <a href="ptIndex" class="aui-tabBar-item aui-tabBar-item-active">
                     <span class="aui-tabBar-item-icon">
                         <i class="icon icon-home"></i>
                     </span>
             <span class="aui-tabBar-item-text">首页</span>
         </a>
-        <button class="aui-button-btn">
+        <button class="aui-button-btn" th:onclick="${'createT('+product.id+')'}">
             <i>￥</i>
-            2.9一键开团
+            <g th:text="${product.price/100.0+'一键开团'}">2.9一键开团</g>
         </button>
     </footer>
 </section>
@@ -279,7 +256,7 @@
 <script type="text/javascript" src="/js/pt_layer.js"></script>
 <script type="text/javascript" src="/js/pt_touchSlider.js"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         $(".main_img").touchSlider({
             flexible: true,
@@ -287,7 +264,7 @@
             btn_prev: $("#btn_prev"),
             btn_next: $("#btn_next"),
             paging: $(".point a"),
-            counter: function(e) {
+            counter: function (e) {
                 $(".point a").removeClass("on").eq(e.current - 1).addClass("on");
                 $(".img_font span").hide().eq(e.current - 1).show();
             }
@@ -295,13 +272,14 @@
 
     });
 </script>
-<script type="text/javascript">
+<script th:inline="javascript">
 
-    var intDiff = parseInt(32000);
+    var intDiff = parseInt([[${endTs}]]);
+
     //倒计时总秒数量
 
     function timer(intDiff) {
-        window.setInterval(function() {
+        window.setInterval(function () {
             var day = 00
                 , hour = 00
                 , minute = 00
@@ -313,18 +291,21 @@
                 minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
                 second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
             }
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
             if (minute <= 9)
                 minute = '0' + minute;
             if (second <= 9)
                 second = '0' + second;
-            $('.hour_show').html('0<s id="h"></s>' + hour + ' ');
+            $('.hour_show').html('<s id="h"></s>' + hour + ' ');
             $('.minute_show').html('<s></s>' + minute + ' ');
             $('.second_show').html('<s></s>' + second + ' ');
             intDiff--;
         }, 1000);
     }
 
-    $(function() {
+    $(function () {
         timer(intDiff);
     });
 </script>

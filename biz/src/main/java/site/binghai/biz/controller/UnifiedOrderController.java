@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.binghai.biz.def.Result;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
-import site.binghai.lib.def.UnifiedOrderMethods;
 import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
+import site.binghai.lib.service.CouponService;
 import site.binghai.lib.service.PayBizServiceFactory;
 import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
@@ -35,6 +36,8 @@ public class UnifiedOrderController extends BaseController {
     private WxUserService wxUserService;
     @Autowired
     private PayBizServiceFactory payBizServiceFactory;
+    @Autowired
+    private CouponService couponService;
 
     @GetMapping("detail")
     @ResponseBody
@@ -200,37 +203,43 @@ public class UnifiedOrderController extends BaseController {
      */
     public Object cancelUnifiedOrder(UnifiedOrder unifiedOrder) {
         if (OrderStatusEnum.valueOf(unifiedOrder.getStatus()) == OrderStatusEnum.PAIED) {
-            if (refund(unifiedOrder)) {
-                return cancelBizOrder(unifiedOrder);
+            Result<Boolean> ret = cancelBizOrder(unifiedOrder);
+            if (ret.getSucceed()) {
+                return refund(unifiedOrder);
             }
-            return fail("取消失败-不支持退款");
+            return fail(ret.getMessage());
         } else {
-            unifiedOrder.setStatus(OrderStatusEnum.CANCELED.getCode());
-            unifiedOrderService.update(unifiedOrder);
-            return cancelBizOrder(unifiedOrder);
+            Result<Boolean> ret = cancelBizOrder(unifiedOrder);
+            if (ret.getSucceed() && refund(unifiedOrder)) {
+                return success(null, "取消成功");
+            } else {
+                return fail("取消失败-BIZ-NOT-SUPPORT");
+            }
         }
     }
 
-    private Object cancelBizOrder(UnifiedOrder unifiedOrder) {
-        //todo 取消成功通知
-        Object data = null;
-        UnifiedOrderMethods service = payBizServiceFactory
-            .get(unifiedOrder.getAppCode());
-
-        if (service != null) {
-            data = service.cancel(unifiedOrder);
-            return success(data, "取消成功");
-        } else {
-            return fail("取消失败-BIZ-NOT-SUPPORT");
+    private Result<Boolean> cancelBizOrder(UnifiedOrder unifiedOrder) {
+        try {
+            payBizServiceFactory.cancel(unifiedOrder);
+        } catch (Exception e) {
+            return new Result<>(Boolean.FALSE, e, Boolean.FALSE);
         }
+        return new Result();
     }
 
     /**
      * 退款
      */
     private boolean refund(UnifiedOrder unifiedOrder) {
-        //TODO 退款逻辑
-        //unifiedOrderService.cancel(unifiedOrder.getId());
-        return false;
+        if (unifiedOrder.getPoints() != null && unifiedOrder.getPoints() > 0) {
+            WxUser user = wxUserService.findById(getUser().getId());
+            user.setShoppingPoints(user.getShoppingPoints() + unifiedOrder.getPoints());
+            wxUserService.update(user);
+            persistent(user);
+        }
+        if (unifiedOrder.getCouponId() != null) {
+            couponService.unuse(unifiedOrder.getCouponId());
+        }
+        return true;
     }
 }

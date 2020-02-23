@@ -3,6 +3,7 @@ package site.binghai.shop.entity;
 import lombok.Data;
 import site.binghai.lib.entity.BaseEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -39,16 +40,32 @@ public class Product extends BaseEntity {
     /**
      * kv信息->袖长:七分袖,销售渠道类型:纯电商...
      */
+    @Column(columnDefinition = "TEXT")
     private String infos;
     private Boolean offline;
-    private Double startOfDesc;
-    private Double startOfQuality;
+    private Double starOfDesc;
+    private Double starOfQuality;
 
-    public void setStartOfDesc(Double startOfDesc) {
-        this.startOfDesc = (this.startOfDesc * sold + startOfDesc) / (sold + 1);
+
+    /**
+     * 成团人数
+     * */
+    private Integer ptSize;
+    /**
+     * 拼团开始时间
+     * */
+    private Long ptStartTs;
+    /**
+     * 拼团结束时间
+     * */
+    private Long ptEndTs;
+
+
+    public void setStarOfDesc(Double starOfDesc) {
+        this.starOfDesc = (this.starOfDesc * sold + starOfDesc) / (sold + 1);
     }
 
-    public void setStartOfQuality(Double startOfQuality) {
-        this.startOfQuality = (this.startOfQuality * sold + startOfQuality) / (sold + 1);
+    public void setStarOfQuality(Double starOfQuality) {
+        this.starOfQuality = (this.starOfQuality * sold + starOfQuality) / (sold + 1);
     }
 }

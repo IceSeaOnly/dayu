@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @date 2020/2/2 下午1:26
  **/
 @Controller
@@ -139,19 +138,26 @@ public class CartController extends BaseController {
         if (product.getStock() < size) {
             return fail("库存不足:" + product.getStock());
         }
-        CartItem cart = new CartItem();
+        boolean hidden = false;
         if (body.containsKey("hidden")) {
             body.remove("hidden");
-            cart.setHidden(Boolean.TRUE);
-        } else {
-            cart.setHidden(Boolean.FALSE);
+            hidden = true;
         }
+        return success(doAddCart(extraStandardInfo(body), productId, size, hidden, false, null), null);
+    }
+
+    public CartItem doAddCart(String jsonBody, Long productId, Integer size, boolean hidden, boolean ptOrder,
+                              Long tuanId) {
+        CartItem cart = new CartItem();
         cart.setBuyerId(getUser().getId());
         cart.setProductId(productId);
         cart.setSize(size);
-        cart.setStandardInfo(extraStandardInfo(body));
+        cart.setStandardInfo(jsonBody);
+        cart.setHidden(hidden);
+        cart.setPtOrder(ptOrder);
+        cart.setJoinPtId(tuanId);
         cartItemService.save(cart);
-        return success(cart, null);
+        return cart;
     }
 
     private String extraStandardInfo(Map body) {

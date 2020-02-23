@@ -37,6 +37,10 @@ public class WxUser extends BaseEntity implements SessionPersistent {
      */
     private Integer shoppingPoints;
     /**
+     * 历史总积分
+     * */
+    private Integer historyShoppingPoints;
+    /**
      * 推荐人id
      */
     private Long refereeId;

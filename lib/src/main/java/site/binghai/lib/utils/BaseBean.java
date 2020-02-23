@@ -18,6 +18,10 @@ import java.util.List;
 public abstract class BaseBean extends MapUtils {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    protected String toJSONString(Object obj) {
+        return JSONObject.toJSONString(obj);
+    }
+
     protected JSONObject newJSONObject() {
         return new JSONObject();
     }

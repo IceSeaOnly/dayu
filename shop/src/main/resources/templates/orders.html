@@ -10,6 +10,23 @@
     <script>/*@cc_on window.location.href="http://support.dmeng.net/upgrade-your-browser.html?referrer="+encodeURIComponent(window.location.href); @*/</script>
     <title></title>
     <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+    <!--fy-alert-->
+    <link type="text/css" rel="stylesheet" href="/css/fy-alert.css"/>
+    <script type="text/javascript" src="/js/fy-alert.js"></script>
+
+    <script>
+        function cancel(uid) {
+            var url = '/user/unified/cancel?unifiedId=' + uid;
+            $.getJSON(url, function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    window.location.reload();
+                } else {
+                    errorInfo(resp.msg);
+                }
+            })
+        }
+    </script>
 </head>
 
 <body>
@@ -80,8 +97,13 @@
                 </div>
             </div>
         </div>
-        <div class="dphjbox">
-            <p class="p5">合计:<span th:text="${'￥'+item.totalPrice/100.0}">￥69.00</span></p>
+        <div class="dphjbox" th:if="${item.totalPrice != item.unifiedOrder.shouldPay}">
+            <p class="p5">合计:<span
+                    th:text="${'￥'+item.unifiedOrder.shouldPay/100.0+'(含优惠)'}">￥69.00</span>
+            </p>
+        </div>
+        <div class="dphjbox" th:if="${item.totalPrice == item.unifiedOrder.shouldPay}">
+            <p class="p5">合计:<span th:text="${'￥'+item.unifiedOrder.shouldPay/100.0}">￥69.00</span></p>
         </div>
         <div class="dpbtn">
             <!--<div class="dpbtn1">-->
@@ -98,6 +120,9 @@
             </div>
             <div class="dpbtn3" th:if="${item.status > 4}">
                 <a th:href="${'/shop/detail?productId='+item.productId}">再次购买</a>
+            </div>
+            <div class="dpbtn3" th:if="${item.status <= 1}">
+                <a th:href="${'javascript:cancel('+item.unifiedId+')'}">取消订单</a>
             </div>
         </div>
     </div>

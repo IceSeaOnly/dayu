@@ -9,9 +9,9 @@ import site.binghai.shop.dao.ProductDao;
 import site.binghai.shop.entity.Product;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- *
  * @date 2020/2/1 上午11:11
  **/
 @Service
@@ -43,14 +43,21 @@ public class ProductService extends BaseService<Product> {
         List<Product> pages = emptyList();
 
         int page = 0;
-        List<Product> tmp = productDao.findProductsByOfflineAndCategoryId(Boolean.FALSE,category,
+        List<Product> tmp = productDao.findProductsByOfflineAndCategoryId(Boolean.FALSE, category,
             new PageRequest(page, 100));
         while (!isEmptyList(tmp)) {
             pages.addAll(tmp);
             page++;
-            tmp = productDao.findProductsByOfflineAndCategoryId(Boolean.FALSE,category,
+            tmp = productDao.findProductsByOfflineAndCategoryId(Boolean.FALSE, category,
                 new PageRequest(page, 100));
         }
         return pages;
+    }
+
+    public List<Product> ptSearch() {
+        List<Product> products = searchByCategory(999L);
+        return products.stream().filter(p -> p.getPtStartTs() < now() && p.getPtEndTs() > now())
+            .filter(p -> p.getStock() > 0)
+            .collect(Collectors.toList());
     }
 }
