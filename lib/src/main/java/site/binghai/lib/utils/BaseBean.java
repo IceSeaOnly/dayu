@@ -34,6 +34,22 @@ public abstract class BaseBean extends MapUtils {
         return new ArrayList();
     }
 
+    public boolean isJSON(String s) {
+        try {
+            if (hasEmptyString(s)) {
+                return false;
+            }
+            if (s.startsWith("{")) {
+                JSONObject.parseObject(s);
+                return true;
+            } else if (s.startsWith("[")) {
+                JSONArray.parseArray(s);
+                return true;
+            }
+        } catch (Exception e) {}
+        return false;
+    }
+
     protected JSONObject toJsonObject(Object obj) {
         return JSONObject.parseObject(JSONObject.toJSONString(obj));
     }

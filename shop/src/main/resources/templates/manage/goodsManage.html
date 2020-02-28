@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="header-border"></div>
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:include="manage/menus"></div>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18">商品管理</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+                <div class="row">
+                    <div class="col-xl-4">
+                        <a href="addGoods">
+                            <button type="button" class="btn btn-secondary waves-effect waves-light">增加商品</button>
+                        </a>
+                    </div>
+                </div>
+                <div style="height: 10px"></div>
+                <div class="row">
+                    <div class="col-md-6 col-xl-3" th:each="prd:${products}">
+                        <div class="card">
+                            <img class="img-fluid" th:src="${prd.imgUrl}" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${prd.title+(prd.offline?'(下架)':'')}"
+                                    th:style="${'color:'+(prd.offline?'red':'green')}">Card title</h5>
+                                <h6 class="card-subtitle text-muted">
+                                    <b th:text="${'￥'+prd.price/100.0}" style="color: green"></b>
+                                    <del th:text="${'￥'+prd.previousPrice/100.0}" style="color: black"></del>
+                                    <g th:text="${'已售:'+prd.sold}"></g>
+                                    <g th:text="${'库存:'+prd.stock}"></g>
+                                </h6>
+                                <div style="height: 5px"></div>
+                                <h6 class="card-subtitle text-muted">
+                                    <g th:text="${prd.tags}"></g>
+                                    <g th:text="${'描述:'+prd.starOfDesc}"></g>
+                                    <g th:text="${'质量:'+prd.starOfQuality}"></g>
+                                </h6>
+                                <p class="card-text" th:text="${prd.simpleDesc}">sssss.</p>
+
+                                <a th:href="${'changeOffline?id='+prd.id}">
+                                    <button type="button" th:if="${prd.offline == true}" class="btn btn-success btn-sm waves-effect waves-light">上架
+                                    </button>
+                                </a>
+                                <a th:href="${'changeOffline?id='+prd.id}">
+                                    <button type="button" th:if="${prd.offline == false}" class="btn btn-danger btn-sm waves-effect waves-light">下架
+                                    </button>
+                                </a>
+                                <a th:href="${'editGoods?id='+prd.id}">
+                                    <button type="button" class="btn btn-info btn-sm waves-effect waves-light">管理
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+
+    </div>
+    <!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+
+<!-- Overlay-->
+<div class="menu-overlay"></div>
+
+
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+
+
+<!-- Sparkline Js-->
+<script src="/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+<!-- Chart Js-->
+<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- Chart Custom Js-->
+<!--<script src="assets/pages/knob-chart-demo.js"></script>-->
+<!-- Morris Js-->
+<script src="/plugins/morris-js/morris.min.js"></script>
+<!-- Raphael Js-->
+<script src="/plugins/raphael/raphael.min.js"></script>
+<!-- Custom Js -->
+<!--<script src="assets/pages/dashboard-demo.js"></script>-->
+<!-- App js -->
+<script src="/js/theme.js"></script>
+</body>
+
+</html>

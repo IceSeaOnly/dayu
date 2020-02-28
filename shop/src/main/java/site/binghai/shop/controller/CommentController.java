@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @date 2020/2/4 下午9:10
  **/
 @RequestMapping("shop")
@@ -57,8 +56,8 @@ public class CommentController extends BaseController {
         try {
             order.setStatus(OrderStatusEnum.FEED_DONE.getCode());
             Product product = productService.findById(order.getProductId());
-            product.setStarOfDesc(getDouble(map, "desc_star"));
-            product.setStarOfQuality(getDouble(map, "quality_star"));
+            product.resetStarOfDesc(getDouble(map, "desc_star"));
+            product.resetStarOfQuality(getDouble(map, "quality_star"));
             order.setStartOfService(getInteger(map, "service_star"));
             order.setStartOfShip(getInteger(map, "ship_star"));
 

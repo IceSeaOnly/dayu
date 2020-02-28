@@ -61,11 +61,11 @@ public class Product extends BaseEntity {
     private Long ptEndTs;
 
 
-    public void setStarOfDesc(Double starOfDesc) {
+    public void resetStarOfDesc(Double starOfDesc) {
         this.starOfDesc = (this.starOfDesc * sold + starOfDesc) / (sold + 1);
     }
 
-    public void setStarOfQuality(Double starOfQuality) {
+    public void resetStarOfQuality(Double starOfQuality) {
         this.starOfQuality = (this.starOfQuality * sold + starOfQuality) / (sold + 1);
     }
 }

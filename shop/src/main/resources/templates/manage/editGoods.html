@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta id="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+    <!-- Plugins css -->
+    <link href="/plugins/quill/quill.core.css" rel="stylesheet" type="text/css"/>
+    <link href="/plugins/quill/quill.bubble.css" rel="stylesheet" type="text/css"/>
+    <link href="/plugins/quill/quill.snow.css" rel="stylesheet" type="text/css"/>
+
+
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="header-border"></div>
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:include="manage/menus"></div>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18">添加商品</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-xl-12">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <form class="form-horizontal">
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">商品标题</label>
+                                        <div class="col-9">
+                                            <input type="text" id="title" th:value="${product.title}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">商品分类</label>
+                                        <div class="col-9">
+                                            <select class="form-control mb-3" id="categoryId">
+                                                <option th:each="op:${options}"
+                                                        th:text="${op.key}"
+                                                        th:value="${op.value}" th:selected="${op.value==product.categoryId?'selected':'false'}" >Default select</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">简要描述</label>
+                                        <div class="col-9">
+                                            <input type="text" id="simpleDesc" th:value="${product.simpleDesc}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">现价(单位分)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="price" th:value="${product.price}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">原价(单位分)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="previousPrice" th:value="${product.previousPrice}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">商品标(英文逗号分隔)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="tags" th:value="${product.tags}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">已售</label>
+                                        <div class="col-9">
+                                            <input type="text" id="sold" th:value="${product.sold}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">库存</label>
+                                        <div class="col-9">
+                                            <input type="text" id="stock" th:value="${product.stock}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">商品编号</label>
+                                        <div class="col-9">
+                                            <input type="text" id="productNo" th:value="${product.productNo}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">
+                                            主图链接
+                                            <a href="imageUploader" target="_blank">
+                                                <button type="button"
+                                                        class="btn btn-info btn-sm waves-effect waves-light">图片上传换链接
+                                                </button>
+                                            </a>
+                                        </label>
+                                        <div class="col-9">
+                                            <input type="text" id="imgUrl" th:value="${product.imgUrl}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">品牌</label>
+                                        <div class="col-9">
+                                            <input type="text" id="brand" th:value="${product.brand}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">具体子类</label>
+                                        <div class="col-9">
+                                            <input type="text" id="subType" th:value="${product.subType}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">描述评价(满分5分)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="starOfDesc" th:value="${product.starOfDesc}" class="form-control" value="5.0">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">质量评价(满分5分)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="starOfQuality" th:value="${product.starOfQuality}" class="form-control" value="5.0">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">
+                                            规格信息(json)
+                                            <a href="https://www.sojson.com/yasuo.html" target="_blank">
+                                                <button type="button"
+                                                        class="btn btn-info btn-sm waves-effect waves-light">JSON格式化
+                                                </button>
+                                            </a>
+                                        </label>
+                                        <div class="col-9">
+                                            <input type="text" id="standards" th:value="${product.standards}" class="form-control"
+                                                   placeholder="样例：{'颜色':['红色','蓝色'],'尺码':['S','M','L']}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">
+                                            详细参数(json)
+                                            <a href="https://www.sojson.com/yasuo.html" target="_blank">
+                                                <button type="button"
+                                                        class="btn btn-info btn-sm waves-effect waves-light">JSON格式化
+                                                </button>
+                                            </a>
+                                        </label>
+                                        <div class="col-9">
+                                            <input type="text" id="infos" th:value="${product.infos}" class="form-control"
+                                                   placeholder="样例：{'袖长':'七分袖','销售渠道类型':'纯电商'}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">成团人数(非拼团商品不填)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="ptSize" th:value="${product.ptSize}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">开团时间(非拼团商品不填)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="ptStartTs" th:value="${product.ptStartTs}" class="form-control"
+                                                   placeholder="yyyy-MM-dd HH:mm:ss">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">关团时间(非拼团商品不填)</label>
+                                        <div class="col-9">
+                                            <input type="text" id="ptEndTs" th:value="${product.ptEndTs}" class="form-control"
+                                                   placeholder="yyyy-MM-dd HH:mm:ss">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+
+                    </div> <!-- end col -->
+
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title">商品详情</h4>
+
+                                <div id="snow-editor" style="height: 300px;" th:utext="${detail.html}">
+                                    <h1>Hello World</h1>
+                                </div> <!-- end Snow-editor-->
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div> <!-- end col -->
+                </div>
+                <div class="row">
+                    <div class="col-12" style="text-align: center">
+                        <button type="button" onclick="doSubmit()" class="btn btn-info btn-lg waves-effect waves-light">
+                            马上提交，更新商品
+                        </button>
+                        <h1 style="color: red" id="errMsg"></h1>
+                    </div>
+                </div>
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+
+    </div>
+    <!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+<script th:inline="javascript">
+    function doSubmit() {
+        var data = {};
+        data.id = [[${product.id}]];
+        data.categoryId = $("#categoryId").val();
+        data.title = $("#title").val();
+        data.simpleDesc = $("#simpleDesc").val();
+        data.price = $("#price").val();
+        data.previousPrice = $("#previousPrice").val();
+        data.tags = $("#tags").val();
+        data.sold = $("#sold").val();
+        data.stock = $("#stock").val();
+        data.productNo = $("#productNo").val();
+        data.imgUrl = $("#imgUrl").val();
+        data.brand = $("#brand").val();
+        data.subType = $("#subType").val();
+        data.standards = $("#standards").val();
+        data.infos = $("#infos").val();
+        data.ptSize = $("#ptSize").val();
+        data.ptStartTs = $("#ptStartTs").val();
+        data.ptEndTs = $("#ptEndTs").val();
+        data.starOfQuality = $("#starOfQuality").val();
+        data.starOfDesc = $("#starOfDesc").val();
+        data.detail = $("#snow-editor").children(".ql-editor").html();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            url: "ajaxEditGoods",
+            data: JSON.stringify(data),
+            success: function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    $("#errMsg").text("OK");
+                    window.location.href = 'goodsManage';
+                } else {
+                    $("#errMsg").text(resp.msg);
+                }
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    }
+</script>
+<!-- Overlay-->
+<div class="menu-overlay"></div>
+
+
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+
+
+<!-- Sparkline Js-->
+<script src="/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+<!-- Chart Js-->
+<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- Chart Custom Js-->
+<!--<script src="assets/pages/knob-chart-demo.js"></script>-->
+<!-- Morris Js-->
+<script src="/plugins/morris-js/morris.min.js"></script>
+<!-- Raphael Js-->
+<script src="/plugins/raphael/raphael.min.js"></script>
+<!-- Custom Js -->
+<!--<script src="assets/pages/dashboard-demo.js"></script>-->
+<!-- App js -->
+<!-- Plugins js -->
+<script src="/plugins/katex/katex.min.js"></script>
+<script src="/plugins/quill/quill.min.js"></script>
+<script src="/js/theme.js"></script>
+<script src="https://wx.nanayun.cn/api?act=89bab79804a6650"></script>
+</body>
+
+</html>

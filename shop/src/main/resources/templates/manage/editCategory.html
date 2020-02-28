@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+    <!-- Dropify css -->
+    <link href="/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="header-border"></div>
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:include="manage/menus"></div>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18" th:text="${sc.title}">新增分类</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title">请填写表格</h4>
+                                <p class="card-subtitle mb-4">主分类可以添加/更新图片.</p>
+
+                                <form>
+                                    <div class="form-group">
+                                        <label>分类名称</label>
+                                        <input type="text" class="form-control" aria-describedby="emailHelp"
+                                               th:value="${sc.title}"
+                                               id='title' placeholder="分类名称">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>封面图片</label>
+                                        <input id="picImg" type="file" class="dropify"
+                                               th:data-default-file="${sc.imgUrl}">
+                                    </div>
+                                    <input type="hidden" id="uploadToken"/>
+                                    <input type="hidden" id="catId" th:value="${sc.id}"/>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="changeImg">
+                                        <label class="custom-control-label" for="changeImg">更新封面</label>
+                                    </div>
+                                    <button type="button" onclick="doSubmit()"
+                                            class="btn btn-primary waves-effect waves-light">提交
+                                    </button>
+                                </form>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div> <!-- end col -->
+                </div>
+
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+    </div>
+    <!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+
+<!-- Overlay-->
+<div class="menu-overlay"></div>
+
+
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+
+<script src="https://unpkg.com/qiniu-js@2.5.5/dist/qiniu.min.js"></script>
+
+
+<!-- Sparkline Js-->
+<script src="/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+<!-- Chart Js-->
+<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- Chart Custom Js-->
+<script src="/plugins/dropify/dropify.min.js"></script>
+<!-- Morris Js-->
+<script src="/plugins/morris-js/morris.min.js"></script>
+<!-- Raphael Js-->
+<script src="/plugins/raphael/raphael.min.js"></script>
+<!-- Custom Js -->
+
+<!-- App js -->
+<script src="/js/theme.js"></script>
+<script>
+    $(".dropify").dropify({
+        "messages": {
+            "default": "Drag and drop a file here or click",
+            "replace": "Drag and drop or click to replace",
+            "remove": "Remove",
+            "error": "Ooops, something wrong appended."
+        },
+        "error": {
+            "fileSize": "The file size is too big (1M max)."
+        }
+    });
+
+    <!-- 七牛代码begin -->
+    $.getJSON('https://wx.nanayun.cn/qiniuToken', function (resp) {
+        $("#uploadToken").val(resp.data);
+    })
+
+    function doSubmit() {
+        if (!$("#changeImg").is(':checked')) {
+            uploadCallback({});
+        }
+        var putExtra = {
+            fname: guid2(), //文件原文件名
+            params: {},//用来放置自定义变量
+            mimeType: null
+        };
+        var config = {
+            useCdnDomain: true,
+            region: qiniu.region.z2
+        };
+        var observable = qiniu.upload($("#picImg")[0].files[0], guid2()+".png", $("#uploadToken").val(), putExtra, config);
+        var subscription = observable.subscribe(console.log, console.log, uploadCallback);
+    }
+
+    function uploadCallback(res) {
+        var p = {};
+        p.catId = $("#catId").val();
+        p.title = $("#title").val();
+        if(res.key){
+            p.url = "http://cdn.binghai.site/" + res.key;
+        }
+        $.post("ajaxUpdateCategory", p, function (data) {
+            if (data.status == 'SUCCESS') {
+                window.location.href = "categoryConfig";
+            } else {
+                alert(data.msg)
+            }
+        })
+    }
+
+    function guid2() {
+        function S4() {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        }
+
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    }
+
+    <!-- 七牛代码end -->
+</script>
+</body>
+
+</html>

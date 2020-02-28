@@ -72,13 +72,13 @@ public class WxEventHandlerImpl extends BaseBean implements WxEventHandler {
     @Override
     public void onTuanFull(Long tuanId, String goodsName, Integer price, String openId) {
         JSONObject msg = new TplGenerator(
-            iceConfig.getTuanJoinTplId(),
+            iceConfig.getTuanFullTplId(),
             iceConfig.getAppRoot() + "/shop/tuanDetail?t=" + tuanId,
             openId
         ).put("first", goodsName + "恭喜恭喜，拼团成功，耐心等待收货吧~！")
             .put("keyword1", goodsName)
             .put("keyword2", TimeTools.now())
-            .put("remark", "请等待成团，24小时未拼团成功的将会自动退款，点击查看拼团详情")
+            .put("remark", "点击查看拼团详情")
             .build();
 
         wxTplMessageService.send(msg);
@@ -87,7 +87,7 @@ public class WxEventHandlerImpl extends BaseBean implements WxEventHandler {
     @Override
     public void onTuanJoin(Long tuanId, String goodsName, Integer shouldPay, String openId) {
         JSONObject msg = new TplGenerator(
-            iceConfig.getTuanFullTplId(),
+            iceConfig.getTuanJoinTplId(),
             iceConfig.getAppRoot() + "/shop/tuanDetail?t=" + tuanId,
             openId
         ).put("first", goodsName + "参团成功，快去邀请小伙伴一起吧！")

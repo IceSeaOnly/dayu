@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+<div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex align-items-center min-vh-100">
+                    <div class="w-100 d-block bg-white shadow-lg rounded my-5">
+                        <div class="row">
+                            <div id="imgBg" class="col-lg-5 d-none d-lg-block bg-login rounded-left" ></div>
+                            <div class="col-lg-7">
+                                <div class="p-5">
+                                    <div class="text-center mb-5">
+                                        <a href="javascript:caidan()"
+                                           class="text-dark font-size-22 font-family-secondary">
+                                            <i class="mdi mdi-alpha-x-circle"></i> <b id="t0">曹操速购</b>
+                                        </a>
+                                    </div>
+                                    <h1 class="h5 mb-1" id="t1">欢迎回来!<p style="color: red" id="errorMsg"></p></h1>
+                                    <p class="text-muted mb-4" id="t2">只要有斗志，不怕没战场</p>
+                                    <form class="user" action="/p/doLogin" method="post" id="loginForm">
+                                        <div class="form-group">
+                                            <input type="text" name="userName" class="form-control form-control-user" id="t3" placeholder="账号">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" name="passWord" class="form-control form-control-user" id="t4" placeholder="密码">
+                                        </div>
+                                        <a href="javascript:$('#loginForm').submit()" class="btn btn-success btn-block waves-effect waves-light" id="t5"> 登录</a>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+
+<script src="/js/theme.js"></script>
+<script>
+    function caidan() {
+        $("#imgBg").css({"background-image":"url(http://cdn.binghai.site/o_1e1ujrvhlojkrote0rv6h1gaua.jpg)"});
+        $("#t0").text("又双叒叕到了彩蛋时间");
+        $("#t1").text("我的天哪");
+        $("#t2").text("瞧瞧你是多么的机敏，上帝也会为你点赞！");
+        $("#t3").attr("placeholder","哦我的天呐，我快等不及了，");
+        $("#t4").attr("placeholder","快用力戳这里输入那该死的账号吧！");
+        $("#t5").text("狗头一下，你就知道");
+
+    }
+    if(window.location.href.indexOf("err") > 0){
+        $("#errorMsg").text("账户名/密码错误");
+    }
+</script>
+</body>
+
+</html>

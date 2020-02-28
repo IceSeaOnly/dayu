@@ -12,7 +12,7 @@ import site.binghai.lib.service.PayBizServiceFactory;
  * @author huaishuo
  * @date 2020/2/23 下午3:16
  **/
-@RequestMapping("door")
+@RequestMapping("/manage/door")
 @RestController
 public class BackDoorController extends BaseController {
     @Autowired
