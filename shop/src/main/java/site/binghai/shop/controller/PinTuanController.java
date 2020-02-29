@@ -12,14 +12,11 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.Tuan;
+import site.binghai.shop.enums.BannerType;
 import site.binghai.shop.enums.TuanStatus;
-import site.binghai.shop.kv.PinIndexBanners;
 import site.binghai.shop.kv.PinTodayRecommend;
 import site.binghai.shop.pojo.TuanFollower;
-import site.binghai.shop.service.KvService;
-import site.binghai.shop.service.ProductDetailService;
-import site.binghai.shop.service.ProductService;
-import site.binghai.shop.service.TuanService;
+import site.binghai.shop.service.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,10 +38,12 @@ public class PinTuanController extends BaseController {
     private TuanService tuanService;
     @Autowired
     private CartController cartController;
+    @Autowired
+    private BannerService bannerService;
 
     @GetMapping("ptIndex")
     public String ptIndex(ModelMap map) {
-        map.put("banners", kvService.get(PinIndexBanners.class).getImgs());
+        map.put("banners", bannerService.findByType(BannerType.PT_INDEX));
         List<Long> items = kvService.get(PinTodayRecommend.class).getItemIds();
         List<Product> recommends = productService.findByIds(items);
         map.put("recommends", recommends);

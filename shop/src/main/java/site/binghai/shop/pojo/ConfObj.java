@@ -9,8 +9,7 @@ import lombok.Data;
 @Data
 public class ConfObj {
     private String name;
-    private String value;
-    private String notice;
-    private String exampleImg;
-
+    private Object value;
+    private String className;
+    private String fieldName;
 }

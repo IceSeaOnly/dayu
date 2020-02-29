@@ -28,7 +28,7 @@
     <div id="fade_focus">
         <div class="loading"></div>
         <ul>
-            <li th:each="b:${banners}"><img th:src="${b.url}"/></li>
+            <li th:each="b:${banners}"><a th:href="${b.target}"><img th:src="${b.imgUrl}"/></a></li>
         </ul>
     </div>
 </div>
@@ -63,48 +63,48 @@
 </div>
 <!--<div class="clear"></div>-->
 <!--<div class="hotTit">-->
-    <!--<div class="hotTitL">-->
-        <!--<img src="/images/hotit.png"/>-->
-    <!--</div>-->
-    <!--<div class="hotTitR">-->
-        <!--<p>商城开业狂欢！四重大礼等你来抢！</p>-->
-    <!--</div>-->
+<!--<div class="hotTitL">-->
+<!--<img src="/images/hotit.png"/>-->
+<!--</div>-->
+<!--<div class="hotTitR">-->
+<!--<p>商城开业狂欢！四重大礼等你来抢！</p>-->
+<!--</div>-->
 <!--</div>-->
 <div class="clear"></div>
 <div class="kbox"></div>
 <!--<div class="timeBuy">-->
-    <!--<div class="Buybox">-->
-        <!--<p><span>限时</span>抢购</p>-->
-        <!--<a href="itemList" class="more"></a>-->
-        <!--<a href="itemList" class="btn">全场一折起</a>-->
-    <!--</div>-->
-    <!--<ul>-->
-        <!--<li>-->
-            <!--<a href="detail">-->
-                <!--<img src="/images/timebuy1.png"/>-->
-                <!--<p>超值特惠电饭煲</p>-->
-            <!--</a>-->
-        <!--</li>-->
-        <!--<li>-->
-            <!--<a href="detail">-->
-                <!--<img src="/images/timebuy2.png"/>-->
-                <!--<p>达芙妮秋款包包</p>-->
-            <!--</a>-->
-        <!--</li>-->
-        <!--<li>-->
-            <!--<a href="detail">-->
-                <!--<img src="/images/timebuy3.png"/>-->
-                <!--<p>特百惠优质水杯</p>-->
-            <!--</a>-->
-        <!--</li>-->
-        <!--<li>-->
-            <!--<a href="detail">-->
-                <!--<img src="/images/timebuy4.png"/>-->
-                <!--<p>易捷手机充电宝</p>-->
-            <!--</a>-->
-        <!--</li>-->
-    <!--</ul>-->
-    <!--<div class="clear"></div>-->
+<!--<div class="Buybox">-->
+<!--<p><span>限时</span>抢购</p>-->
+<!--<a href="itemList" class="more"></a>-->
+<!--<a href="itemList" class="btn">全场一折起</a>-->
+<!--</div>-->
+<!--<ul>-->
+<!--<li>-->
+<!--<a href="detail">-->
+<!--<img src="/images/timebuy1.png"/>-->
+<!--<p>超值特惠电饭煲</p>-->
+<!--</a>-->
+<!--</li>-->
+<!--<li>-->
+<!--<a href="detail">-->
+<!--<img src="/images/timebuy2.png"/>-->
+<!--<p>达芙妮秋款包包</p>-->
+<!--</a>-->
+<!--</li>-->
+<!--<li>-->
+<!--<a href="detail">-->
+<!--<img src="/images/timebuy3.png"/>-->
+<!--<p>特百惠优质水杯</p>-->
+<!--</a>-->
+<!--</li>-->
+<!--<li>-->
+<!--<a href="detail">-->
+<!--<img src="/images/timebuy4.png"/>-->
+<!--<p>易捷手机充电宝</p>-->
+<!--</a>-->
+<!--</li>-->
+<!--</ul>-->
+<!--<div class="clear"></div>-->
 <!--</div>-->
 <div class="clear"></div>
 <div class="kbox"></div>
@@ -116,34 +116,36 @@
 <div class="kbox"></div>
 <div class="clear"></div>
 <!--<div class="hotMarket">-->
-    <!--<div class="hotM_1">-->
-        <!--<div class="hotM_1L">-->
-            <!--<div style="width:100%; height:100%;background-image:url(/images/1.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
-        <!--</div>-->
-        <!--<div class="hotM_1C">-->
-            <!--<div style="width:100%; height:100%;background-image:url(/images/2.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
-        <!--</div>-->
-        <!--<div class="hotM_1R">-->
-            <!--<div style="width:100%; height:100%;background-image:url(/images/3.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div class="hotM_1">-->
-        <!--<div class="hotM_1L">-->
-            <!--<div style="width:100%; height:100%;background-image:url(/images/4.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
-        <!--</div>-->
-        <!--<div class="hotM_1C">-->
-            <!--<div style="width:100%; height:100%;background-image:url(/images/5.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
-        <!--</div>-->
-        <!--<div class="hotM_1R">-->
-            <!--<div style="width:100%; height:100%;background-image:url(/images/6.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
-        <!--</div>-->
-    <!--</div>-->
+<!--<div class="hotM_1">-->
+<!--<div class="hotM_1L">-->
+<!--<div style="width:100%; height:100%;background-image:url(/images/1.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
+<!--</div>-->
+<!--<div class="hotM_1C">-->
+<!--<div style="width:100%; height:100%;background-image:url(/images/2.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
+<!--</div>-->
+<!--<div class="hotM_1R">-->
+<!--<div style="width:100%; height:100%;background-image:url(/images/3.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="hotM_1">-->
+<!--<div class="hotM_1L">-->
+<!--<div style="width:100%; height:100%;background-image:url(/images/4.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
+<!--</div>-->
+<!--<div class="hotM_1C">-->
+<!--<div style="width:100%; height:100%;background-image:url(/images/5.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
+<!--</div>-->
+<!--<div class="hotM_1R">-->
+<!--<div style="width:100%; height:100%;background-image:url(/images/6.png); background-repeat:no-repeat; background-position:center center; background-size:contain"></div>-->
+<!--</div>-->
+<!--</div>-->
 <!--</div>-->
 <div class="clear"></div>
 <div class="kbox"></div>
 <div class="hotMarket">
     <div class="hotM_2">
-        <p><span><g th:text="${pinWall.redText}">拼单</g></span><g th:text="${pinWall.blackText}">特惠</g></p>
+        <p><span><g th:text="${pinWall.redText}">拼单</g></span>
+            <g th:text="${pinWall.blackText}">特惠</g>
+        </p>
         <i th:text="${pinWall.smallText}">拼着买更省钱</i>
         <a th:href="${pinWall.moreUrl}" class="more">更多</a>
     </div>
@@ -171,7 +173,9 @@
 <div class="kbox"></div>
 <div class="hotMarket">
     <div class="hotM_2">
-        <p><span th:text="${hot.redText}">热门</span><g th:text="${hot.blackText}">主题</g></p>
+        <p><span th:text="${hot.redText}">热门</span>
+            <g th:text="${hot.blackText}">主题</g>
+        </p>
         <i th:text="${hot.smallText}">太热门啦，要挤爆了</i>
         <a th:href="${hot.moreUrl}" class="more">更多</a>
     </div>

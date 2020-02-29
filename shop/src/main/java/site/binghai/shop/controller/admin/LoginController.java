@@ -36,7 +36,7 @@ public class LoginController extends BaseController {
             return "redirect:/p/login?err=1";
         }
         persistent(manager);
-        return "/manage/index";
+        return "redirect:/manage/index";
     }
 
     @GetMapping("logout")

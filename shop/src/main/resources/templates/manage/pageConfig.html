@@ -11,6 +11,8 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
     <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+    <!-- Dropify css -->
+    <link href="/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -39,35 +41,47 @@
                             <h4 class="mb-0 font-size-18">页面配置</h4>
                         </div>
                     </div>
-                </div>
-                <!-- end page title -->
-                <div class="row">
-                    <div class="col-xl-4">
-                        <a href="https://www.sojson.com/yasuo.html" target="_blank">
-                            <button type="button" class="btn btn-secondary waves-effect waves-light">JSON格式化</button>
-                        </a>
-                        <a href="imageUploader" target="_blank">
-                            <button type="button" class="btn btn-info waves-effect waves-light">图片上传换链接</button>
-                        </a>
+                    <div class="col-12">
+                        <div class="page-title-box d-flex  justify-content-between">
+                            <div class="alert alert-success" role="alert" th:if="${msg != null}" th:text="${msg}">
+                                更新成功
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div style="height: 15px"></div>
                 <div class="row">
                     <div class="col-xl-6" th:each="cfg:${configs}">
 
-                        <div class="card" >
+                        <div class="card">
                             <div class="card-body">
 
                                 <h4 class="card-title" th:text="${cfg.key.name}">Horizontal Form</h4>
-                                <p class="card-subtitle mb-4" th:text="${cfg.key.notice}">NOTICE:</p>
-                                <img width="60%" th:if="${cfg.key.exampleImg != 'NONE'}" th:src="${cfg.key.exampleImg}"/>
-                                <form class="form-horizontal" th:each="item:${cfg.value}">
-                                    <div class="form-group row mb-3">
+                                <form class="form-horizontal" th:id="${cfg.key.className}">
+                                    <input type="hidden" name="className" th:value="${cfg.key.className}"/>
+                                    <div class="form-group row mb-3" th:each="item:${cfg.value}">
                                         <label class="col-3 col-form-label" th:text="${item.name+':'}">Email</label>
                                         <div class="col-9">
-                                            <input type="text" class="form-control" th:value="${item.value}"
-                                            th:placeholder="${item.notice}">
+                                            <input th:type="${item.value.endsWith('.png')||item.value.endsWith('.jpg')?'hidden':'text'}"
+                                                   class="form-control"
+                                                   th:name="${item.fieldName}"
+                                                   th:id="${cfg.key.className+'_'+item.fieldName}"
+                                                   th:value="${item.value}"/>
+
+                                            <input th:if="${item.value.endsWith('.png')||item.value.endsWith('.jpg')}"
+                                                   type="file"
+                                                   class="dropify"
+                                                   th:data-default-file="${item.value}"
+                                                   th:id="${'bind_'+cfg.key.className+'_'+item.fieldName}"
+                                                   onchange="doUpload(this)"/>
                                         </div>
+                                    </div>
+                                    <div style="text-align: center">
+                                        <button type="button"
+                                                th:onclick="${'doSubmitForm('''+cfg.key.className+''')'}"
+                                                class="btn btn-primary waves-effect waves-light">更新模块
+                                        </button>
                                     </div>
                                 </form>
                             </div> <!-- end card-body-->
@@ -91,6 +105,33 @@
 <!-- Overlay-->
 <div class="menu-overlay"></div>
 
+<script>
+    function doSubmitForm(id) {
+        var data = {};
+        var params = $("#" + id).serializeArray();
+        $.each(params, function () {
+            data[this.name] = this.value;
+        });
+        $.ajax({
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            url: "ajaxUpdatePageConfig",
+            data: JSON.stringify(data),
+            success: function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    var timestamp = new Date().getTime();
+                    window.location.href = 'pageConfig?update=' + timestamp;
+                } else {
+                    alert(resp.msg);
+                }
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    }
+</script>
 
 <!-- jQuery  -->
 <script src="/js/jquery-1.8.1.min.js"></script>
@@ -114,6 +155,9 @@
 <!--<script src="assets/pages/dashboard-demo.js"></script>-->
 <!-- App js -->
 <script src="/js/theme.js"></script>
+<script src="/plugins/dropify/dropify.min.js"></script>
+<script src="https://unpkg.com/qiniu-js@2.5.5/dist/qiniu.min.js"></script>
+<script src="/js/image-upload-helper.js"></script>
 </body>
 
 </html>

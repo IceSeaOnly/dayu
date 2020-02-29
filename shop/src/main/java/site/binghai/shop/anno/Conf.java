@@ -18,8 +18,4 @@ public @interface Conf {
     String value();
 
     boolean json() default false;
-
-    String notice() default "";
-
-    String exampleImg() default "NONE";
 }

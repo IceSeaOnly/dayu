@@ -51,10 +51,10 @@
                 <div style="height: 10px"></div>
                 <div class="row">
                     <div class="col-xl-4" th:each="cat:${categories}">
-                        <div class="card">
+                        <div class="card" >
                             <div class="card-body">
                                 <h4 class="card-title" th:text="${cat.key.title}">Unordered</h4>
-                                <p class="card-subtitle mb-4">状态:
+                                <p class="card-subtitle mb-4"  th:if="${cat.key.id != 998}">状态:
                                     <b th:if="${cat.key.hidden}" style="color: red">隐藏中</b>
                                     <b th:if="${cat.key.hidden == false}" style="color: green">展示中</b>
                                     <a th:href="${'showChange?cid='+cat.key.id}"><button th:if="${cat.key.hidden}" type="button" class="btn btn-success btn-sm waves-effect waves-light">改为展示</button></a>
@@ -62,16 +62,22 @@
                                     <a th:href="${'addCategory?superId='+cat.key.id}"><button type="button" class="btn btn-secondary btn-sm waves-effect waves-light">增加子类</button></a>
                                     <a th:href="${'editCategory?catId='+cat.key.id}"><button type="button" class="btn btn-info btn-sm waves-effect waves-light">管理</button></a>
                                 </p>
-                                <ul>
+                                <ul  th:if="${cat.key.id != 998}">
                                     <li th:each="cts:${cat.value}">
                                         <span th:text="${cts.title}">name</span>
-                                        <img th:src="${cts.imgUrl}" style="width: 50px;height: 50px"/>
+                                        <img th:src="${cts.imgUrl}" style="width: 50px;height: 50px" />
                                         <a th:href="${'showChange?cid='+cts.id}"><button th:if="${cts.hidden}" type="button" class="btn btn-success btn-sm waves-effect waves-light">展示</button></a>
                                         <a th:href="${'showChange?cid='+cts.id}"><button th:if="${cts.hidden == false}" type="button" class="btn btn-danger btn-sm waves-effect waves-light">隐藏</button></a>
-                                        <a th:href="${'editCategory?catId='+cts.id}"><button type="button" class="btn btn-info btn-sm waves-effect waves-light">管理</button></a>
+                                        <a th:href="${'editCategory?catId='+cts.id}"><button type="button" class="btn btn-info btn-sm waves-effect waves-light">编辑</button></a>
+                                        <a th:href="${'goodsManage?categoryId='+cts.id}"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light">商品</button></a>
                                     </li>
                                 </ul>
 
+                                <ul  th:if="${cat.key.id == 998}">
+                                    <li th:each="cts:${cat.value}">
+                                        <a th:href="${'goodsManage?categoryId='+cts.id}"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light">商品</button></a>
+                                    </li>
+                                </ul>
 
                             </div> <!-- end card-body-->
                         </div> <!-- end card -->

@@ -5,6 +5,7 @@ import site.binghai.lib.service.BaseService;
 import site.binghai.shop.entity.ShopCategory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,17 +32,14 @@ public class ShopCategoryService extends BaseService<ShopCategory> {
     }
 
     public Map<ShopCategory, List<ShopCategory>> listAll() {
-        Map<ShopCategory, List<ShopCategory>> ret = new HashMap<>();
+        Map<ShopCategory, List<ShopCategory>> ret = new LinkedHashMap<>();
         List<ShopCategory> all = empty(findAll(999));
         Map<Long, List<ShopCategory>> maps = all.stream().filter(c -> !c.getSuperCategory())
             .collect(Collectors.groupingBy(c -> c.getSuperId()));
 
         all.stream().filter(c -> c.getSuperCategory())
-            .forEach(s -> {
-                if (!s.getId().equals(998L)) {
-                    ret.put(s, maps.get(s.getId()));
-                }
-            });
+            .sorted((a, b) -> a.getSuperId() > b.getSuperId() ? -1 : 1)
+            .forEach(s -> ret.put(s, maps.get(s.getId())));
         return ret;
     }
 

@@ -43,10 +43,9 @@ public class KvService extends BaseService<KeyValueEntity> {
         delete(p.getId());
     }
 
-    private KeyValueEntity findByKey(String className) {
+    public KeyValueEntity findByKey(String className) {
         KeyValueEntity exp = new KeyValueEntity();
         exp.setClassName(className);
         return queryOne(exp);
     }
-
 }

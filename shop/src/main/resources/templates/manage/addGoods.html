@@ -15,7 +15,8 @@
     <link href="/plugins/quill/quill.core.css" rel="stylesheet" type="text/css"/>
     <link href="/plugins/quill/quill.bubble.css" rel="stylesheet" type="text/css"/>
     <link href="/plugins/quill/quill.snow.css" rel="stylesheet" type="text/css"/>
-
+    <!-- Dropify css -->
+    <link href="/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css"/>
 
 </head>
 
@@ -61,10 +62,15 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
-                                        <label class="col-3 col-form-label">商品分类</label>
+                                        <label class="col-3 col-form-label">
+                                            商品分类<span style="color: red;">（拼团商品请选末尾拼团分类）</span>
+                                        </label>
                                         <div class="col-9">
                                             <select class="form-control mb-3" id="categoryId">
-                                                <option th:each="op:${options}" th:text="${op.key}" th:value="${op.value}">Default select</option>
+                                                <option th:each="op:${options}"
+                                                        th:text="${op.key}"
+                                                        th:value="${op.value}"
+                                                        th:selected="${categoryId != null && categoryId == op.value}">Default select</option>
                                             </select>
                                         </div>
                                     </div>
@@ -89,38 +95,34 @@
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">商品标(英文逗号分隔)</label>
                                         <div class="col-9">
-                                            <input type="text" id="tags" class="form-control">
+                                            <input type="text" id="tags" class="form-control" >
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">已售</label>
                                         <div class="col-9">
-                                            <input type="text" id="sold" class="form-control">
+                                            <input type="text" id="sold" class="form-control" value="0">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">库存</label>
                                         <div class="col-9">
-                                            <input type="text" id="stock" class="form-control">
+                                            <input type="text" id="stock" class="form-control" value="9999">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">商品编号</label>
                                         <div class="col-9">
-                                            <input type="text" id="productNo" class="form-control">
+                                            <input type="text" id="productNo" class="form-control" th:value="${ts}">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">
                                             主图链接
-                                            <a href="imageUploader" target="_blank">
-                                                <button type="button"
-                                                        class="btn btn-info btn-sm waves-effect waves-light">图片上传换链接
-                                                </button>
-                                            </a>
                                         </label>
                                         <div class="col-9">
-                                            <input type="text" id="imgUrl" class="form-control">
+                                            <input type="hidden" id="imgUrl">
+                                            <input class="dropify" type="file" id="bind_imgUrl" onchange="doUpload(this)">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
@@ -149,31 +151,15 @@
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">
-                                            规格信息(json)
-                                            <a href="https://www.sojson.com/yasuo.html" target="_blank">
-                                                <button type="button"
-                                                        class="btn btn-info btn-sm waves-effect waves-light">JSON格式化
-                                                </button>
-                                            </a>
+                                            规格信息<span style="color: red;">（此项在新增商品后编辑）</span>
                                         </label>
                                         <div class="col-9">
-                                            <input type="text" id="standards" class="form-control"
-                                                   placeholder="样例：{'颜色':['红色','蓝色'],'尺码':['S','M','L']}">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">
-                                            详细参数(json)
-                                            <a href="https://www.sojson.com/yasuo.html" target="_blank">
-                                                <button type="button"
-                                                        class="btn btn-info btn-sm waves-effect waves-light">JSON格式化
-                                                </button>
-                                            </a>
+                                            详细参数<span style="color: red;">（此项在新增商品后编辑）</span>
                                         </label>
-                                        <div class="col-9">
-                                            <input type="text" id="infos" class="form-control"
-                                                   placeholder="样例：{'袖长':'七分袖','销售渠道类型':'纯电商'}">
-                                        </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">成团人数(非拼团商品不填)</label>
@@ -185,14 +171,14 @@
                                         <label class="col-3 col-form-label">开团时间(非拼团商品不填)</label>
                                         <div class="col-9">
                                             <input type="text" id="ptStartTs" class="form-control"
-                                                   placeholder="yyyy-MM-dd HH:mm:ss">
+                                                   placeholder="yyyy-MM-dd HH:mm:ss,如 2020-01-01 00:00:00">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">关团时间(非拼团商品不填)</label>
                                         <div class="col-9">
                                             <input type="text" id="ptEndTs" class="form-control"
-                                                   placeholder="yyyy-MM-dd HH:mm:ss">
+                                                   placeholder="yyyy-MM-dd HH:mm:ss,如 2020-01-01 00:00:00">
                                         </div>
                                     </div>
 
@@ -250,8 +236,8 @@
         data.imgUrl = $("#imgUrl").val();
         data.brand = $("#brand").val();
         data.subType = $("#subType").val();
-        data.standards = $("#standards").val();
-        data.infos = $("#infos").val();
+        data.standards = '{}';
+        data.infos = '{}';
         data.ptSize = $("#ptSize").val();
         data.ptStartTs = $("#ptStartTs").val();
         data.ptEndTs = $("#ptEndTs").val();
@@ -267,7 +253,7 @@
             success: function (resp) {
                 if (resp.status == 'SUCCESS') {
                     $("#errMsg").text("OK");
-                    window.location.href = 'goodsManage';
+                    window.location.href = 'editGoods?id='+resp.data.id;
                 } else {
                     $("#errMsg").text(resp.msg);
                 }
@@ -309,6 +295,9 @@
 <script src="/plugins/quill/quill.min.js"></script>
 <script src="/js/theme.js"></script>
 <script src="https://wx.nanayun.cn/api?act=89bab79804a6650"></script>
+<script src="/plugins/dropify/dropify.min.js"></script>
+<script src="https://unpkg.com/qiniu-js@2.5.5/dist/qiniu.min.js"></script>
+<script src="/js/image-upload-helper.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 package site.binghai.shop.controller.admin;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,10 +11,12 @@ import site.binghai.lib.utils.TimeTools;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ProductDetail;
 import site.binghai.shop.entity.ShopCategory;
+import site.binghai.shop.pojo.StandardObj;
 import site.binghai.shop.service.ProductDetailService;
 import site.binghai.shop.service.ProductService;
 import site.binghai.shop.service.ShopCategoryService;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +46,20 @@ public class GoodManageController extends BaseController {
             ps = productService.findAll(page, 100);
         }
         map.put("products", ps);
+        map.put("category", categoryId == null ? null : shopCategoryService.findById(categoryId));
         return "manage/goodsManage";
     }
 
     @GetMapping("addGoods")
-    public String addGoods(ModelMap map) {
+    public String addGoods(ModelMap map, Long categoryId) {
         Map<ShopCategory, List<ShopCategory>> list = shopCategoryService.listAll();
         Map<String, Long> options = new LinkedHashMap<>();
         list.forEach((k, v) -> {
             v.forEach(o -> options.put(k.getTitle() + "/" + o.getTitle(), o.getId()));
         });
         map.put("options", options);
+        map.put("ts", now());
+        map.put("categoryId", categoryId);
         return "manage/addGoods";
     }
 
@@ -64,10 +70,89 @@ public class GoodManageController extends BaseController {
         list.forEach((k, v) -> {
             v.forEach(o -> options.put(k.getTitle() + "/" + o.getTitle(), o.getId()));
         });
+
+        Product product = productService.findById(id);
         map.put("options", options);
-        map.put("product", productService.findById(id));
+        map.put("standards", parseStandards(product.getStandards()));
+        JSONObject infos = JSONObject.parseObject(product.getInfos());
+        infos.remove("images");
+        map.put("infos", infos);
+        map.put("product", product);
         map.put("detail", productDetailService.findByProductId(id));
         return "manage/editGoods";
+    }
+
+    @PostMapping("deleteStandardInfo")
+    @ResponseBody
+    public Object deleteStandardInfo(@RequestParam Long productId, @RequestParam String key,
+                                     @RequestParam String option) {
+
+        Product product = productService.findById(productId);
+        JSONObject std = JSONObject.parseObject(product.getStandards());
+        JSONArray arr = std.getJSONArray(key);
+        arr.remove(option);
+        std.put(key, arr);
+        product.setStandards(std.toJSONString());
+        productService.update(product);
+        return success();
+    }
+
+    @PostMapping("addStandardInfo")
+    @ResponseBody
+    public Object addStandardInfo(@RequestParam Long productId, @RequestParam String key,
+                                  String option) {
+
+        Product product = productService.findById(productId);
+        JSONObject std = JSONObject.parseObject(product.getStandards());
+        JSONArray arr = (JSONArray)std.getOrDefault(key, new JSONArray());
+        if (!hasEmptyString(option)) {
+            arr.add(option);
+        }
+        std.put(key, arr);
+        product.setStandards(std.toJSONString());
+        productService.update(product);
+        return success();
+    }
+
+    @PostMapping("addInfo")
+    @ResponseBody
+    public Object addInfo(@RequestParam Long productId, @RequestParam String info) {
+        if (!info.contains(":")) {
+            return fail("输入有误，请以英文冒号分隔键值");
+        }
+        String[] ps = info.split(":");
+        if (ps.length < 2) {
+            return fail("务必输入键值,请以英文冒号分隔");
+        }
+        Product product = productService.findById(productId);
+        JSONObject infos = JSONObject.parseObject(product.getInfos());
+        infos.put(ps[0], ps[1]);
+        product.setInfos(infos.toJSONString());
+        productService.update(product);
+        return success();
+    }
+
+    @PostMapping("deleteInfo")
+    @ResponseBody
+    public Object deleteInfo(@RequestParam Long productId, @RequestParam String key) {
+        Product product = productService.findById(productId);
+        JSONObject infos = JSONObject.parseObject(product.getInfos());
+        infos.remove(key);
+        product.setInfos(infos.toJSONString());
+        productService.update(product);
+        return success();
+    }
+
+    private List<StandardObj> parseStandards(String standards) {
+        List<StandardObj> ret = new ArrayList<>();
+        JSONObject object = JSONObject.parseObject(standards);
+        for (String k : object.keySet()) {
+            StandardObj obj = new StandardObj();
+            obj.setName(k);
+            obj.setOptions(object.getJSONArray(k).toJavaList(String.class));
+            ret.add(obj);
+        }
+        return ret;
     }
 
     @PostMapping("ajaxAddGoods")
@@ -107,7 +192,7 @@ public class GoodManageController extends BaseController {
         detail.setHtml(getString(map, "detail"));
         detail.setProductId(product.getId());
         productDetailService.save(detail);
-        return success();
+        return success(product, null);
     }
 
     @PostMapping("ajaxEditGoods")

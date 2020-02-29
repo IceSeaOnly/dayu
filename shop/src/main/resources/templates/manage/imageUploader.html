@@ -42,20 +42,17 @@
                         </div>
                     </div>
                 </div>
-                <input id="uploadToken" type="hidden"/>
                 <!-- end page title -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <input type="file" id="picImg" class="dropify" data-height="300"/>
+                                <input type="file" id="bind-picImg" class="dropify" data-height="300"
+                                       onchange="doUpload(this)"/>
                                 <form>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" id="urlShown" placeholder="url会出现在这里">
+                                        <input type="text" class="form-control" id="picImg" placeholder="url会出现在这里">
                                     </div>
-                                    <button type="button" onclick="doUpload()"
-                                            class="btn btn-primary waves-effect waves-light">上传
-                                    </button>
                                 </form>
                             </div> <!-- end card-body-->
                         </div> <!-- end card-->
@@ -84,14 +81,11 @@
 <script src="/js/waves.js"></script>
 <script src="/js/simplebar.min.js"></script>
 
-<script src="https://unpkg.com/qiniu-js@2.5.5/dist/qiniu.min.js"></script>
-
 <!-- Sparkline Js-->
 <script src="/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
 <!-- Chart Js-->
 <script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
 <!-- Chart Custom Js-->
-<script src="/plugins/dropify/dropify.min.js"></script>
 <!-- Morris Js-->
 <script src="/plugins/morris-js/morris.min.js"></script>
 <!-- Raphael Js-->
@@ -100,59 +94,9 @@
 <!--<script src="assets/pages/dashboard-demo.js"></script>-->
 <!-- App js -->
 <script src="/js/theme.js"></script>
-
-<script>
-    $(".dropify").dropify({
-        "messages": {
-            "default": "Drag and drop a file here or click",
-            "replace": "Drag and drop or click to replace",
-            "remove": "Remove",
-            "error": "Ooops, something wrong appended."
-        },
-        "error": {
-            "fileSize": "The file size is too big (1M max)."
-        }
-    });
-
-    <!-- 七牛代码begin -->
-
-    function reloadToken() {
-        $.getJSON('https://wx.nanayun.cn/qiniuToken', function (resp) {
-            $("#uploadToken").val(resp.data);
-        })
-    }
-
-    function doUpload() {
-
-        var putExtra = {
-            fname: guid2(), //文件原文件名
-            params: {},//用来放置自定义变量
-            mimeType: null
-        };
-        var config = {
-            useCdnDomain: true,
-            region: qiniu.region.z2
-        };
-        var observable = qiniu.upload($("#picImg")[0].files[0], guid2() + ".png", $("#uploadToken").val(), putExtra, config);
-        var subscription = observable.subscribe(console.log, console.log, uploadCallback);
-    }
-
-    function uploadCallback(res) {
-        $("#urlShown").val("http://cdn.binghai.site/" + res.key);
-        reloadToken();
-    }
-
-    function guid2() {
-        function S4() {
-            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-        }
-
-        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-    }
-
-    reloadToken();
-    <!-- 七牛代码end -->
-</script>
+<script src="/plugins/dropify/dropify.min.js"></script>
+<script src="https://unpkg.com/qiniu-js@2.5.5/dist/qiniu.min.js"></script>
+<script src="/js/image-upload-helper.js"></script>
 </body>
 
 </html>
