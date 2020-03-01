@@ -110,7 +110,7 @@
 <div class="kbox"></div>
 <div class="clear"></div>
 <div class="w100">
-    <img src="/images/ad.jpg"/>
+    <img th:src="${ad.indexMiddleAdImg}"/>
 </div>
 <div class="clear"></div>
 <div class="kbox"></div>
@@ -150,22 +150,32 @@
         <a th:href="${pinWall.moreUrl}" class="more">更多</a>
     </div>
     <div class="hotM_3">
-        <div class="hotM_3L">
-            <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.leftImg+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-        </div>
+        <a th:href="${pinWall.leftImgTarget}">
+            <div class="hotM_3L">
+                <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.leftImg+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+            </div>
+        </a>
         <div class="hotM_3R">
-            <div class="hotM_3R_1">
-                <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right01+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
-            <div class="hotM_3R_1 br">
-                <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right02+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
-            <div class="hotM_3R_1">
-                <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right03+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
-            <div class="hotM_3R_1 br">
-                <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right04+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
+            <a th:href="${pinWall.right01Target}">
+                <div class="hotM_3R_1">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right01+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
+            <a th:href="${pinWall.right01Target}">
+                <div class="hotM_3R_1 br">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right02+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
+            <a th:href="${pinWall.right01Target}">
+                <div class="hotM_3R_1">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right03+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
+            <a th:href="${pinWall.right01Target}">
+                <div class="hotM_3R_1 br">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+pinWall.right04+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
         </div>
     </div>
 </div>
@@ -180,37 +190,55 @@
         <a th:href="${hot.moreUrl}" class="more">更多</a>
     </div>
     <div class="hotM_4">
-        <div class="hotM_4L">
-            <div th:style="${'width:100%; height:100%;background-image:url('+hot.leftBig+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-        </div>
+        <a th:href="${hot.leftBigTarget}">
+            <div class="hotM_4L">
+                <div th:style="${'width:100%; height:100%;background-image:url('+hot.leftBig+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+            </div>
+        </a>
         <div class="hotM_4R">
-            <div class="hotM_4R_1">
-                <div th:style="${'width:100%; height:100%;background-image:url('+hot.right1+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
-            <div class="hotM_4R_1 br">
-                <div th:style="${'width:100%; height:100%;background-image:url('+hot.right2+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
-            <div class="hotM_4R_1">
-                <div th:style="${'width:100%; height:100%;background-image:url('+hot.right3+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
-            <div class="hotM_4R_1 br">
-                <div th:style="${'width:100%; height:100%;background-image:url('+hot.right4+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-            </div>
+            <a th:href="${hot.right1Target}">
+                <div class="hotM_4R_1">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+hot.right1+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
+            <a th:href="${hot.right2Target}">
+                <div class="hotM_4R_1 br">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+hot.right2+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
+            <a th:href="${hot.right3Target}">
+                <div class="hotM_4R_1">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+hot.right3+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
+            <a th:href="${hot.right4Target}">
+                <div class="hotM_4R_1 br">
+                    <div th:style="${'width:100%; height:100%;background-image:url('+hot.right4+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+                </div>
+            </a>
         </div>
     </div>
     <div class="hotM_5">
-        <div class="hotM_5L">
-            <div th:style="${'width:100%; height:100%;background-image:url('+hot.down1+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-        </div>
-        <div class="hotM_5L">
-            <div th:style="${'width:100%; height:100%;background-image:url('+hot.down2+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-        </div>
-        <div class="hotM_5L">
-            <div th:style="${'width:100%; height:100%;background-image:url('+hot.down3+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-        </div>
-        <div class="hotM_5L br">
-            <div th:style="${'width:100%; height:100%;background-image:url('+hot.down4+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
-        </div>
+        <a th:href="${hot.down1Target}">
+            <div class="hotM_5L">
+                <div th:style="${'width:100%; height:100%;background-image:url('+hot.down1+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+            </div>
+        </a>
+        <a th:href="${hot.down2Target}">
+            <div class="hotM_5L">
+                <div th:style="${'width:100%; height:100%;background-image:url('+hot.down2+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+            </div>
+        </a>
+        <a th:href="${hot.down3Target}">
+            <div class="hotM_5L">
+                <div th:style="${'width:100%; height:100%;background-image:url('+hot.down3+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+            </div>
+        </a>
+        <a th:href="${hot.down4Target}">
+            <div class="hotM_5L br">
+                <div th:style="${'width:100%; height:100%;background-image:url('+hot.down4+'); background-repeat:no-repeat; background-position:center center; background-size:contain'}"></div>
+            </div>
+        </a>
     </div>
 </div>
 <div class="clear"></div>

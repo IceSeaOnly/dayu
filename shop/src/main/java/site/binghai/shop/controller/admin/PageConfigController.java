@@ -8,6 +8,7 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.anno.Conf;
 import site.binghai.shop.def.KvSupport;
 import site.binghai.shop.entity.KeyValueEntity;
+import site.binghai.shop.kv.AdImg;
 import site.binghai.shop.kv.IndexHotTopicImgWall;
 import site.binghai.shop.kv.PinTuanIndexImgWall;
 import site.binghai.shop.pojo.ConfObj;
@@ -33,6 +34,7 @@ public class PageConfigController extends BaseController {
         Map<ConfObj, List<ConfObj>> configs = new LinkedHashMap<>();
         join(configs, IndexHotTopicImgWall.class);
         join(configs, PinTuanIndexImgWall.class);
+        join(configs, AdImg.class);
         map.put("configs", configs);
         map.put("msg", update != null ? "更新成功" : null);
         return "manage/pageConfig";
@@ -59,7 +61,11 @@ public class PageConfigController extends BaseController {
                     ConfObj o = new ConfObj();
                     o.setName(cf.value());
                     o.setFieldName(field.getName());
-                    o.setValue(cf.json() ? toJSONString(v) : String.valueOf(field.get(v)));
+                    if (v == null) {
+                        o.setValue("{}");
+                    } else {
+                        o.setValue(cf.json() ? toJSONString(v) : String.valueOf(field.get(v)));
+                    }
                     list.add(o);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -17,7 +17,6 @@ import site.binghai.shop.service.ShopCollectionService;
 import site.binghai.shop.service.ShopOrderService;
 
 /**
- *
  * @date 2020/2/2 下午8:37
  **/
 @RequestMapping("shop")
@@ -72,6 +71,12 @@ public class MyController extends BaseController {
         wxUserService.update(user);
         persistent(user);
         return "redirect:my";
+    }
+
+    @GetMapping("relogin")
+    public String relogin() {
+        getSession().invalidate();
+        return "redirect:myInfo";
     }
 
     private boolean needCompleteInfo(WxUser wxUser) {

@@ -155,14 +155,14 @@
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">描述评价(满分5分)</label>
                                         <div class="col-9">
-                                            <input type="text" id="starOfDesc" th:value="${product.starOfDesc}"
+                                            <input type="text" id="starOfDesc" th:value="${#numbers.formatDecimal(product.starOfDesc,1,1)}"
                                                    class="form-control" value="5.0">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">质量评价(满分5分)</label>
                                         <div class="col-9">
-                                            <input type="text" id="starOfQuality" th:value="${product.starOfQuality}"
+                                            <input type="text" id="starOfQuality" th:value="${#numbers.formatDecimal(product.starOfQuality,1,1)}"
                                                    class="form-control" value="5.0">
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">开团时间(非拼团商品不填)</label>
                                         <div class="col-9">
-                                            <input type="text" id="ptStartTs" th:value="${product.ptStartTs}"
+                                            <input type="text" id="ptStartTs" th:value="${ptStartTs}"
                                                    class="form-control"
                                                    placeholder="yyyy-MM-dd HH:mm:ss,如 2020-01-01 00:00:00">
                                         </div>
@@ -260,7 +260,7 @@
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">关团时间(非拼团商品不填)</label>
                                         <div class="col-9">
-                                            <input type="text" id="ptEndTs" th:value="${product.ptEndTs}"
+                                            <input type="text" id="ptEndTs" th:value="${ptEndTs}"
                                                    class="form-control"
                                                    placeholder="yyyy-MM-dd HH:mm:ss,如 2020-01-01 00:00:00">
                                         </div>

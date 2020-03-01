@@ -37,16 +37,20 @@ public class GoodManageController extends BaseController {
     private ProductDetailService productDetailService;
 
     @GetMapping("goodsManage")
-    public String goodsManage(Long categoryId, ModelMap map, Integer page) {
+    public String goodsManage(Long categoryId, ModelMap map, Integer page, Boolean offline) {
         page = page == null ? 0 : page;
-        List<Product> ps = null;
-        if (categoryId != null) {
-            ps = productService.searchByCategory(categoryId);
-        } else {
-            ps = productService.findAll(page, 100);
-        }
+        page = Math.max(0, page);
+
+        Product exp = new Product();
+        exp.setCategoryId(categoryId);
+        exp.setOffline(offline);
+        List<Product> ps = productService.pageQuery(exp, page, 100);
+
+        map.put("offline", String.valueOf(offline));
+        map.put("page", page);
         map.put("products", ps);
         map.put("category", categoryId == null ? null : shopCategoryService.findById(categoryId));
+        map.put("categoryId", categoryId == null ? "" : categoryId);
         return "manage/goodsManage";
     }
 
@@ -78,6 +82,8 @@ public class GoodManageController extends BaseController {
         infos.remove("images");
         map.put("infos", infos);
         map.put("product", product);
+        map.put("ptStartTs", product.getPtStartTs() == null ? "" : TimeTools.format(product.getPtStartTs()));
+        map.put("ptEndTs", product.getPtEndTs() == null ? "" : TimeTools.format(product.getPtEndTs()));
         map.put("detail", productDetailService.findByProductId(id));
         return "manage/editGoods";
     }
@@ -238,10 +244,21 @@ public class GoodManageController extends BaseController {
     }
 
     @GetMapping("changeOffline")
-    public String changeOffline(@RequestParam Long id) {
+    @ResponseBody
+    public Object changeOffline(@RequestParam Long id) {
         Product product = productService.findById(id);
         product.setOffline(!product.getOffline());
         productService.update(product);
-        return "redirect:goodsManage";
+        return success();
+    }
+
+    @GetMapping("removeItem")
+    @ResponseBody
+    public Object removeItem(@RequestParam Long id) {
+        Product product = productService.findById(id);
+        product.setOffline(true);
+        product.setCategoryId(1000L);
+        productService.update(product);
+        return success();
     }
 }

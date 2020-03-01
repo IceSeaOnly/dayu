@@ -36,19 +36,49 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-flex align-items-center justify-content-between">
-                            <h4 class="mb-0 font-size-18" th:text="${category == null?'商品管理':'商品管理/'+category.title}">商品管理</h4>
+                            <h4 class="mb-0 font-size-18" th:text="${category == null?'商品管理':'商品管理/'+category.title}">
+                                商品管理</h4>
                         </div>
                     </div>
                 </div>
                 <!-- end page title -->
-                <div class="row">
+                <div class="row" th:if="${category != null && category.id != 1000}">
                     <div class="col-xl-4">
                         <a th:href="${category == null?'addGoods':'addGoods?categoryId='+category.id}">
                             <button type="button" class="btn btn-secondary waves-effect waves-light"
-                                    th:text="${category == null?'增加商品':'增加【'+category.title+'】分类下的商品'}">增加商品</button>
+                                    th:text="${category == null?'增加商品':'增加【'+category.title+'】分类下的商品'}">增加商品
+                            </button>
                         </a>
                     </div>
                 </div>
+
+                <ul class="nav nav-tabs mb-3" style="padding-top: 15px">
+                    <li class="nav-item"
+                        th:onclick="${'window.location.href=''?categoryId='+categoryId+'&page='+page+'&offline=false'''}">
+                        <a href="#" data-toggle="tab" aria-expanded="false"
+                           th:class="${offline == 'false'?'nav-link active':'nav-link'}">
+                            <i class="mdi mdi-home-variant d-lg-none d-block"></i>
+                            <span class="d-none d-lg-block">上架中</span>
+                        </a>
+                    </li>
+                    <li class="nav-item"
+                        th:onclick="${'window.location.href=''?categoryId='+categoryId+'&page='+page+'&offline=true'''}">
+                        <a href="#" data-toggle="tab" aria-expanded="false"
+                           th:class="${offline == 'true'?'nav-link active':'nav-link'}">
+                            <i class="mdi mdi-account-circle d-lg-none d-block"></i>
+                            <span class="d-none d-lg-block">已下架</span>
+                        </a>
+                    </li>
+                    <li class="nav-item"
+                        th:onclick="${'window.location.href=''?categoryId='+categoryId+'&page='+page+'&offline='''}">
+                        <a href="" data-toggle="tab" aria-expanded="false"
+                           th:class="${offline == 'null'?'nav-link active':'nav-link'}">
+                            <i class="mdi mdi-settings-outline d-lg-none d-block"></i>
+                            <span class="d-none d-lg-block">全部</span>
+                        </a>
+                    </li>
+                </ul>
+
                 <div style="height: 10px"></div>
                 <div class="row">
                     <div class="col-md-6 col-xl-3" th:each="prd:${products}">
@@ -66,25 +96,63 @@
                                 <div style="height: 5px"></div>
                                 <h6 class="card-subtitle text-muted">
                                     <g th:text="${prd.tags}"></g>
-                                    <g th:text="${'描述:'+prd.starOfDesc}"></g>
-                                    <g th:text="${'质量:'+prd.starOfQuality}"></g>
+                                    <g th:text="${'描述:'+#numbers.formatDecimal(prd.starOfDesc,1,1)}"></g>
+                                    <g th:text="${'质量:'+#numbers.formatDecimal(prd.starOfQuality,1,1)}"></g>
                                 </h6>
                                 <p class="card-text" th:text="${prd.simpleDesc}">sssss.</p>
 
-                                <a th:href="${'changeOffline?id='+prd.id}">
-                                    <button type="button" th:if="${prd.offline == true}" class="btn btn-success btn-sm waves-effect waves-light">上架
+                                <div class="btn-group mb-2">
+                                    <a th:href="${'javascript:offline('+prd.id+')'}">
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm waves-effect waves-light">上下架商品
+                                        </button>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-light  btn-sm dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="mdi mdi-chevron-down"></i><span class="sr-only">Toggle Dropdown</span>
                                     </button>
-                                </a>
-                                <a th:href="${'changeOffline?id='+prd.id}">
-                                    <button type="button" th:if="${prd.offline == false}" class="btn btn-danger btn-sm waves-effect waves-light">下架
+                                    <div class="dropdown-menu" x-placement="bottom-start"
+                                         style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(95px, 35px, 0px);">
+                                        <a class="dropdown-item" th:href="${'javascript:removeItem('+prd.id+')'}" style="color:red">移除</a>
+                                    </div>
+                                </div>
+                                <div class="btn-group mb-2">
+                                    <a th:href="${'editGoods?id='+prd.id}">
+                                        <button type="button" class="btn btn-info btn-sm waves-effect waves-light">编辑
+                                        </button>
+                                    </a>
+                                </div>
+                                <div class="btn-group mb-2">
+                                    <button type="button" th:onclick="${'copyCategoryUrl('+prd.id+')'}"
+                                            class="btn btn-warning btn-sm waves-effect waves-light">链接
                                     </button>
-                                </a>
-                                <a th:href="${'editGoods?id='+prd.id}">
-                                    <button type="button" class="btn btn-info btn-sm waves-effect waves-light">管理
-                                    </button>
-                                </a>
+                                </div>
+
                             </div>
                         </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link waves-effect"
+                                   th:href="${'?categoryId='+categoryId+'&page='+(page-1)+'&offline='+offline}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">上一页</span>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link waves-effect" th:text="${page}">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   th:href="${'?categoryId='+categoryId+'&page='+(page+1)+'&offline='+offline}"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">下一页</span>
+                                </a>
+                            </li>
+                        </ul>
 
                     </div>
                 </div>
@@ -103,7 +171,49 @@
 <!-- Overlay-->
 <div class="menu-overlay"></div>
 
+<script th:inline="javascript">
+    var baseUrl = [[${categoryId == 999?'http://fastshop.bigdata8.xin/shop/ptDetail?item=':'http://fastshop.bigdata8.xin/shop/detail?productId='}]]
 
+    function copyCategoryUrl(cid) {
+        if (copyText(baseUrl + cid)) {
+            alert("复制成功!");
+        } else {
+            alert("复制失败!浏览器不支持");
+        }
+    }
+
+    function offline(pid) {
+        $.get('changeOffline?id=' + pid, function (resp) {
+            window.location.reload();
+        })
+    }
+
+    function removeItem(pid) {
+        $.get('removeItem?id=' + pid, function (resp) {
+            window.location.reload();
+        })
+    }
+
+    function copyText(text) {
+        var textarea = document.createElement("input");//创建input对象
+        var currentFocus = document.activeElement;//当前获得焦点的元素
+        document.body.appendChild(textarea);//添加元素
+        textarea.value = text;
+        textarea.focus();
+        if (textarea.setSelectionRange)
+            textarea.setSelectionRange(0, textarea.value.length);//获取光标起始位置到结束位置
+        else
+            textarea.select();
+        try {
+            var flag = document.execCommand("copy");//执行复制
+        } catch (eo) {
+            var flag = false;
+        }
+        document.body.removeChild(textarea);//删除元素
+        currentFocus.focus();
+        return flag;
+    }
+</script>
 <!-- jQuery  -->
 <script src="/js/jquery-1.8.1.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>

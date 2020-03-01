@@ -50,38 +50,94 @@
                 </div>
                 <div style="height: 10px"></div>
                 <div class="row">
-                    <div class="col-xl-4" th:each="cat:${categories}">
-                        <div class="card" >
+                    <div class="col-xl-4" th:each="cat:${categories}" th:if="${cat.key.id != 998}">
+                        <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title" th:text="${cat.key.title}">Unordered</h4>
-                                <p class="card-subtitle mb-4"  th:if="${cat.key.id != 998}">状态:
-                                    <b th:if="${cat.key.hidden}" style="color: red">隐藏中</b>
-                                    <b th:if="${cat.key.hidden == false}" style="color: green">展示中</b>
-                                    <a th:href="${'showChange?cid='+cat.key.id}"><button th:if="${cat.key.hidden}" type="button" class="btn btn-success btn-sm waves-effect waves-light">改为展示</button></a>
-                                    <a th:href="${'showChange?cid='+cat.key.id}"><button th:if="${cat.key.hidden == false}" type="button" class="btn btn-danger btn-sm waves-effect waves-light">改为隐藏</button></a>
-                                    <a th:href="${'addCategory?superId='+cat.key.id}"><button type="button" class="btn btn-secondary btn-sm waves-effect waves-light">增加子类</button></a>
-                                    <a th:href="${'editCategory?catId='+cat.key.id}"><button type="button" class="btn btn-info btn-sm waves-effect waves-light">管理</button></a>
-                                </p>
-                                <ul  th:if="${cat.key.id != 998}">
+                                <h4 class="card-title" th:text="${cat.key.title}"
+                                    th:style="${'color:'+(cat.key.hidden?'red':'green')}">Unordered</h4>
+                                <div class="btn-group mb-2">
+                                    <a th:href="${'addCategory?superId='+cat.key.id}">
+                                        <button type="button" class="btn btn-light btn-sm waves-effect waves-light">
+                                            增加子类
+                                        </button>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-info btn-sm dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="mdi mdi-chevron-down"></i><span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <div class="dropdown-menu" x-placement="bottom-start"
+                                         style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(95px, 35px, 0px);">
+                                        <a class="dropdown-item" th:href="${'editCategory?catId='+cat.key.id}">编辑</a>
+                                        <a class="dropdown-item" th:href="${'showChange?cid='+cat.key.id}">隐藏/展示</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#" style="color:red">删除</a>
+                                    </div>
+                                </div>
+                                <ul>
                                     <li th:each="cts:${cat.value}">
                                         <span th:text="${cts.title}">name</span>
-                                        <img th:src="${cts.imgUrl}" style="width: 50px;height: 50px" />
-                                        <a th:href="${'showChange?cid='+cts.id}"><button th:if="${cts.hidden}" type="button" class="btn btn-success btn-sm waves-effect waves-light">展示</button></a>
-                                        <a th:href="${'showChange?cid='+cts.id}"><button th:if="${cts.hidden == false}" type="button" class="btn btn-danger btn-sm waves-effect waves-light">隐藏</button></a>
-                                        <a th:href="${'editCategory?catId='+cts.id}"><button type="button" class="btn btn-info btn-sm waves-effect waves-light">编辑</button></a>
-                                        <a th:href="${'goodsManage?categoryId='+cts.id}"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light">商品</button></a>
+                                        <img th:src="${cts.imgUrl}" style="width: 50px;height: 50px"/>
+                                        <div class="btn-group mb-2">
+                                            <a th:href="${'goodsManage?categoryId='+cts.id}">
+                                                <button type="button"
+                                                        class="btn btn-light btn-sm waves-effect waves-light">管理商品
+                                                </button>
+                                            </a>
+                                            <button type="button"
+                                                    class="btn btn-secondary  btn-sm dropdown-toggle dropdown-toggle-split"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="mdi mdi-chevron-down"></i><span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(95px, 35px, 0px);">
+                                                <a class="dropdown-item"
+                                                   th:href="${'editCategory?catId='+cts.id}">编辑</a>
+                                                <a class="dropdown-item" th:href="${'showChange?cid='+cts.id}">隐藏/展示</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#" style="color:red">删除</a>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group mb-2">
+                                            <button type="button" th:onclick="${'copyCategoryUrl('+cts.id+')'}"
+                                                    class="btn btn-success btn-sm waves-effect waves-light">链接
+                                            </button>
+                                        </div>
                                     </li>
                                 </ul>
 
-                                <ul  th:if="${cat.key.id == 998}">
-                                    <li th:each="cts:${cat.value}">
-                                        <a th:href="${'goodsManage?categoryId='+cts.id}"><button type="button" class="btn btn-warning btn-sm waves-effect waves-light">商品</button></a>
-                                    </li>
-                                </ul>
 
                             </div> <!-- end card-body-->
                         </div> <!-- end card -->
-                    </div> <!-- end col-->
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">系统分组</h4>
+                                <ul>
+                                    <li>
+                                        <span>拼团商品</span>
+                                        <a href="goodsManage?categoryId=999">
+                                            <button type="button"
+                                                    class="btn btn-warning btn-sm waves-effect waves-light">管理商品
+                                            </button>
+                                        </a>
+                                        <button type="button" onclick="copyCategoryUrl(999)"
+                                                class="btn btn-success btn-sm waves-effect waves-light">复制链接
+                                        </button>
+                                    </li>
+                                    <li style="padding-top: 10px">
+                                        <span>待分组商品</span>
+                                        <a href="goodsManage?categoryId=1000">
+                                            <button type="button"
+                                                    class="btn btn-warning btn-sm waves-effect waves-light">管理商品
+                                            </button>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div> <!-- container-fluid -->
@@ -95,9 +151,37 @@
 </div>
 <!-- END layout-wrapper -->
 
+<script>
+    function copyCategoryUrl(cid) {
+        if (copyText('http://fastshop.bigdata8.xin/shop/productCategoryList?category=' + cid)) {
+            alert("复制成功!");
+        } else {
+            alert("复制失败!浏览器不支持");
+        }
+    }
+
+    function copyText(text) {
+        var textarea = document.createElement("input");//创建input对象
+        var currentFocus = document.activeElement;//当前获得焦点的元素
+        document.body.appendChild(textarea);//添加元素
+        textarea.value = text;
+        textarea.focus();
+        if (textarea.setSelectionRange)
+            textarea.setSelectionRange(0, textarea.value.length);//获取光标起始位置到结束位置
+        else
+            textarea.select();
+        try {
+            var flag = document.execCommand("copy");//执行复制
+        } catch (eo) {
+            var flag = false;
+        }
+        document.body.removeChild(textarea);//删除元素
+        currentFocus.focus();
+        return flag;
+    }
+</script>
 <!-- Overlay-->
 <div class="menu-overlay"></div>
-
 
 <!-- jQuery  -->
 <script src="/js/jquery-1.8.1.min.js"></script>
