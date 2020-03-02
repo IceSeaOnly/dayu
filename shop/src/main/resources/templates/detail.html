@@ -64,7 +64,7 @@
                         data: JSON.stringify(submitForm),
                         success: function (resp) {
                             if (resp.status == 'SUCCESS') {
-                                window.location.href = 'buyConfirm?cartIds='+resp.data.id
+                                window.location.href = 'buyConfirm?cartIds=' + resp.data.id
                             } else {
                                 errorInfo(resp.msg);
                             }
@@ -165,7 +165,7 @@
         </div>
         <div class="hdbox_3">
             <!--<a onclick="javascript:history.back(-1)"><img src="/images/h2.png"/></a>-->
-            <a href="cart"><img src="/images/h1.png"/></a>
+            <a href="cart"><img src="http://cdn.binghai.site/b7cd20d8-9e78-9ab1-d6c5-16b477bbb43d.png"/></a>
         </div>
     </div>
 </div>
@@ -305,7 +305,7 @@
     </div>
     <div class="Contentbox">
         <div id="con_two_1">
-            <div class="xqsub" th:utext="${detail.html}">
+            <div class="xqsub" id="detailHtmlContainer">
                 <!--html here-->
             </div>
             <div style="height: 100px"></div>
@@ -403,6 +403,11 @@
             </div>
         </div>
     </div>
-
+</div>
+<script th:inline="javascript">
+    $.get([[${detail.html}]],function (resp) {
+        $("#detailHtmlContainer").html(resp);
+    });
+</script>
 </body>
 </html>

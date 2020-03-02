@@ -40,9 +40,16 @@
                                 商品管理</h4>
                         </div>
                     </div>
+                    <div class="col-12" th:if="${category != null && category.id == 999}">
+                        <div class="page-title-box d-flex  justify-content-between">
+                            <div class="alert alert-success" role="alert" >
+                                拼团推荐商品会展示在"今日秒拼"栏目
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- end page title -->
-                <div class="row" th:if="${category != null && category.id != 1000}">
+                <div class="row" >
                     <div class="col-xl-4">
                         <a th:href="${category == null?'addGoods':'addGoods?categoryId='+category.id}">
                             <button type="button" class="btn btn-secondary waves-effect waves-light"
@@ -87,6 +94,15 @@
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${prd.title+(prd.offline?'(下架)':'')}"
                                     th:style="${'color:'+(prd.offline?'red':'green')}">Card title</h5>
+                                <span class="badge badge-danger badge-pill" th:if="${prd.recommend != null && prd.recommend}">荐</span>
+
+                                <span class="badge badge-secondary" th:if="${prd.ptSize != null}">拼团商品</span>
+                                <span class="badge badge-warning" th:if="${prd.ptSize == null}">普通商品</span>
+                                <span class="badge badge-info" th:text="${'描述:'+#numbers.formatDecimal(prd.starOfDesc,1,1)}">普通商品</span>
+                                <span class="badge badge-info" th:text="${'质量:'+#numbers.formatDecimal(prd.starOfQuality,1,1)}">普通商品</span>
+
+                                <span class="badge badge-light" th:if="${prd.tags != null}" th:each="p:${prd.tags.split(',')}" th:text="${p}">普通商品</span>
+                                <div style="height: 10px"></div>
                                 <h6 class="card-subtitle text-muted">
                                     <b th:text="${'￥'+prd.price/100.0}" style="color: green"></b>
                                     <del th:text="${'￥'+prd.previousPrice/100.0}" style="color: black"></del>
@@ -94,11 +110,9 @@
                                     <g th:text="${'库存:'+prd.stock}"></g>
                                 </h6>
                                 <div style="height: 5px"></div>
-                                <h6 class="card-subtitle text-muted">
-                                    <g th:text="${prd.tags}"></g>
-                                    <g th:text="${'描述:'+#numbers.formatDecimal(prd.starOfDesc,1,1)}"></g>
-                                    <g th:text="${'质量:'+#numbers.formatDecimal(prd.starOfQuality,1,1)}"></g>
-                                </h6>
+                                <!--<h6 class="card-subtitle text-muted">-->
+
+                                <!--</h6>-->
                                 <p class="card-text" th:text="${prd.simpleDesc}">sssss.</p>
 
                                 <div class="btn-group mb-2">
@@ -114,6 +128,8 @@
                                     </button>
                                     <div class="dropdown-menu" x-placement="bottom-start"
                                          style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(95px, 35px, 0px);">
+                                        <a class="dropdown-item" th:href="${'javascript:recommend('+prd.id+')'}" style="color:green">推荐/取消</a>
+                                        <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" th:href="${'javascript:removeItem('+prd.id+')'}" style="color:red">移除</a>
                                     </div>
                                 </div>
@@ -184,6 +200,12 @@
 
     function offline(pid) {
         $.get('changeOffline?id=' + pid, function (resp) {
+            window.location.reload();
+        })
+    }
+
+    function recommend(pid) {
+        $.get('recommendProduct?id=' + pid, function (resp) {
             window.location.reload();
         })
     }

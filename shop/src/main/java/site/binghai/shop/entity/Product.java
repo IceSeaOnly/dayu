@@ -43,6 +43,7 @@ public class Product extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String infos;
     private Boolean offline;
+    private Boolean recommend;
     private Double starOfDesc;
     private Double starOfQuality;
 

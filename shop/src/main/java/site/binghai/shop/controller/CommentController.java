@@ -58,8 +58,8 @@ public class CommentController extends BaseController {
             Product product = productService.findById(order.getProductId());
             product.resetStarOfDesc(getDouble(map, "desc_star"));
             product.resetStarOfQuality(getDouble(map, "quality_star"));
-            order.setStartOfService(getInteger(map, "service_star"));
-            order.setStartOfShip(getInteger(map, "ship_star"));
+            order.setStarOfService(getInteger(map, "service_star"));
+            order.setStarOfShip(getInteger(map, "ship_star"));
 
             ProductComment pc = new ProductComment();
             pc.setProductId(product.getId());

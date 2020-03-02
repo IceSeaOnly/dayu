@@ -29,22 +29,22 @@
 
 <body>
 <!--<div class="headerbox">-->
-    <!--<div class="header">-->
-        <!--<div class="headerL">-->
-            <!--<a href="index" class="goback"><img src="/images/goback.png"/></a>-->
-        <!--</div>-->
-        <!--<div class="headerC0">-->
-            <!--<div class="ssdiv">-->
-                <!--<form action="search" method="get" id="searchForm">-->
-                    <!--<input name="content" type="text" th:placeholder="${searchPlaceholder}"/>-->
-                    <!--<a onclick="document.getElementById('searchForm').submit();"><img src="/images/ss.png"/></a>-->
-                <!--</form>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="headerR">-->
-            <!--<a href="index">取消</a>-->
-        <!--</div>-->
-    <!--</div>-->
+<!--<div class="header">-->
+<!--<div class="headerL">-->
+<!--<a href="index" class="goback"><img src="/images/goback.png"/></a>-->
+<!--</div>-->
+<!--<div class="headerC0">-->
+<!--<div class="ssdiv">-->
+<!--<form action="search" method="get" id="searchForm">-->
+<!--<input name="content" type="text" th:placeholder="${searchPlaceholder}"/>-->
+<!--<a onclick="document.getElementById('searchForm').submit();"><img src="/images/ss.png"/></a>-->
+<!--</form>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="headerR">-->
+<!--<a href="index">取消</a>-->
+<!--</div>-->
+<!--</div>-->
 <!--</div>-->
 <!--<div class="clear"></div>-->
 <!--<div class="hbox"></div>-->
@@ -61,7 +61,9 @@
     <div class="shtypeRight">
         <div class="boxOne">
             <div class="box1" th:if="${ad != null}">
-                <img th:src="${ad.categoryPageAdImg}"/>
+                <a th:href="${ad.categoryPageAdImgTarget}">
+                    <img th:src="${ad.categoryPageAdImg}"/>
+                </a>
             </div>
             <a name="m1">
                 <div class="box2 botrtop">

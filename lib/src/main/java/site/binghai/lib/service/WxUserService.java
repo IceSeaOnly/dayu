@@ -1,10 +1,13 @@
 package site.binghai.lib.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.entity.WxInfo;
 import site.binghai.lib.entity.WxUser;
+import site.binghai.lib.service.dao.WxUserDao;
+import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -13,6 +16,13 @@ import java.util.List;
 public class WxUserService extends BaseService<WxUser> {
     @Autowired
     private IceConfig iceConfig;
+    @Autowired
+    private WxUserDao wxUserDao;
+
+    @Override
+    protected JpaRepository<WxUser, Long> getDao() {
+        return wxUserDao;
+    }
 
     public WxUser findByOpenId(String openId) {
         WxUser wxUser = new WxUser();
@@ -77,5 +87,9 @@ public class WxUserService extends BaseService<WxUser> {
         WxUser user = findById(userId);
         user.setShoppingPoints(user.getShoppingPoints() + points);
         update(user);
+    }
+
+    public long countToday() {
+        return wxUserDao.countByCreatedAfter(TimeTools.today()[0]);
     }
 }

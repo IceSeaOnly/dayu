@@ -10,9 +10,12 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.dao.UnifiedOrderDao;
+import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by IceSea on 2018/4/5. GitHub: https://github.com/IceSeaOnly
@@ -49,6 +52,15 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
 
     public Long countByAppCodeAndStatus(PayBizEnum pb, Integer status) {
         return dao.countByAppCodeAndStatus(pb.getCode(), status);
+    }
+
+    public Long countByDate(PayBizEnum pb, Long[]date, OrderStatusEnum... status) {
+        List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
+        return dao.countByAppCodeAndStatusInAndCreatedBetween(pb.getCode(), ss, date[0],date[1]);
+    }
+
+    public Long countToday(PayBizEnum pb) {
+        return dao.countByAppCodeAndCreatedAfter(pb.getCode(), TimeTools.today()[0]);
     }
 
     public List<UnifiedOrder> list(PayBizEnum payBiz, OrderStatusEnum status, Integer page, Integer pageSize) {
@@ -145,9 +157,14 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         return true;
     }
 
-
     public List<UnifiedOrder> scanTimeOut() {
         return dao.findAllByStatusAndCreatedBefore(OrderStatusEnum.CREATED.getCode(),
             now() - 15 * 6000);
+    }
+
+    public Integer sumShouldPay(PayBizEnum pb, Long[] date, OrderStatusEnum... status) {
+        Integer ret = dao.sum(pb.getCode(), date[0], date[1], Arrays.stream(status).map(s -> s.getCode())
+            .collect(Collectors.toList()));
+        return ret == null ? 0 : ret;
     }
 }

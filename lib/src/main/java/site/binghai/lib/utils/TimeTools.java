@@ -39,8 +39,24 @@ public class TimeTools {
         return df.format(date);
     }
 
+    public static String format2MM_dd(Long date) {
+        SimpleDateFormat df = new SimpleDateFormat("MM.dd");
+        return df.format(date);
+    }
+
     public static Long dataTime2Timestamp(String dateTime) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = format.parse(dateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime();
+    }
+
+    public static Long dataTime2Timestamp(String dateTime,String formats) {
+        SimpleDateFormat format = new SimpleDateFormat(formats);
         Date date = null;
         try {
             date = format.parse(dateTime);

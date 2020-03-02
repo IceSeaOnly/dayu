@@ -6,6 +6,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.entity.ShopCategory;
+import site.binghai.shop.service.ProductService;
 import site.binghai.shop.service.ShopCategoryService;
 
 /**
@@ -17,6 +18,8 @@ import site.binghai.shop.service.ShopCategoryService;
 public class CategoryConfigController extends BaseController {
     @Autowired
     private ShopCategoryService shopCategoryService;
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("categoryConfig")
     public String categoryConfig(ModelMap map) {
@@ -38,6 +41,34 @@ public class CategoryConfigController extends BaseController {
         ShopCategory category = shopCategoryService.findById(catId);
         map.put("sc", category);
         return "manage/editCategory";
+    }
+
+    @GetMapping("deleteCategory")
+    public String deleteCategory(@RequestParam Long cid) {
+        ShopCategory ct = shopCategoryService.findById(cid);
+        if (ct.getSuperCategory()) {
+            shopCategoryService.findAll(999)
+                .stream()
+                .filter(p -> cid.equals(p.getSuperId()))
+                .forEach(p -> {
+                    deleteChildCategory(p.getId());
+                    shopCategoryService.delete(p);
+                });
+            shopCategoryService.delete(cid);
+        } else {
+            deleteChildCategory(cid);
+        }
+        return "redirect:categoryConfig";
+    }
+
+    private void deleteChildCategory(Long cid) {
+        productService.searchByCategory(cid)
+            .forEach(p -> {
+                p.setCategoryId(1000L);
+                p.setOffline(Boolean.TRUE);
+                productService.update(p);
+            });
+        shopCategoryService.delete(cid);
     }
 
     @ResponseBody
@@ -74,6 +105,14 @@ public class CategoryConfigController extends BaseController {
     public String showChange(@RequestParam Long cid) {
         ShopCategory category = shopCategoryService.findById(cid);
         category.setHidden(!category.getHidden());
+        shopCategoryService.update(category);
+        return "redirect:categoryConfig";
+    }
+
+    @GetMapping("recommend")
+    public String recommend(@RequestParam Long cid) {
+        ShopCategory category = shopCategoryService.findById(cid);
+        category.setRecommend(category.getRecommend() == null ? Boolean.TRUE : !category.getRecommend());
         shopCategoryService.update(category);
         return "redirect:categoryConfig";
     }

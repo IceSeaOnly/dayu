@@ -14,7 +14,6 @@ import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.BannerType;
 import site.binghai.shop.enums.TuanStatus;
-import site.binghai.shop.kv.PinTodayRecommend;
 import site.binghai.shop.pojo.TuanFollower;
 import site.binghai.shop.service.*;
 
@@ -44,9 +43,7 @@ public class PinTuanController extends BaseController {
     @GetMapping("ptIndex")
     public String ptIndex(ModelMap map) {
         map.put("banners", bannerService.findByType(BannerType.PT_INDEX));
-        List<Long> items = kvService.get(PinTodayRecommend.class).getItemIds();
-        List<Product> recommends = productService.findByIds(items);
-        map.put("recommends", recommends);
+        map.put("recommends", productService.findRecommendPtItems());
         List<Product> products = productService.ptSearch();
         map.put("products", products);
         return "ptIndex";
@@ -78,14 +75,14 @@ public class PinTuanController extends BaseController {
         map.put("tuan", tuan);
         map.put("product", product);
         map.put("endTs", (tuan.getEndTs() - now()) / 1000);
-        map.put("waits",waits(tuan.getTotalSize()-tuan.getCurrentSize()));
+        map.put("waits", waits(tuan.getTotalSize() - tuan.getCurrentSize()));
         List<Product> products = productService.ptSearch();
         map.put("products", products);
         return "ptInvitation";
     }
 
     private List<Integer> waits(int i) {
-        List<Integer> ret =new ArrayList<>();
+        List<Integer> ret = new ArrayList<>();
         for (int j = 0; j < i; j++) {
             ret.add(j);
         }

@@ -71,17 +71,18 @@
                                         <a class="dropdown-item" th:href="${'editCategory?catId='+cat.key.id}">编辑</a>
                                         <a class="dropdown-item" th:href="${'showChange?cid='+cat.key.id}">隐藏/展示</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#" style="color:red">删除</a>
+                                        <a class="dropdown-item" th:href="${'javascript:delCate('+cat.key.id+')'}" style="color:red">删除</a>
                                     </div>
                                 </div>
                                 <ul>
                                     <li th:each="cts:${cat.value}">
                                         <span th:text="${cts.title}">name</span>
+                                        <span class="badge badge-danger badge-pill" th:if="${cts.recommend != null && cts.recommend}">荐</span>
                                         <img th:src="${cts.imgUrl}" style="width: 50px;height: 50px"/>
                                         <div class="btn-group mb-2">
                                             <a th:href="${'goodsManage?categoryId='+cts.id}">
                                                 <button type="button"
-                                                        class="btn btn-light btn-sm waves-effect waves-light">管理商品
+                                                        class="btn btn-light btn-sm waves-effect waves-light">商品
                                                 </button>
                                             </a>
                                             <button type="button"
@@ -94,8 +95,9 @@
                                                 <a class="dropdown-item"
                                                    th:href="${'editCategory?catId='+cts.id}">编辑</a>
                                                 <a class="dropdown-item" th:href="${'showChange?cid='+cts.id}">隐藏/展示</a>
+                                                <a class="dropdown-item" th:href="${'recommend?cid='+cts.id}" style="color:green">推荐/取消</a>
                                                 <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#" style="color:red">删除</a>
+                                                <a class="dropdown-item" th:href="${'javascript:delCate('+cts.id+')'}" style="color:red">删除</a>
                                             </div>
                                         </div>
                                         <div class="btn-group mb-2">
@@ -152,6 +154,13 @@
 <!-- END layout-wrapper -->
 
 <script>
+
+    function delCate(cid) {
+        if(confirm('确定删除分类吗，分类下的所有商品均下架并移动到待分类分组中')){
+            window.location.href='deleteCategory?cid='+cid;
+        }
+    }
+
     function copyCategoryUrl(cid) {
         if (copyText('http://fastshop.bigdata8.xin/shop/productCategoryList?category=' + cid)) {
             alert("复制成功!");

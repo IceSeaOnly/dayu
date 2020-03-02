@@ -46,6 +46,7 @@ public class ShopCategoryService extends BaseService<ShopCategory> {
     public List<ShopCategory> hotList() {
         List<ShopCategory> all = empty(findAll(999));
         return all.stream().filter(p -> !p.getSuperCategory())
-            .limit(10).collect(Collectors.toList());
+            .filter(p -> p.getRecommend() != null && p.getRecommend())
+            .collect(Collectors.toList());
     }
 }

@@ -34,8 +34,8 @@ public class ShopOrder extends PayBizEntity {
     private String receiverAddress;
     private String receiverPhone;
     private Long expiredTime;
-    private Integer startOfService;
-    private Integer startOfShip;
+    private Integer starOfService;
+    private Integer starOfShip;
     /**
      * 是否是拼团订单
      * */

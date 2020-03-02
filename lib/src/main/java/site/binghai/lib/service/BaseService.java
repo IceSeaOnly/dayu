@@ -74,6 +74,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return t;
     }
 
+
     public T findById(Long id) {
         if (id == null) { return null; }
         T t = getDao().findById(id).orElse(null);

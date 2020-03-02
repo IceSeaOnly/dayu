@@ -56,8 +56,14 @@ public class ProductService extends BaseService<Product> {
 
     public List<Product> ptSearch() {
         List<Product> products = searchByCategory(999L);
-        return products.stream().filter(p -> p.getPtStartTs() < now() && p.getPtEndTs() > now())
+        List<Product> ret = products.stream().filter(p -> p.getPtStartTs() < now() && p.getPtEndTs() > now())
             .filter(p -> p.getStock() > 0)
+            .collect(Collectors.toList());
+        return empty(ret);
+    }
+
+    public List<Product> findRecommendPtItems() {
+        return ptSearch().stream().filter(p -> p.getRecommend() != null && p.getRecommend())
             .collect(Collectors.toList());
     }
 }

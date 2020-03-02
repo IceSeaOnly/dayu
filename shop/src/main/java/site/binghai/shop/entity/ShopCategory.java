@@ -19,6 +19,7 @@ public class ShopCategory extends BaseEntity {
     private Long id;
     private Boolean superCategory;
     private Boolean hidden;
+    private Boolean recommend;
     private String title;
     private String imgUrl;
     private Long superId;

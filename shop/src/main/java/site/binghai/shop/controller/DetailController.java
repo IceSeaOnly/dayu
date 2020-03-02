@@ -16,7 +16,6 @@ import site.binghai.shop.service.*;
 import java.util.List;
 
 /**
- *
  * @date 2020/2/1 下午3:30
  **/
 @Controller
@@ -40,7 +39,7 @@ public class DetailController extends BaseController {
         Product product = productService.findById(productId);
 
         if (product == null || product.getOffline()) {
-            return "redirect:404";
+            return e500("商品不存在或已下架!");
         }
 
         footHistoryService.footprint(getUser().getId(), productId);

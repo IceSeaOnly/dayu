@@ -2,6 +2,7 @@ package site.binghai.shop.service;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.def.UnifiedOrderMethods;
 import site.binghai.lib.def.WxEventHandler;
@@ -12,13 +13,16 @@ import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.BaseService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.CompareUtils;
+import site.binghai.shop.dao.ShopOrderDao;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.TuanStatus;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @date 2020/2/2 下午12:47
@@ -33,6 +37,13 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     private ProductService productService;
     @Autowired
     private WxEventHandler wxEventHandler;
+    @Autowired
+    private ShopOrderDao shopOrderDao;
+
+    @Override
+    protected JpaRepository<ShopOrder, Long> getDao() {
+        return shopOrderDao;
+    }
 
     @Override
     public JSONObject moreInfo(UnifiedOrder order) {
@@ -87,7 +98,8 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
             } else {
                 Tuan tuan = tuanService.join(user, shopOrder);
                 if (tuan.getStatus() == TuanStatus.INIT) {
-                    wxEventHandler.onTuanJoin(shopOrder.getTuanId(), product.getTitle(), order.getShouldPay(),order.getOpenId());
+                    wxEventHandler.onTuanJoin(shopOrder.getTuanId(), product.getTitle(), order.getShouldPay(),
+                        order.getOpenId());
                 }
             }
         }
@@ -129,5 +141,12 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     @Override
     public String buildPayCallbackUrl(UnifiedOrder unifiedOrder) {
         return "/shop/orders";
+    }
+
+    public List<ShopOrder> findByStatusAndTime(Long ts, long end, OrderStatusEnum... status) {
+        List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
+        List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
+        return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
+            Collectors.toList());
     }
 }

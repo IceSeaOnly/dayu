@@ -72,7 +72,9 @@ public class GoodManageController extends BaseController {
         Map<ShopCategory, List<ShopCategory>> list = shopCategoryService.listAll();
         Map<String, Long> options = new LinkedHashMap<>();
         list.forEach((k, v) -> {
-            v.forEach(o -> options.put(k.getTitle() + "/" + o.getTitle(), o.getId()));
+            if (!isEmptyList(v)) {
+                v.forEach(o -> options.put(k.getTitle() + "/" + o.getTitle(), o.getId()));
+            }
         });
 
         Product product = productService.findById(id);
@@ -91,13 +93,17 @@ public class GoodManageController extends BaseController {
     @PostMapping("deleteStandardInfo")
     @ResponseBody
     public Object deleteStandardInfo(@RequestParam Long productId, @RequestParam String key,
-                                     @RequestParam String option) {
+                                     String option) {
 
         Product product = productService.findById(productId);
         JSONObject std = JSONObject.parseObject(product.getStandards());
-        JSONArray arr = std.getJSONArray(key);
-        arr.remove(option);
-        std.put(key, arr);
+        if (hasEmptyString(option)) {
+            std.remove(key);
+        } else {
+            JSONArray arr = std.getJSONArray(key);
+            arr.remove(option);
+            std.put(key, arr);
+        }
         product.setStandards(std.toJSONString());
         productService.update(product);
         return success();
@@ -248,6 +254,15 @@ public class GoodManageController extends BaseController {
     public Object changeOffline(@RequestParam Long id) {
         Product product = productService.findById(id);
         product.setOffline(!product.getOffline());
+        productService.update(product);
+        return success();
+    }
+
+    @GetMapping("recommendProduct")
+    @ResponseBody
+    public Object recommendProduct(@RequestParam Long id) {
+        Product product = productService.findById(id);
+        product.setRecommend(product.getRecommend() == null ? Boolean.TRUE : !product.getRecommend());
         productService.update(product);
         return success();
     }
