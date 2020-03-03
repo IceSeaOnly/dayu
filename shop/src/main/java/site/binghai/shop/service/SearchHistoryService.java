@@ -8,7 +8,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- *
  * @date 2020/1/31 下午8:48
  **/
 @Service
@@ -64,6 +63,6 @@ public class SearchHistoryService extends BaseService<SearchHistory> {
     }
 
     public List<SearchHistory> findHot20() {
-       return findAll(20);
+        return sortQuery(new SearchHistory(), "id", true);
     }
 }

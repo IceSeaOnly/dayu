@@ -8,12 +8,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
+import site.binghai.lib.utils.HttpUtils;
 import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.BannerType;
 import site.binghai.shop.enums.TuanStatus;
+import site.binghai.shop.kv.PinTuanIndexWxShareConfig;
 import site.binghai.shop.pojo.TuanFollower;
 import site.binghai.shop.service.*;
 
@@ -39,14 +42,26 @@ public class PinTuanController extends BaseController {
     private CartController cartController;
     @Autowired
     private BannerService bannerService;
+    @Autowired
+    private IceConfig iceConfig;
+    private static final String path = "?source=http://fastshop.bigdata8.xin/shop/ptIndex";
 
     @GetMapping("ptIndex")
     public String ptIndex(ModelMap map) {
+        PinTuanIndexWxShareConfig config = kvService.get(PinTuanIndexWxShareConfig.class);
         map.put("banners", bannerService.findByType(BannerType.PT_INDEX));
         map.put("recommends", productService.findRecommendPtItems());
         List<Product> products = productService.ptSearch();
         map.put("products", products);
+        map.put("wxShare", config);
+        map.put("wxShareConfig", getWxShareConfig(config, "/shop/ptIndex"));
         return "ptIndex";
+    }
+
+    private Object getWxShareConfig(PinTuanIndexWxShareConfig config, String suffix) {
+        config = config == null ? kvService.get(PinTuanIndexWxShareConfig.class) : config;
+        return HttpUtils
+            .sendJSONGet(config.getConfigGetUrl() + "?source=" + iceConfig.getAppRoot() + suffix, null);
     }
 
     @GetMapping("ptDetail")
@@ -56,6 +71,7 @@ public class PinTuanController extends BaseController {
             return e500("您来错地方了");
         }
 
+        map.put("wxShareConfig", getWxShareConfig(null, "/shop/ptDetail?item=" + item));
         map.put("product", product);
         map.put("images", getImages(product));
         map.put("endTs", product.getPtEndTs() / 1000);

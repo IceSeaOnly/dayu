@@ -8,9 +8,12 @@ $(".dropify").dropify({
     "error": {
         "fileSize": "图片不得大于1MB"
     }
+}).on('dropify.afterClear', function (event, element) {
+    $('#'+element.element.id.substr(5)).val('');
 });
 
 var uploadToken = '';
+
 function reloadToken() {
     $.getJSON('https://wx.nanayun.cn/qiniuToken', function (resp) {
         uploadToken = resp.data;
@@ -31,7 +34,7 @@ function doUpload(thiz) {
     var observable = qiniu.upload($("#" + inputId)[0].files[0], guid2() + ".png", uploadToken, putExtra, config);
     observable.subscribe(console.log, console.log, function (resp) {
         var url = "http://cdn.binghai.site/" + resp.key;
-        $("#"+inputId.substr(5)).val(url);
+        $("#" + inputId.substr(5)).val(url);
         reloadToken();
     });
 }
@@ -40,6 +43,7 @@ function guid2() {
     function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     }
+
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 

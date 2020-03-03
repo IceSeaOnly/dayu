@@ -95,7 +95,7 @@
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">商品标(英文逗号分隔)</label>
                                         <div class="col-9">
-                                            <input type="text" id="tags" class="form-control" >
+                                            <input type="text" id="tags" class="form-control" placeholder="提示: 拼团商品展示在[全民团]文案旁边">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
@@ -222,7 +222,30 @@
 </div>
 <!-- END layout-wrapper -->
 <script >
+    function doUploadHtml(urlConsumer) {
+        $("#errMsg").text('处理中 50%...');
+        var htmls = $("#snow-editor").children(".ql-editor").html();
+        var blob = new Blob([htmls.toString()]);
+
+        var putExtra = {
+            fname: guid2(), //文件原文件名
+            params: {},//用来放置自定义变量
+            mimeType: null
+        };
+        var config = {
+            useCdnDomain: true,
+            region: qiniu.region.z2
+        };
+        var observable = qiniu.upload(blob, guid2() + ".html", uploadToken, putExtra, config);
+        observable.subscribe(console.log, console.log, function (resp) {
+            var url = "http://cdn.binghai.site/" + resp.key;
+            reloadToken();
+            urlConsumer(url);
+        });
+    }
+
     function doSubmit() {
+        $("#errMsg").text('处理中 20%...');
         var data = {};
         data.categoryId = $("#categoryId").val();
         data.title = $("#title").val();
@@ -243,26 +266,30 @@
         data.ptEndTs = $("#ptEndTs").val();
         data.starOfQuality = $("#starOfQuality").val();
         data.starOfDesc = $("#starOfDesc").val();
-        data.detail = $("#snow-editor").children(".ql-editor").html();
 
-        $.ajax({
-            type: "POST",
-            contentType: "application/json;charset=UTF-8",
-            url: "ajaxAddGoods",
-            data: JSON.stringify(data),
-            success: function (resp) {
-                if (resp.status == 'SUCCESS') {
-                    $("#errMsg").text("OK");
-                    window.location.href = 'editGoods?id='+resp.data.id;
-                } else {
-                    $("#errMsg").text(resp.msg);
+        doUploadHtml(function (detailUrl) {
+            data.detail = detailUrl;
+            $("#errMsg").text('处理中 80%...');
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=UTF-8",
+                url: "ajaxAddGoods",
+                data: JSON.stringify(data),
+                success: function (resp) {
+                    if (resp.status == 'SUCCESS') {
+                        $("#errMsg").text("OK");
+                        window.location.href = 'editGoods?id='+resp.data.id;
+                    } else {
+                        $("#errMsg").text(resp.msg);
+                    }
+                },
+                error: function (e) {
+                    console.log(e.status);
+                    console.log(e.responseText);
                 }
-            },
-            error: function (e) {
-                console.log(e.status);
-                console.log(e.responseText);
-            }
-        });
+            });
+        })
+
     }
 </script>
 <!-- Overlay-->

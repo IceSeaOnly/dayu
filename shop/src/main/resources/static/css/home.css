@@ -2342,12 +2342,19 @@
 }
 
 .aui-page-box {
-    padding: 15px;
+    padding: 0px;
 }
 
 .aui-page-box p {
     margin-bottom: 15px;
     font-size:0.85rem;
+}
+
+.aui-page-box  img {
+    max-width: 100%;
+    height: auto;
+    border: none;
+    display: block;
 }
 
 .aui-page-box p img {

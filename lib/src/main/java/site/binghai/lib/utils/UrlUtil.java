@@ -15,8 +15,11 @@ public class UrlUtil {
             + ":"
             + request.getServerPort()           //端口号
             + request.getContextPath()      //项目名称
-            + request.getServletPath()      //请求页面或其他地址
-            + "?" + (request.getQueryString()); //参数
+            + request.getServletPath();
+        if (StringUtils.isNotBlank(request.getQueryString())) {
+            strBackUrl += "?" + (request.getQueryString()); //参数
+        }
+
         return strBackUrl;
     }
 

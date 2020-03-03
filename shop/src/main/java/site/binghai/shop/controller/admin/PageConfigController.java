@@ -8,9 +8,7 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.anno.Conf;
 import site.binghai.shop.def.KvSupport;
 import site.binghai.shop.entity.KeyValueEntity;
-import site.binghai.shop.kv.AdImg;
-import site.binghai.shop.kv.IndexHotTopicImgWall;
-import site.binghai.shop.kv.PinTuanIndexImgWall;
+import site.binghai.shop.kv.*;
 import site.binghai.shop.pojo.ConfObj;
 import site.binghai.shop.service.KvService;
 
@@ -32,6 +30,8 @@ public class PageConfigController extends BaseController {
     @GetMapping("pageConfig")
     public String pageConfig(ModelMap map, Long update) {
         Map<ConfObj, List<ConfObj>> configs = new LinkedHashMap<>();
+        join(configs, RecommendSearchWord.class);
+        join(configs, PinTuanIndexWxShareConfig.class);
         join(configs, IndexHotTopicImgWall.class);
         join(configs, PinTuanIndexImgWall.class);
         join(configs, AdImg.class);

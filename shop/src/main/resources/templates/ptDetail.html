@@ -177,18 +177,8 @@
         <div class="aui-login-line">
             <h2>商品详情</h2>
         </div>
-        <div class="aui-page-box" th:utext="${detail.html}">
-            <p>
-                <img src="/images/cp-001.png" alt="">
-            </p>
-            <p>
-                <img src="/images/cp-002.png" alt="">
-            </p>
-            <p>
-                <img src="/images/cp-003.png" alt="">
-            </p>
-            <p>商品细节。。。。</p>
-            <p>商品细节。。。。</p>
+        <div class="aui-page-box" id="detailHtmlContainer">
+
         </div>
     </section>
     <footer class="aui-footer aui-footer-fixed">
@@ -208,46 +198,7 @@
     <div class="aui-show-box">
         <div class="aui-show-box-title aui-footer-flex">
             <div class="b-line aui-coll-share-box">
-                <a href="javascript:;" class="aui-coll-share-item">
-                    <div class="aui-coll-share-img">
-                        <img src="/images/icon-wx.png" alt="">
-                    </div>
-                    <div class="aui-coll-share-text">微信好友</div>
-                </a>
-                <a href="javascript:;" class="aui-coll-share-item">
-                    <div class="aui-coll-share-img">
-                        <img src="/images/icon-pyq.png" alt="">
-                    </div>
-                    <div class="aui-coll-share-text">朋友圈</div>
-                </a>
-                <a href="javascript:;" class="aui-coll-share-item">
-                    <div class="aui-coll-share-img">
-                        <img src="/images/icon-qq.png" alt="">
-                    </div>
-                    <div class="aui-coll-share-text">QQ</div>
-                </a>
-                <a href="javascript:;" class="aui-coll-share-item">
-                    <div class="aui-coll-share-img">
-                        <img src="/images/icon-kj.png" alt="">
-                    </div>
-                    <div class="aui-coll-share-text">QQ空间</div>
-                </a>
-                <a href="javascript:;" class="aui-coll-share-item">
-                    <div class="aui-coll-share-img">
-                        <img src="/images/icon-txw.png" alt="">
-                    </div>
-                    <div class="aui-coll-share-text">腾讯微博</div>
-                </a>
-                <a href="javascript:;" class="aui-coll-share-item">
-                    <div class="aui-coll-share-img">
-                        <img src="/images/icon-wb.png" alt="">
-                    </div>
-                    <div class="aui-coll-share-text">新浪微博</div>
-                </a>
-            </div>
-            <div class="aui-coll-cancel">
-                <a href="javascript:;" id="cancel" class="">取消
-                </a>
+                <h4 style="color: #7d7d7d">偷偷告诉你，点击右上角就可以分享啦!</h4>
             </div>
         </div>
     </div>
@@ -255,6 +206,12 @@
 <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript" src="/js/pt_layer.js"></script>
 <script type="text/javascript" src="/js/pt_touchSlider.js"></script>
+<script type='text/javascript' src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js' charset='utf-8'></script>
+<script th:inline="javascript">
+    $.get([[${detail.html}]],function (resp) {
+        $("#detailHtmlContainer").html(resp);
+    });
+</script>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -273,7 +230,71 @@
     });
 </script>
 <script th:inline="javascript">
+    function onShareSuccess(){
 
+    }
+
+    function onShareFailed(){
+
+    }
+
+    wx.config([[${wxShareConfig}]]);
+
+    wx.ready(function () {
+        wx.onMenuShareQQ({
+            title: [[${'我发现了一个好东西:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/ptDetail?item='+product.id}]], // 分享链接
+            imgUrl: [[${images[0]}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.onMenuShareAppMessage({
+            title: [[${'我发现了一个好东西:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/ptDetail?item='+product.id}]], // 分享链接
+            imgUrl: [[${images[0]}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            type: 'link', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.onMenuShareTimeline({
+            title: [[${'我发现了一个好东西:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/ptDetail?item='+product.id}]], // 分享链接
+            imgUrl: [[${images[0]}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.onMenuShareQZone({
+            title: [[${'我发现了一个好东西:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/ptDetail?item='+product.id}]], // 分享链接
+            imgUrl: [[${images[0]}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.showOptionMenu();
+    });
+    
+    
     var intDiff = parseInt([[${endTs}]]);
 
     //倒计时总秒数量

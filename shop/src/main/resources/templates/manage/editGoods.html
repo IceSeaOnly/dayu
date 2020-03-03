@@ -102,7 +102,7 @@
                                         <label class="col-3 col-form-label">商品标(英文逗号分隔)</label>
                                         <div class="col-9">
                                             <input type="text" id="tags" th:value="${product.tags}"
-                                                   class="form-control">
+                                                   class="form-control" placeholder="提示: 拼团商品展示在[全民团]文案旁边">
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
@@ -251,6 +251,30 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group row mb-3" style="text-align: center">
+                                        <h5 style="width: 100%">------------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下为拼团商品特有参数，普通商品勿填&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;------------------</h5>
+                                    </div>
+                                    <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">
+                                            拼团商品滚动图<b style="color:red">(普通商品不填)</b>
+                                        </label>
+                                        <div class="col-9">
+                                            <div class="btn-group mb-2" th:each="ptImg,stat:${images}">
+                                                <input type="hidden" name="ptDetailImg" th:value="${ptImg}"
+                                                       th:id="${'ptDetailImg'+stat.index}">
+                                                <input class="dropify" type="file"
+                                                       th:id="${'bind_ptDetailImg'+stat.index}"
+                                                       onchange="doUpload(this)" th:data-default-file="${ptImg}">
+                                            </div>
+                                            <div class="btn-group mb-2" th:each="b,stat:${blankImages}">
+                                                <input type="hidden" name="ptDetailImg"
+                                                       th:id="${'ptDetailImg'+(4-stat.index)}">
+                                                <input class="dropify" type="file"
+                                                       th:id="${'bind_ptDetailImg'+(4-stat.index)}"
+                                                       onchange="doUpload(this)">
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">成团人数(非拼团商品不填)</label>
                                         <div class="col-9">
@@ -302,7 +326,7 @@
                             马上提交，更新商品
                         </button>
                         <!--<button type="button" onclick="doUploadHtml()" class="btn btn-info btn-lg waves-effect waves-light">-->
-                            <!--更新HTML测试-->
+                        <!--更新HTML测试-->
                         <!--</button>-->
                         <h1 style="color: red" id="errMsg"></h1>
                     </div>
@@ -354,7 +378,7 @@
 <script src="/js/image-upload-helper.js"></script>
 <script th:inline="javascript">
 
-    $.get([[${detail.html}]],function (resp) {
+    $.get([[${detail.html}]], function (resp) {
         $("#snow-editor").children(".ql-editor").html(resp);
     });
 
@@ -489,8 +513,16 @@
         data.imgUrl = $("#imgUrl").val();
         data.brand = $("#brand").val();
         data.subType = $("#subType").val();
+        var infos = jQuery.parseJSON($("#infos").val());
+        var images = [];
+        $("[name='ptDetailImg']").each(function () {
+            if ($(this).val() && $(this).val() != '') {
+                images.push($(this).val());
+            }
+        });
+        infos.images = images;
         data.standards = $("#standards").val();
-        data.infos = $("#infos").val();
+        data.infos = JSON.stringify(infos);
         data.ptSize = $("#ptSize").val();
         data.ptStartTs = $("#ptStartTs").val();
         data.ptEndTs = $("#ptEndTs").val();

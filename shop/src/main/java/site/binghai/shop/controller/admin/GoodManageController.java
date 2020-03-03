@@ -81,13 +81,20 @@ public class GoodManageController extends BaseController {
         map.put("options", options);
         map.put("standards", parseStandards(product.getStandards()));
         JSONObject infos = JSONObject.parseObject(product.getInfos());
-        infos.remove("images");
+        Object images = infos.remove("images");
+        map.put("images", images == null ? emptyList() : images);
+        map.put("blankImages", generateBlank(images));
         map.put("infos", infos);
         map.put("product", product);
         map.put("ptStartTs", product.getPtStartTs() == null ? "" : TimeTools.format(product.getPtStartTs()));
         map.put("ptEndTs", product.getPtEndTs() == null ? "" : TimeTools.format(product.getPtEndTs()));
         map.put("detail", productDetailService.findByProductId(id));
         return "manage/editGoods";
+    }
+
+    private Integer[] generateBlank(Object images) {
+        int size = images == null ? 4 : 4 - ((JSONArray)images).size();
+        return new Integer[size];
     }
 
     @PostMapping("deleteStandardInfo")
