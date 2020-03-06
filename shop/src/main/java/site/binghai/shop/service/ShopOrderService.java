@@ -104,6 +104,7 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
             }
         }
         shopOrder.setStatus(OrderStatusEnum.PAIED.getCode());
+        shopOrder.setPaid(Boolean.TRUE);
         update(shopOrder);
     }
 
@@ -122,6 +123,13 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     public long countByUserId(Long userId) {
         ShopOrder exp = new ShopOrder();
         exp.setUserId(userId);
+        return count(exp);
+    }
+
+    public long countPtByUserId(Long userId) {
+        ShopOrder exp = new ShopOrder();
+        exp.setUserId(userId);
+        exp.setPtOrder(Boolean.TRUE);
         return count(exp);
     }
 
@@ -148,5 +156,12 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
         return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
             Collectors.toList());
+    }
+
+    public List<ShopOrder> findTuanByUserId(Long userId) {
+        ShopOrder exp = new ShopOrder();
+        exp.setUserId(userId);
+        exp.setPtOrder(Boolean.TRUE);
+        return sortQuery(exp, "id", true);
     }
 }

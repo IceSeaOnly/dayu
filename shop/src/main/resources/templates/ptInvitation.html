@@ -38,7 +38,7 @@
                     <div class="aui-flex-box">
                         <h2 th:text="${product.title}">新疆阿克苏冰糖心苹果10斤</h2>
                         <h3 th:text="${'￥'+product.price/100.0}">￥19.99</h3>
-                        <p >如24小时内未拼团成功,钱款、积分、优惠券将自动退回</p>
+                        <p>如24小时内未拼团成功,钱款、积分、优惠券将自动退回</p>
                     </div>
                 </a>
                 <div class="aui-invite-content">
@@ -46,7 +46,7 @@
                     <h2 th:if="${tuan.status.name() == 'FULL'}">拼团成功,请等待收货!</h2>
                     <h2 th:if="${tuan.status.name() == 'FAIL'}">拼团失败,再来一次试试吧</h2>
                     <div class="aui-invite-time-box" th:if="${tuan.status.name() == 'INIT'}">
-                        <div class="aui-invite-time-fl" >
+                        <div class="aui-invite-time-fl">
                             <h3>还差 <em th:text="${tuan.totalSize-tuan.currentSize}">3</em>人 </h3>
                         </div>
                         <div class="aui-limit-time clearfix">
@@ -81,8 +81,13 @@
                             <span class="aui-tabBar-item-text">待邀请</span>
                         </a>
                     </div>
-                    <div class="aui-add-box" th:if="${tuan.status.name() == 'INIT'}">
-                        <button>邀请好友参团</button>
+                    <div class="aui-add-box" th:if="${isLeaderOrFollower && tuan.status.name() == 'INIT'}">
+                        <button>点击右上角邀请好友参团</button>
+                    </div>
+                    <div class="aui-add-box" th:if="${isLeaderOrFollower == false && tuan.status.name() == 'INIT'}">
+                        <a th:href="${'joinTuan?tuanId='+tuan.id}">
+                            <button>我要参团</button>
+                        </a>
                     </div>
                     <div class="aui-add-box" th:if="${tuan.status.name() == 'FAIL'}">
                         <button onclick="window.location.href='ptIndex'">再来一单</button>
@@ -155,13 +160,78 @@
 <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript" src="/js/pt_slider.js"></script>
 <script type="text/javascript" src="/js/pt_tab.js"></script>
+<script type='text/javascript' src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js' charset='utf-8'></script>
 <script th:inline="javascript">
+    function onShareSuccess() {
 
-    var intDiff = parseInt([[${tuan.endTs}]]);
+    }
+
+    function onShareFailed() {
+
+    }
+
+    wx.config([[${wxShareConfig}]]);
+
+    wx.ready(function () {
+        wx.onMenuShareQQ({
+            title: [[${'快来和我一起拼:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/tuanDetail?t='+tuan.id}]], // 分享链接
+            imgUrl: [[${product.imgUrl}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.onMenuShareAppMessage({
+            title: [[${'快来和我一起拼:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/tuanDetail?t='+tuan.id}]], // 分享链接
+            imgUrl: [[${product.imgUrl}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            type: 'link', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.onMenuShareTimeline({
+            title: [[${'快来和我一起拼:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/tuanDetail?t='+tuan.id}]], // 分享链接
+            imgUrl: [[${product.imgUrl}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.onMenuShareQZone({
+            title: [[${'快来和我一起拼:'+product.title}]], // 分享标题
+            link: [[${'http://fastshop.bigdata8.xin/shop/tuanDetail?t='+tuan.id}]], // 分享链接
+            imgUrl: [[${product.imgUrl}]], // 分享图标
+            desc: [[${product.simpleDesc}]], // 分享描述
+            success: function () {
+                onShareSuccess();
+            },
+            cancel: function () {
+                onShareFailed();
+            }
+        });
+        wx.showOptionMenu();
+    });
+
+
+    var intDiff = parseInt([[${endTs}]]);
+
     //倒计时总秒数量
-
     function timer(intDiff) {
-        window.setInterval(function() {
+        window.setInterval(function () {
             var day = 00
                 , hour = 00
                 , minute = 00
@@ -173,18 +243,21 @@
                 minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
                 second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
             }
+            if (hour <= 9) {
+                hour = '0' + hour;
+            }
             if (minute <= 9)
                 minute = '0' + minute;
             if (second <= 9)
                 second = '0' + second;
-            $('.hour_show').html('0<s id="h"></s>' + hour + ' ');
+            $('.hour_show').html('<s id="h"></s>' + hour + ' ');
             $('.minute_show').html('<s></s>' + minute + ' ');
             $('.second_show').html('<s></s>' + second + ' ');
             intDiff--;
         }, 1000);
     }
 
-    $(function() {
+    $(function () {
         timer(intDiff);
     });
 </script>

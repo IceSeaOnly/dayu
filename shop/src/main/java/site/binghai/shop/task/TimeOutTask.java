@@ -39,7 +39,7 @@ public class TimeOutTask extends BaseBean {
         }
         List<Tuan> tuans = tuanService.scanTimeOut();
         tuans.forEach(t -> {
-            TuanService.cancel(t);
+            tuanService.cancel(t);
         });
 
         cartItemService.clean();

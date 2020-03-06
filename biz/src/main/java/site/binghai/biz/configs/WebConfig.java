@@ -37,7 +37,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         //registry.addInterceptor(mockUserFilter()).addPathPatterns("/user/**", "/shop/**");
         registry.addInterceptor(wxLoginFilter()).addPathPatterns("/user/**", "/shop/**");
-        //registry.addInterceptor(mockManageInterceptor()).addPathPatterns("/manage/**");
+        registry.addInterceptor(mockManageInterceptor()).addPathPatterns("/manage/**");
         registry.addInterceptor(managerInterceptor()).addPathPatterns("/manage/**");
         //registry.addInterceptor(userSubscribeFilter()).addPathPatterns("/user/**");
     }

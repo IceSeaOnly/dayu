@@ -18,4 +18,6 @@ public class FootHistory extends BaseEntity {
     private Long id;
     private Long buyerId;
     private Long productId;
+    @Transient
+    private Product product;
 }

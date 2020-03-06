@@ -11,10 +11,8 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.WxUserService;
-import site.binghai.shop.service.FootHistoryService;
-import site.binghai.shop.service.RecommendService;
-import site.binghai.shop.service.ShopCollectionService;
-import site.binghai.shop.service.ShopOrderService;
+import site.binghai.shop.kv.MyPageConfig;
+import site.binghai.shop.service.*;
 
 /**
  * @date 2020/2/2 下午8:37
@@ -31,14 +29,18 @@ public class MyController extends BaseController {
     @Autowired
     private RecommendService recommendService;
     @Autowired
+    private KvService kvService;
+    @Autowired
     private WxUserService wxUserService;
 
     @GetMapping("my")
     public String my(ModelMap map) {
         map.put("user", getUser());
+        map.put("pageConfig", kvService.get(MyPageConfig.class));
         map.put("collectCnt", shopCollectionService.countByUserId(getUser()));
         map.put("footPrints", footHistoryService.countByUserId(getUser()));
         map.put("orderCnt", shopOrderService.countByUserId(getUser().getId()));
+        map.put("ptOrderCnt", shopOrderService.countPtByUserId(getUser().getId()));
         map.put("created", shopOrderService.countByUserIdAndState(getUser().getId(), OrderStatusEnum.CREATED));
         map.put("shipping", shopOrderService.countByUserIdAndState(getUser().getId(), OrderStatusEnum.PAIED));
         map.put("shipped", shopOrderService.countByUserIdAndState(getUser().getId(), OrderStatusEnum.PROCESSING));

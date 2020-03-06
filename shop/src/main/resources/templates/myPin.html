@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <link href="/css/pin_style.css" rel="stylesheet" type="text/css"/>
+    <link type="text/css" rel="stylesheet" href="/css/base.css">
+    <link type="text/css" rel="stylesheet" href="/css/icon.css">
+    <link type="text/css" rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+
+<section class="aui-flexView" style="height:auto" id="navHead">
+    <section class="aui-scrollView aui-scrollView-my">
+        <div class="aui-flex aui-flex-back">
+            <div class="aui-flex-box aui-flex-box-times">
+                <h4 style="color:#fff"><i class="icon icon-time"></i>拼团活动热销进行中</h4>
+            </div>
+            <div class="aui-order-arrow">
+                <a href="/shop/ptIndex">立即拼团</a>
+            </div>
+        </div>
+        <div class="aui-tab" data-ydui-tab>
+            <ul class="tab-nav b-line">
+                <li th:class="${amLeader == null || amLeader.size() == 0?'tab-nav-item':'tab-nav-item tab-active'}">
+                    <a href="javascript:;">
+                        <span>我发起的</span>
+                    </a>
+                </li>
+                <li th:class="${amLeader == null || amLeader.size() == 0?'tab-nav-item tab-active':'tab-nav-item'}">
+                    <a href="javascript:;">
+                        <span>我参与的</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-panel">
+                <div th:class="${amLeader == null || amLeader.size() == 0?'tab-panel-item':'tab-panel-item tab-active'}">
+                    <div style="text-align: center;padding-top: 40px" th:if="${amLeader == null || amLeader.size() == 0}">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <h3>这里空荡荡的，连只老鼠都没有</h3>
+                    </div>
+                    <a th:href="${order.paid?'tuanDetail?t='+order.tuanId:'/user/unified/cashier?unifiedId='+order.unifiedId}" class="aui-order-list b-line" th:each="order:${amLeader}">
+                        <div class="aui-flex">
+                            <div class="aui-flex-box">
+                                <h3 th:text="${order.createdTime}">普通拼团 </h3>
+                            </div>
+                            <div class="aui-order-pay">
+                                <p th:text="${order.paid?order.tuanStatus.desc:'未付款'}">已付款</p>
+                            </div>
+                        </div>
+                        <div class="aui-flex aui-flex-order">
+                            <div class="aui-order-img">
+                                <img th:src="${order.productImgUrl}" alt="">
+                            </div>
+                            <div class="aui-flex-box">
+                                <h2 th:text="${order.title}">江西赣南脐橙 精品大果 现摘橙子 新鲜水果 京东生鲜 10斤精品钻石果10斤精品钻石果10斤精品钻石果</h2>
+                                <h4>共 <i th:text="${order.size}">1</i> 件商品 需付款 <em th:text="${'￥'+order.totalPrice/100.0}">￥9.9</em></h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="tab-panel">
+                <div th:class="${amLeader == null || amLeader.size() == 0?'tab-panel-item tab-active':'tab-panel-item'}">
+                    <div style="text-align: center;padding-top: 40px" th:if="${amFollower == null || amFollower.size() == 0}">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <h3>这里空荡荡的，连只老鼠都没有</h3>
+                    </div>
+                    <a th:href="${order.paid?'tuanDetail?t='+order.tuanId:'/user/unified/cashier?unifiedId='+order.unifiedId}"  class="aui-order-list b-line" th:each="order:${amFollower}">
+                        <div class="aui-flex">
+                            <div class="aui-flex-box">
+                                <h3 th:text="${order.createdTime}">普通拼团 </h3>
+                            </div>
+                            <div class="aui-order-pay">
+                                <p th:text="${order.paid?order.tuanStatus.desc:'未付款,立即付款>>>'}">已付款</p>
+                            </div>
+                        </div>
+                        <div class="aui-flex aui-flex-order">
+                            <div class="aui-order-img">
+                                <img th:src="${order.productImgUrl}" alt="">
+                            </div>
+                            <div class="aui-flex-box">
+                                <h2 th:text="${order.title}">江西赣南脐橙 精品大果 现摘橙子 新鲜水果 京东生鲜 10斤精品钻石果10斤精品钻石果10斤精品钻石果</h2>
+                                <h4>共 <i th:text="${order.size}">1</i> 件商品 需付款 <em th:text="${'￥'+order.totalPrice/100.0}">￥9.9</em></h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+</body>
+
+<script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="/js/pt_slider.js"></script>
+<script type="text/javascript" src="/js/pt_tab.js"></script>
+<script type="text/javascript" src="/js/pt_layer.js"></script>
+</html>

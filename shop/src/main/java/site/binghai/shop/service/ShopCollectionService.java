@@ -6,9 +6,9 @@ import site.binghai.lib.service.BaseService;
 import site.binghai.shop.entity.ShopCollection;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
- *
  * @date 2020/2/3 下午12:26
  **/
 @Service
@@ -41,5 +41,11 @@ public class ShopCollectionService extends BaseService<ShopCollection> {
         ShopCollection f = new ShopCollection();
         f.setBuyerId(user.getId());
         return count(f);
+    }
+
+    public List<ShopCollection> findByUserId(WxUser user) {
+        ShopCollection cs = new ShopCollection();
+        cs.setBuyerId(user.getId());
+        return sortQuery(cs, "id", true);
     }
 }

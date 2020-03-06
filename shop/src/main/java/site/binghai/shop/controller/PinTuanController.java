@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.controller.BaseController;
+import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.utils.HttpUtils;
 import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.entity.Product;
+import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.BannerType;
 import site.binghai.shop.enums.TuanStatus;
@@ -23,6 +25,7 @@ import site.binghai.shop.service.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @date 2020/2/12 下午3:49
@@ -44,7 +47,25 @@ public class PinTuanController extends BaseController {
     private BannerService bannerService;
     @Autowired
     private IceConfig iceConfig;
+    @Autowired
+    private ShopOrderService shopOrderService;
+
     private static final String path = "?source=http://fastshop.bigdata8.xin/shop/ptIndex";
+
+    @GetMapping("myPin")
+    public String myPin(ModelMap map) {
+        WxUser user = getUser();
+        List<Tuan> tuans = tuanService.findByTuanLeader(user.getId());
+        List<Long> tuanIds = tuans.stream().map(t -> t.getId()).collect(Collectors.toList());
+        List<ShopOrder> orders = shopOrderService.findTuanByUserId(user.getId());
+        List<ShopOrder> amLeader = orders.stream().filter(o -> tuanIds.contains(o.getTuanId())).collect(
+            Collectors.toList());
+        List<ShopOrder> amFollower = orders.stream().filter(o -> !tuanIds.contains(o.getTuanId())).collect(
+            Collectors.toList());
+        map.put("amLeader", amLeader);
+        map.put("amFollower", amFollower);
+        return "myPin";
+    }
 
     @GetMapping("ptIndex")
     public String ptIndex(ModelMap map) {
@@ -86,14 +107,21 @@ public class PinTuanController extends BaseController {
         if (tuan == null) {
             return e500("您来错地方了");
         }
+        PinTuanIndexWxShareConfig config = kvService.get(PinTuanIndexWxShareConfig.class);
         Product product = productService.findById(tuan.getProductId());
-        map.put("follower", JSONObject.parseArray(tuan.getFollower(), TuanFollower.class));
+        List<TuanFollower> followers = JSONObject.parseArray(tuan.getFollower(), TuanFollower.class);
+        map.put("follower", followers);
         map.put("tuan", tuan);
         map.put("product", product);
         map.put("endTs", (tuan.getEndTs() - now()) / 1000);
         map.put("waits", waits(tuan.getTotalSize() - tuan.getCurrentSize()));
         List<Product> products = productService.ptSearch();
         map.put("products", products);
+        map.put("wxShareConfig", getWxShareConfig(config, "/shop/tuanDetail?t=" + t));
+
+        WxUser user = getUser();
+        boolean isLeaderOrFollower = followers.stream().filter(p -> p.getUserId().equals(user.getId())).count() > 0;
+        map.put("isLeaderOrFollower", user.getId().equals(tuan.getLeaderId()) || isLeaderOrFollower);
         return "ptInvitation";
     }
 

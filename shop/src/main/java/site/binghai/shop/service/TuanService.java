@@ -25,8 +25,9 @@ public class TuanService extends BaseService<Tuan> {
     private WxEventHandler wxEventHandler;
 
     @Transactional
-    public static void cancel(Tuan t) {
-
+    public void cancel(Tuan t) {
+        t.setStatus(TuanStatus.FAIL);
+        update(t);
     }
 
     public List<Tuan> searchByProductIdAndStatus(Long productId, TuanStatus status, int size) {
@@ -105,5 +106,12 @@ public class TuanService extends BaseService<Tuan> {
         Tuan tuan = findById(t);
         enrich(tuan);
         return tuan;
+    }
+
+    public List<Tuan> findByTuanLeader(Long id) {
+        Tuan tuan = new Tuan();
+        tuan.setLeaderId(id);
+        List<Tuan> ts = sortQuery(tuan, "id", true);
+        return empty(ts);
     }
 }

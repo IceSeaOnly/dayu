@@ -30,6 +30,7 @@ public class PageConfigController extends BaseController {
     @GetMapping("pageConfig")
     public String pageConfig(ModelMap map, Long update) {
         Map<ConfObj, List<ConfObj>> configs = new LinkedHashMap<>();
+        join(configs, MyPageConfig.class);
         join(configs, RecommendSearchWord.class);
         join(configs, PinTuanIndexWxShareConfig.class);
         join(configs, IndexHotTopicImgWall.class);
