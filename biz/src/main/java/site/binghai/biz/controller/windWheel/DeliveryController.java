@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *
  * @date 2018/12/3 下午11:01
  **/
 //@RestController
@@ -103,7 +102,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         WxUser user = getLastestUser();
         List<ExpressBrand> expressBrands = null;
         if (user.getExpDeliverySuperAuth()) {
-            expressBrands = expressBrandService.findAll(999);
+            expressBrands = expressBrandService.pageQuery(new ExpressBrand(), 0,999);
         } else {
             expressBrands = expressOwnerService.listByOwnerId(user.getId(), expressBrandService);
         }
@@ -145,7 +144,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
     @GetMapping("authMap")
     public Object authMap() {
         WxUser user = getLastestUser();
-        List<ExpressOwner> all = expressOwnerService.findAll(9999);
+        List<ExpressOwner> all = expressOwnerService.pageQuery(new ExpressOwner(), 0,9999);
         Map<Long, ExpressOwner> ret = new HashMap<>();
         boolean changed = true;
         while (changed) {
@@ -314,7 +313,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
             }
         }
 
-        List<ExpressOwner> all = expressOwnerService.findAll(9999)
+        List<ExpressOwner> all = expressOwnerService.pageQuery(new ExpressOwner(),0,9999)
             .stream()
             .filter(v -> v.getBrandId().equals(expressOwner.getBrandId()))
             .collect(Collectors.toList());
@@ -391,9 +390,9 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
     @PostMapping("search")
     public Object search(@RequestBody Map map) {
         WxUser user = getLastestUser();
-        Long eid = getLong(map,"eid");
+        Long eid = getLong(map, "eid");
         String content = getString(map, "content");
-        if(hasEmptyString(eid,content)){
+        if (hasEmptyString(eid, content)) {
             return fail("参数错误!");
         }
 
@@ -405,7 +404,7 @@ public class DeliveryController extends AbstractPayBizController<DeliveryOrder> 
         }
 
         List<DeliveryOrder> orders = deliveryOrderService.search(content);
-        if(isEmptyList(orders)){
+        if (isEmptyList(orders)) {
             return fail("无匹配订单");
         }
         return success(orders, null);

@@ -17,7 +17,7 @@ public class MyPageConfig implements KvSupport {
     private String chargeText;
     @Conf("钱包充值链接")
     private String chargeUrl;
-    @Conf("钱包图片")
+    @Conf(value = "钱包图片",img = true)
     private String walletImg;
 
 }

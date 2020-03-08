@@ -31,6 +31,10 @@ public class ShopCategoryService extends BaseService<ShopCategory> {
         return ret;
     }
 
+    private List<ShopCategory> findAll(int size) {
+        return pageQuery(new ShopCategory(), 0, size);
+    }
+
     public Map<ShopCategory, List<ShopCategory>> listAll() {
         Map<ShopCategory, List<ShopCategory>> ret = new LinkedHashMap<>();
         List<ShopCategory> all = empty(findAll(999));

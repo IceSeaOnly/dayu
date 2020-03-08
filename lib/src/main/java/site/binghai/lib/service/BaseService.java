@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import site.binghai.lib.entity.BaseEntity;
 import site.binghai.lib.utils.BaseBean;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -25,7 +26,11 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
 
     public T newInstance(Map map) {
         JSONObject obj = JSONObject.parseObject(JSONObject.toJSONString(map));
-        return obj.toJavaObject(getTypeArguement());
+        T t = obj.toJavaObject(getTypeArguement());
+        if (t != null) {
+            t.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+        }
+        return t;
     }
 
     @Transactional
@@ -62,18 +67,19 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
 
     @Transactional
     public T save(T t) {
+        t.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         return getDao().save(t);
     }
 
     @Transactional
     public T update(T t) {
+        t.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         if (t.getId() >= 0) {
             t.setUpdated(now());
             return save(t);
         }
         return t;
     }
-
 
     public T findById(Long id) {
         if (id == null) { return null; }
@@ -128,6 +134,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(null);
         example.setUpdated(null);
         example.setUpdatedTime(null);
+        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex, new PageRequest(page, size)).getContent());
     }
@@ -138,6 +145,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(null);
         example.setUpdated(null);
         example.setUpdatedTime(null);
+        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex));
     }
@@ -148,6 +156,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(false);
         example.setUpdated(null);
         example.setUpdatedTime(null);
+        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
         T t = (rs == null ? null : rs.orElse(null));
@@ -161,6 +170,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(null);
         example.setUpdated(null);
         example.setUpdatedTime(null);
+        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         example = queryOne(example);
         if (example != null) {
             delete(example.getId());
@@ -173,17 +183,18 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(null);
         example.setUpdated(null);
         example.setUpdatedTime(null);
+        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField)));
     }
 
-    public List<T> findAll(int limit) {
-        return filterDeleted(getDao().findAll(new PageRequest(0, limit)).getContent());
-    }
-
-    public List<T> findAll(int page, int pageSize) {
-        return filterDeleted(getDao().findAll(new PageRequest(page, pageSize)).getContent());
-    }
+    //public List<T> findAll(int limit) {
+    //    return filterDeleted(getDao().findAll(new PageRequest(0, limit)).getContent());
+    //}
+    //
+    //public List<T> findAll(int page, int pageSize) {
+    //    return filterDeleted(getDao().findAll(new PageRequest(page, pageSize)).getContent());
+    //}
 
     public long count() {
         try {
@@ -193,6 +204,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             exp.setCreatedTime(null);
             exp.setUpdated(null);
             exp.setUpdatedTime(null);
+            exp.setSchoolId(SchoolIdThreadLocal.getSchoolId());
             Example<T> ex = Example.of(exp);
             return getDao().count(ex);
         } catch (Exception e) {
@@ -208,6 +220,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             exp.setCreatedTime(null);
             exp.setUpdated(null);
             exp.setUpdatedTime(null);
+            exp.setSchoolId(SchoolIdThreadLocal.getSchoolId());
             Example<T> ex = Example.of(exp);
             return getDao().count(ex);
         } catch (Exception e) {
@@ -216,10 +229,10 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return 0;
     }
 
-    @Transactional
-    public List<T> batchSave(List<T> batch) {
-        return getDao().saveAll(batch);
-    }
+    //@Transactional
+    //public List<T> batchSave(List<T> batch) {
+    //    return getDao().saveAll(batch);
+    //}
 
     /**
      * 使用map更新entity中除id外的其他字段

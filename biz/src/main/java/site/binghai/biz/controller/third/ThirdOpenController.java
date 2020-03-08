@@ -1,6 +1,5 @@
 package site.binghai.biz.controller.third;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.biz.entity.third.ThirdOpen;
@@ -31,7 +30,7 @@ public class ThirdOpenController extends AbstractPayBizController<ThirdOpenOrder
 
     @GetMapping("listService")
     public Object listService() {
-        return success(thirdOpenSerivice.findAll(999), null);
+        return success(thirdOpenSerivice.pageQuery(new ThirdOpen(),0,999), null);
     }
 
     @PostMapping("booking")

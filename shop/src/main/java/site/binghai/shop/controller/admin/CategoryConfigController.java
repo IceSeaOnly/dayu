@@ -47,7 +47,7 @@ public class CategoryConfigController extends BaseController {
     public String deleteCategory(@RequestParam Long cid) {
         ShopCategory ct = shopCategoryService.findById(cid);
         if (ct.getSuperCategory()) {
-            shopCategoryService.findAll(999)
+            shopCategoryService.pageQuery(new ShopCategory(),0,999)
                 .stream()
                 .filter(p -> cid.equals(p.getSuperId()))
                 .forEach(p -> {

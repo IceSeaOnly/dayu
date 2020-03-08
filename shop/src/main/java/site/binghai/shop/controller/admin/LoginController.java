@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.Manager;
 import site.binghai.lib.service.ManagerService;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 
 /**
  * @author huaishuo
@@ -36,6 +37,7 @@ public class LoginController extends BaseController {
             return "redirect:/p/login?err=1";
         }
         persistent(manager);
+        SchoolIdThreadLocal.setSchoolId(manager.getSchoolId());
         return "redirect:/manage/index";
     }
 

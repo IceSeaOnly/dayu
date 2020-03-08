@@ -12,4 +12,5 @@ public class ConfObj {
     private Object value;
     private String className;
     private String fieldName;
+    private boolean img;
 }

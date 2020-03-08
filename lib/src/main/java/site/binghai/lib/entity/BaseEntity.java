@@ -14,6 +14,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class BaseEntity {
     private Long created;
     private Long updated;
+    private Long schoolId;
     private String createdTime;
     private String updatedTime;
     private Boolean isDeleted;
@@ -67,6 +68,14 @@ public abstract class BaseEntity {
 
     public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public Long getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(Long schoolId) {
+        this.schoolId = schoolId;
     }
 
     public abstract Long getId();

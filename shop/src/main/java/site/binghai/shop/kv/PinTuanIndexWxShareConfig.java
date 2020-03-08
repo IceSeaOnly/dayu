@@ -17,7 +17,7 @@ public class PinTuanIndexWxShareConfig implements KvSupport {
     private String shareTitle;
     @Conf("分享链接")
     private String shareLink;
-    @Conf("分享图片")
+    @Conf(value = "分享图片", img = true)
     private String shareImgUrl;
     @Conf("分享描述")
     private String shareDesc;

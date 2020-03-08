@@ -17,5 +17,5 @@ public @interface Conf {
      */
     String value();
 
-    boolean json() default false;
+    boolean img() default false;
 }

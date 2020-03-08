@@ -25,4 +25,8 @@ public class BannerService extends BaseService<Banner> {
         return findAll(999).stream()
             .collect(Collectors.groupingBy(p -> p.getType()));
     }
+
+    private List<Banner> findAll(int size) {
+        return pageQuery(new Banner(),0,size);
+    }
 }

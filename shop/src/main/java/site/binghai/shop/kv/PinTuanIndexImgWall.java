@@ -21,23 +21,23 @@ public class PinTuanIndexImgWall implements KvSupport {
     @Conf("更多按钮链接")
     private String moreUrl;
 
-    @Conf("左侧大图")
+    @Conf(value = "左侧大图",img = true)
     private String leftImg;
     @Conf("左侧大图跳转链接")
     private String leftImgTarget;
-    @Conf("右侧图1")
+    @Conf(value = "右侧图1",img = true)
     private String right01;
     @Conf("右侧图1跳转链接")
     private String right01Target;
-    @Conf("右侧图2")
+    @Conf(value = "右侧图2",img = true)
     private String right02;
     @Conf("右侧图2跳转链接")
     private String right02Target;
-    @Conf("右侧图3")
+    @Conf(value = "右侧图3",img = true)
     private String right03;
     @Conf("右侧图3跳转链接")
     private String right03Target;
-    @Conf("右侧图4")
+    @Conf(value = "右侧图4",img = true)
     private String right04;
     @Conf("右侧图4跳转链接")
     private String right04Target;

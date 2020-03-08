@@ -13,6 +13,7 @@ import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.TimeTools;
+import site.binghai.shop.service.SchoolService;
 
 /**
  * @author huaishuo
@@ -25,6 +26,8 @@ public class ManageIndexController extends BaseController {
     private WxUserService wxUserService;
     @Autowired
     private UnifiedOrderService unifiedOrderService;
+    @Autowired
+    private SchoolService schoolService;
 
     @GetMapping("index")
     public String index(ModelMap map) {
@@ -42,6 +45,7 @@ public class ManageIndexController extends BaseController {
         map.put("todayAvgAmount", totalPaid > 0 ? totalPaid / paidOrder : 0);
         map.put("weekDealData", generateWeekDealData());
         map.put("weekOrderData", generateWeekOrderData());
+        map.put("school", schoolService.findById(getManager().getSchoolId()));
         return "manage/index";
     }
 

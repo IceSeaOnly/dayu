@@ -46,8 +46,15 @@ public class PageConfigController extends BaseController {
     public Object updatePageConfig(@RequestBody Map map) throws Exception {
         String className = getString(map, "className");
         KeyValueEntity entity = kvService.findByKey(className);
-        entity.setSvalue(toJSONString(map));
-        kvService.update(entity);
+        if(entity == null){
+            entity = new KeyValueEntity();
+            entity.setClassName(className);
+            entity.setSvalue(toJSONString(map));
+            kvService.save(entity);
+        }else{
+            entity.setSvalue(toJSONString(map));
+            kvService.update(entity);
+        }
         return success();
     }
 
@@ -63,10 +70,11 @@ public class PageConfigController extends BaseController {
                     o.setName(cf.value());
                     o.setFieldName(field.getName());
                     if (v == null) {
-                        o.setValue("{}");
+                        o.setValue("#");
                     } else {
-                        o.setValue(cf.json() ? toJSONString(v) : String.valueOf(field.get(v)));
+                        o.setValue(String.valueOf(field.get(v)));
                     }
+                    o.setImg(cf.img());
                     list.add(o);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -78,6 +86,7 @@ public class PageConfigController extends BaseController {
         ConfObj o = new ConfObj();
         o.setName(c.value());
         o.setClassName(clazz.getSimpleName());
+        o.setImg(c.img());
         configs.put(o, list);
     }
 }

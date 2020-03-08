@@ -63,13 +63,13 @@
                                     <div class="form-group row mb-3" th:each="item:${cfg.value}">
                                         <label class="col-3 col-form-label" th:text="${item.name+':'}">Email</label>
                                         <div class="col-9">
-                                            <input th:type="${item.value.endsWith('.png')||item.value.endsWith('.jpg')?'hidden':'text'}"
+                                            <input th:type="${item.img?'hidden':'text'}"
                                                    class="form-control"
                                                    th:name="${item.fieldName}"
                                                    th:id="${cfg.key.className+'_'+item.fieldName}"
                                                    th:value="${item.value}"/>
 
-                                            <input th:if="${item.value.endsWith('.png')||item.value.endsWith('.jpg')}"
+                                            <input th:if="${item.img}"
                                                    type="file"
                                                    class="dropify"
                                                    th:data-default-file="${item.value}"

@@ -13,6 +13,7 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.WxCommonService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.MD5;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 
 @Controller
 @RequestMapping("/wx/")
@@ -53,11 +54,12 @@ public class WxController extends BaseController {
         if (needCompleteInfo(wxUser)) {
             return "redirect:/shop/myInfo";
         }
+        SchoolIdThreadLocal.setSchoolId(wxUser.getSchoolId());
         return backUrl == null ? "redirect:/" : "redirect:" + backUrl;
     }
 
     private boolean needCompleteInfo(WxUser wxUser) {
-        if (hasEmptyString(wxUser.getUserName(), wxUser.getPhone())) {
+        if (hasEmptyString(wxUser.getUserName(), wxUser.getPhone(), wxUser.getSchoolId())) {
             return true;
         }
         return false;

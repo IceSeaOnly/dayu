@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+    <!-- Dropify css -->
+    <link href="/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="header-border"></div>
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:include="manage/menus"></div>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18">学校配置</h4>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="page-title-box d-flex  justify-content-between">
+                            <div class="alert alert-success" role="alert" th:if="${msg != null}" th:text="${msg}">
+                                更新成功
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 15px"></div>
+                <div class="row">
+                    <div class="col-xl-6" th:each="school:${schools}">
+
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title" th:text="${school.schoolName}">Horizontal Form</h4>
+                                <form class="form-horizontal" th:id="${'school_form_'+school.id}"
+                                      th:each="item:${school}">
+                                    <div class="form-group row mb-3">
+                                        <div class="col-9">
+                                            <input type="hidden" name="id" th:value="${item.id}"/>
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">跳转链接</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="schoolName" class="form-control"
+                                                           th:value="${item.schoolName}" placeholder="不跳转填#">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">学生是否可见</label>
+                                                <div class="col-9">
+                                                    <select name="visible">
+                                                        <option th:selected="${item.visible == true}" value="true">可见</option>
+                                                        <option th:selected="${item.visible == false}" value="false">不可见</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <span>学校logo</span>
+                                            <input type="hidden"
+                                                   class="form-control"
+                                                   name="schoolImg"
+                                                   th:id="${'school_'+item.id}"
+                                                   th:value="${item.schoolImg}"/>
+
+                                            <input type="file"
+                                                   class="dropify"
+                                                   th:data-default-file="${item.schoolImg}"
+                                                   th:id="${'bind_school_'+item.id}"
+                                                   onchange="doUpload(this)"/>
+                                            <div style="text-align: center;padding-top: 10px">
+                                                <button type="button"
+                                                        th:onclick="${'doSubmitForm('''+item.id+''')'}"
+                                                        class="btn btn-primary waves-effect waves-light">
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更新&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                </button>
+                                                <button type="button"
+                                                        th:onclick="${'changeTo('''+item.id+''')'}"
+                                                        class="btn btn-secondary waves-effect waves-light">
+                                                    切换到该学校
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+
+                    </div> <!-- end col -->
+
+                    <div class="col-xl-6">
+
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title">新增学校</h4>
+                                <form class="form-horizontal" id="addNewSchoolForm">
+                                    <div class="form-group row mb-3">
+                                        <div class="col-9">
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">学校名称</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="schoolName" class="form-control"
+                                                           placeholder="不可留空">
+                                                </div>
+                                            </div>
+                                            <span>学校logo</span>
+                                            <input type="hidden"
+                                                   class="form-control"
+                                                   name="schoolImg"
+                                                   id="addSchoolImg"/>
+
+                                            <input type="file"
+                                                   class="dropify"
+                                                   id="bind_addSchoolImg"
+                                                   onchange="doUpload(this)"/>
+                                            <div style="text-align: center;padding-top: 10px">
+                                                <button type="button"
+                                                        onclick="addNewSchool()"
+                                                        class="btn btn-primary waves-effect waves-light">
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新增学校&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+
+                    </div> <!-- end col -->
+
+                </div>
+
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+
+    </div>
+    <!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+
+<!-- Overlay-->
+<div class="menu-overlay"></div>
+
+<script>
+    function addNewSchool() {
+        var data = {};
+        var params = $("#addNewSchoolForm").serializeArray();
+        $.each(params, function () {
+            data[this.name] = this.value;
+        });
+        $.ajax({
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            url: "ajaxAddSchool",
+            data: JSON.stringify(data),
+            success: function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    var timestamp = new Date().getTime();
+                    window.location.reload();
+                } else {
+                    alert(resp.msg);
+                }
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    }
+
+    function changeTo(id) {
+        window.location.href = 'schoolChangeTo?id=' + id;
+    }
+
+    function doSubmitForm(id) {
+        var data = {};
+        var params = $("#" + 'school_form_' + id).serializeArray();
+        $.each(params, function () {
+            data[this.name] = this.value;
+        });
+        $.ajax({
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            url: "ajaxUpdateSchool",
+            data: JSON.stringify(data),
+            success: function (resp) {
+                if (resp.status == 'SUCCESS') {
+                    var timestamp = new Date().getTime();
+                    window.location.reload();
+                } else {
+                    alert(resp.msg);
+                }
+            },
+            error: function (e) {
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    }
+</script>
+
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+
+
+<!-- Sparkline Js-->
+<script src="/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+<!-- Chart Js-->
+<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- Chart Custom Js-->
+<!--<script src="assets/pages/knob-chart-demo.js"></script>-->
+<!-- Morris Js-->
+<script src="/plugins/morris-js/morris.min.js"></script>
+<!-- Raphael Js-->
+<script src="/plugins/raphael/raphael.min.js"></script>
+<!-- Custom Js -->
+<!--<script src="assets/pages/dashboard-demo.js"></script>-->
+<!-- App js -->
+<script src="/js/theme.js"></script>
+<script src="/plugins/dropify/dropify.min.js"></script>
+<script src="https://unpkg.com/qiniu-js@2.5.5/dist/qiniu.min.js"></script>
+<script src="/js/image-upload-helper.js"></script>
+</body>
+
+</html>

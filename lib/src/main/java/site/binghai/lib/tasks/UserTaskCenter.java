@@ -1,6 +1,5 @@
 package site.binghai.lib.tasks;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -25,7 +24,7 @@ public class UserTaskCenter extends BaseBean {
     public void doJob() {
         int page = 0;
         int pageSize = 100;
-        List<WxUser> users = wxUserService.findAll(page++, pageSize);
+        List<WxUser> users = wxUserService.pageQuery(new WxUser(), page++, pageSize);
 
         logger.info("User Tasks Start.");
         if (!isEmptyList(users)) {

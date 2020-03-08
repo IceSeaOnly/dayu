@@ -49,4 +49,6 @@ public class WxUser extends BaseEntity implements SessionPersistent {
     private String address;
 
     private Boolean expDeliverySuperAuth;
+
+    private Long schoolId;
 }

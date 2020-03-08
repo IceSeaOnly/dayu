@@ -42,6 +42,10 @@ public class DetailController extends BaseController {
             return e500("商品不存在或已下架!");
         }
 
+        if (product.getPtSize() != null) {
+            return "redirect:ptDetail?item=" + productId;
+        }
+
         footHistoryService.footprint(getUser().getId(), productId);
 
         ProductDetail detail = productDetailService.findByProductId(productId);

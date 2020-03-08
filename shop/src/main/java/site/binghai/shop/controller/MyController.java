@@ -32,6 +32,9 @@ public class MyController extends BaseController {
     private KvService kvService;
     @Autowired
     private WxUserService wxUserService;
+    @Autowired
+    private SchoolService schoolService;
+
 
     @GetMapping("my")
     public String my(ModelMap map) {
@@ -53,6 +56,7 @@ public class MyController extends BaseController {
     public String myInfo(ModelMap map) {
         WxUser user = getUser();
         map.put("user", user);
+        map.put("schools", schoolService.findAll());
         map.put("needCompleteInfo", needCompleteInfo(user));
         return "myInfo";
     }
@@ -62,7 +66,8 @@ public class MyController extends BaseController {
                                @RequestParam String country,
                                @RequestParam String province,
                                @RequestParam String city,
-                               @RequestParam String phone) {
+                               @RequestParam String phone,
+                               @RequestParam Long schoolId) {
 
         WxUser user = getUser();
         user.setCity(city);
@@ -70,8 +75,9 @@ public class MyController extends BaseController {
         user.setProvince(province);
         user.setPhone(phone);
         user.setGender(gender);
+        user.setSchoolId(schoolId);
         wxUserService.update(user);
-        persistent(user);
+        getSession().invalidate();
         return "redirect:my";
     }
 
