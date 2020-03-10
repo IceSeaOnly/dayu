@@ -49,6 +49,11 @@ public class ShopOrder extends PayBizEntity {
      * */
     private Long tuanId;
 
+    /**
+     * 绑定起手，appToken.Id
+     * */
+    private Long bindRider;
+
     @Transient
     private UnifiedOrder unifiedOrder;
     @Transient
