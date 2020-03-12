@@ -9,6 +9,7 @@ import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.utils.BaseBean;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class PayBizServiceFactory extends BaseBean {
     @Transactional
     public void onPayNotify(String orderId) throws Exception {
         UnifiedOrder unifiedOrder = unifiedOrderService.findByOrderId(orderId);
-
+        SchoolIdThreadLocal.setSchoolId(unifiedOrder.getSchoolId());
         if (unifiedOrder == null || unifiedOrder.getStatus() >= OrderStatusEnum.PAIED.getCode()) {
             logger.error("status of order {} is no longer paid!", orderId);
             return;

@@ -15,6 +15,7 @@ import site.binghai.lib.service.WxUserService;
 import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.service.ShopOrderService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,11 +34,21 @@ public class OrderController extends BaseController {
     @GetMapping("orders")
     public String orders(ModelMap map, String type) {
         WxUser user = getUser();
-        List<ShopOrder> shopOrders = null;
+        List<ShopOrder> shopOrders = new ArrayList<>();
         if (type == null) {
             shopOrders = shopOrderService.findByUserId(user.getId());
         } else {
-            shopOrders = shopOrderService.findByUserIdAndState(user.getId(), OrderStatusEnum.valueOf(type));
+            OrderStatusEnum status = OrderStatusEnum.valueOf(type);
+            List<ShopOrder> tmp = shopOrderService.findByUserIdAndState(user.getId(), status);
+            if (!isEmptyList(tmp)) {
+                shopOrders.addAll(tmp);
+            }
+            if (status == OrderStatusEnum.PROCESSING) {
+                tmp = shopOrderService.findByUserIdAndState(user.getId(), OrderStatusEnum.DELIVERY);
+                if (!isEmptyList(tmp)) {
+                    shopOrders.addAll(tmp);
+                }
+            }
         }
         if (!isEmptyList(shopOrders)) {
             shopOrders.forEach(this::enrichUnifiedOrder);
@@ -47,8 +58,10 @@ public class OrderController extends BaseController {
         map.put("typeEnum", OrderStatusEnum.class);
         map.put("allSize", shopOrderService.countByUserId(user.getId()));
         map.put("payingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.CREATED));
-        map.put("shippingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PAIED));
-        map.put("shippedSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PROCESSING));
+        map.put("processingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PAIED));
+        map.put("shippingSize",
+            shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PROCESSING) + shopOrderService
+                .countByUserIdAndState(user.getId(), OrderStatusEnum.DELIVERY));
         map.put("feedingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.COMPLETE));
         return "orders";
     }

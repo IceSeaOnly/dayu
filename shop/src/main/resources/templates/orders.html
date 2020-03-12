@@ -52,10 +52,10 @@
             <a href="orders?type=CREATED" th:text="${'待付款('+payingSize+')'}">全部(6)</a>
         </li>
         <li th:class="${type == 'PAIED'?'on':''}">
-            <a href="orders?type=PAIED" th:text="${'待发货('+shippingSize+')'}">待发货(1)</a>
+            <a href="orders?type=PAIED" th:text="${'待发货('+processingSize+')'}">待发货(1)</a>
         </li>
         <li th:class="${type == 'PROCESSING'?'on':''}">
-            <a href="orders?type=PROCESSING" th:text="${'待收货('+shippedSize+')'}">待收货(3)</a>
+            <a href="orders?type=PROCESSING" th:text="${'待收货('+shippingSize+')'}">待收货(3)</a>
         </li>
         <li th:class="${type == 'COMPLETE'?'on':''}">
             <a href="orders?type=COMPLETE" th:text="${'待评价('+feedingSize+')'}">待评价(2)</a>
@@ -71,12 +71,9 @@
     </div>
     <div class="myddcon1" th:each="item:${orders}">
         <div class="dpbox">
-            <!--<div class="dpL">-->
-            <!--<a href="dpxq">-->
-            <!--<span>皇宫婚纱旗舰店</span>-->
-            <!--<img src="/images/mre1.png">-->
-            <!--</a>-->
-            <!--</div>-->
+            <div class="dpL">
+                <span th:text="${item.createdTime}">皇宫婚纱旗舰店</span>
+            </div>
             <div class="dpR"><a href="shouhuoNo" th:text="${typeEnum.valueOf(item.status).name}">待收货</a></div>
         </div>
         <div class="shopbox">

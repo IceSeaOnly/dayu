@@ -18,7 +18,11 @@ public class AppTokenService extends BaseService<AppToken> {
         AppToken exp = new AppToken();
         exp.setUserName(u);
         exp.setPassWord(pass);
-        return queryOne(exp);
+        AppToken token = queryOne(exp);
+        if (token != null) {
+            SchoolIdThreadLocal.setSchoolId(token.getSchoolId());
+        }
+        return token;
     }
 
     public AppToken findByToken(String token) {
