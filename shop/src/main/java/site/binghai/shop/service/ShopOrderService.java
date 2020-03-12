@@ -2,6 +2,7 @@ package site.binghai.shop.service;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.def.UnifiedOrderMethods;
@@ -163,5 +164,13 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         exp.setUserId(userId);
         exp.setPtOrder(Boolean.TRUE);
         return sortQuery(exp, "id", true);
+    }
+
+    public List<ShopOrder> findByStatusAndRider(OrderStatusEnum status, Long rider, Integer page) {
+        ShopOrder exp = new ShopOrder();
+        exp.setStatus(status.getCode());
+        exp.setBindRider(rider);
+        return shopOrderDao.findAllByStatusAndBindRiderOrderByIdDesc(status.getCode(), rider,
+            new PageRequest(page, 100));
     }
 }

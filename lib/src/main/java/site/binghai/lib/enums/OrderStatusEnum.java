@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by IceSea on 2018/4/4.
- * GitHub: https://github.com/IceSeaOnly
+ * Created by IceSea on 2018/4/4. GitHub: https://github.com/IceSeaOnly
  */
 @Getter
 public enum OrderStatusEnum {
-    CREATED(0, "已创建"),
+    CREATED(0, "待支付"),
     PAYING(1, "待支付"),
     PAIED(2, "已支付"),
     PROCESSING(3, "订单处理中"),
@@ -20,8 +19,8 @@ public enum OrderStatusEnum {
     CANCELED(6, "已取消"),
     OUTOFDATE(7, "已超时/已取消"),
     FEED_DONE(8, "评价完成"),
+    DELIVERY(9, "配送中"),
     ;
-
 
     private int code;
     private String name;

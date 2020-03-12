@@ -25,7 +25,7 @@ public class AppTakingOrderController extends AppBaseController {
     @GetMapping("takingOrder")
     public Object takingOrder(@RequestParam String token) {
         return verifyDoing(token, appToken -> {
-            List<ShopOrder> orders = shopOrderService.findByStatusAndTime(0L, now(), OrderStatusEnum.PAIED);
+            List<ShopOrder> orders = shopOrderService.findByStatusAndTime(0L, now(), OrderStatusEnum.PROCESSING);
             return success(orders, null);
         });
     }
@@ -37,13 +37,13 @@ public class AppTakingOrderController extends AppBaseController {
             if (order == null || order.getSchoolId().equals(appToken.getSchoolId())) {
                 return fail("订单不存在!");
             }
-            if (!order.getStatus().equals(OrderStatusEnum.PAIED.getCode())) {
-                return fail("抢单失败!");
+            if (!order.getStatus().equals(OrderStatusEnum.PROCESSING.getCode())) {
+                return fail("手慢了没抢到!");
             }
             order.setBindRider(appToken.getId());
-            order.setStatus(OrderStatusEnum.PROCESSING.getCode());
+            order.setStatus(OrderStatusEnum.DELIVERY.getCode());
             shopOrderService.update(order);
-            return success();
+            return success("抢单成功", null);
         });
     }
 
@@ -58,26 +58,6 @@ public class AppTakingOrderController extends AppBaseController {
                 return fail("只能查看自己抢到的订单!");
             }
             return success(order, null);
-        });
-    }
-
-    @GetMapping("deliveryOrder")
-    public Object deliveryOrder(@RequestParam String token, @RequestParam Long orderId) {
-        return verifyDoing(token, appToken -> {
-            ShopOrder order = shopOrderService.findById(orderId);
-            if (order == null || order.getSchoolId().equals(appToken.getSchoolId())) {
-                return fail("订单不存在!");
-            }
-            if (!order.getBindRider().equals(appToken.getId())) {
-                return fail("只能处理自己抢到的订单!");
-            }
-            if (!order.getStatus().equals(OrderStatusEnum.PROCESSING.getCode())) {
-                return fail("订单状态错误!" + OrderStatusEnum.valueOf(order.getStatus()).getName());
-            }
-            order.setBindRider(appToken.getId());
-            order.setStatus(OrderStatusEnum.COMPLETE.getCode());
-            shopOrderService.update(order);
-            return success();
         });
     }
 }
