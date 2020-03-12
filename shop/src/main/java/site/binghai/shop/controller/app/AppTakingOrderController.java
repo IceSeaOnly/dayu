@@ -34,7 +34,7 @@ public class AppTakingOrderController extends AppBaseController {
     public Object takeOrder(@RequestParam String token, @RequestParam Long orderId) {
         return verifyDoing(token, appToken -> {
             ShopOrder order = shopOrderService.findById(orderId);
-            if (order == null || order.getSchoolId().equals(appToken.getSchoolId())) {
+            if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
                 return fail("订单不存在!");
             }
             if (!order.getStatus().equals(OrderStatusEnum.PROCESSING.getCode())) {
@@ -47,17 +47,4 @@ public class AppTakingOrderController extends AppBaseController {
         });
     }
 
-    @GetMapping("orderDetail")
-    public Object orderDetail(@RequestParam String token, @RequestParam Long orderId) {
-        return verifyDoing(token, appToken -> {
-            ShopOrder order = shopOrderService.findById(orderId);
-            if (order == null || order.getSchoolId().equals(appToken.getSchoolId())) {
-                return fail("订单不存在!");
-            }
-            if (!order.getBindRider().equals(appToken.getId())) {
-                return fail("只能查看自己抢到的订单!");
-            }
-            return success(order, null);
-        });
-    }
 }

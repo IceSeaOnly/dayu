@@ -25,7 +25,7 @@ public class AppDeliveryOrderController extends AppBaseController {
     public Object deliveryOrder(@RequestParam String token, @RequestParam Long orderId) {
         return verifyDoing(token, appToken -> {
             ShopOrder order = shopOrderService.findById(orderId);
-            if (order == null || order.getSchoolId().equals(appToken.getSchoolId())) {
+            if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
                 return fail("订单不存在!");
             }
             if (!order.getBindRider().equals(appToken.getId())) {
