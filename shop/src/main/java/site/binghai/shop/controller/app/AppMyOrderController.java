@@ -21,6 +21,15 @@ public class AppMyOrderController extends AppBaseController {
     @Autowired
     private ShopOrderService shopOrderService;
 
+    @GetMapping("countMyOrder")
+    public Object countMyOrder(Integer statusCode, @RequestParam String token) {
+        return verifyDoing(token, appToken -> {
+            Long cnt = shopOrderService.countByRiderAndStatus(OrderStatusEnum.valueOf(statusCode),
+                appToken.getId());
+            return success(cnt, null);
+        });
+    }
+
     @GetMapping("myOrder")
     public Object myOrder(Integer statusCode, @RequestParam Integer page, @RequestParam String token) {
         return verifyDoing(token, appToken -> {
@@ -46,6 +55,7 @@ public class AppMyOrderController extends AppBaseController {
             order.setBindRider(null);
             order.setStatus(OrderStatusEnum.PROCESSING.getCode());
             shopOrderService.update(order);
+            System.out.println(appToken.getUserName() + " released order " + orderId);
             return success();
         });
     }
@@ -65,6 +75,7 @@ public class AppMyOrderController extends AppBaseController {
             }
             order.setBindRider(rider);
             shopOrderService.update(order);
+            System.out.println(appToken.getUserName() + " hand over order " + orderId + " to " + rider);
             return success();
         });
     }

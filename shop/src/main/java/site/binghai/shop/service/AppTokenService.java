@@ -6,6 +6,7 @@ import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.shop.entity.AppToken;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * @author huaishuo
@@ -49,5 +50,9 @@ public class AppTokenService extends BaseService<AppToken> {
 
         SchoolIdThreadLocal.setSchoolId(t.getSchoolId());
         return true;
+    }
+
+    public List<AppToken> findAll() {
+        return getDao().findAll();
     }
 }

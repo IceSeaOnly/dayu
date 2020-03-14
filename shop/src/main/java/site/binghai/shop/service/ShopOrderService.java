@@ -167,10 +167,19 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     }
 
     public List<ShopOrder> findByStatusAndRider(OrderStatusEnum status, Long rider, Integer page) {
-        ShopOrder exp = new ShopOrder();
-        exp.setStatus(status == null? null : status.getCode());
-        exp.setBindRider(rider);
+        if (status == null) {
+            return shopOrderDao.findAllByBindRiderOrderByUpdatedDesc(rider, new PageRequest(page, 100));
+        }
         return shopOrderDao.findAllByStatusAndBindRiderOrderByIdDesc(status.getCode(), rider,
             new PageRequest(page, 100));
+    }
+
+    public Long countByRiderAndStatus(OrderStatusEnum status, Long id) {
+        ShopOrder exp = new ShopOrder();
+        exp.setBindRider(id);
+        if (status != null) {
+            exp.setStatus(status.getCode());
+        }
+        return count(exp);
     }
 }

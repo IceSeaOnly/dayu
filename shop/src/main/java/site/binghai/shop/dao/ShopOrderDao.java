@@ -14,4 +14,6 @@ public interface ShopOrderDao extends JpaRepository<ShopOrder, Long> {
     List<ShopOrder> findAllByStatusInAndCreatedBetween(List<Integer> status, Long start, Long end);
 
     List<ShopOrder> findAllByStatusAndBindRiderOrderByIdDesc(Integer status, Long rider, Pageable pageable);
+
+    List<ShopOrder> findAllByBindRiderOrderByUpdatedDesc(Long rider, Pageable pageable);
 }

@@ -47,6 +47,7 @@ public class AppDeliveryOrderController extends AppBaseController {
             order.setBindRider(appToken.getId());
             order.setStatus(OrderStatusEnum.COMPLETE.getCode());
             shopOrderService.update(order);
+            System.out.println(appToken.getUserName() + " mark delivery complete : order " + orderId);
             return success();
         });
     }
