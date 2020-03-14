@@ -22,11 +22,50 @@ public class AppMyOrderController extends AppBaseController {
     private ShopOrderService shopOrderService;
 
     @GetMapping("myOrder")
-    public Object myOrder(@RequestParam Integer statusCode, @RequestParam Integer page, @RequestParam String token) {
+    public Object myOrder(Integer statusCode, @RequestParam Integer page, @RequestParam String token) {
         return verifyDoing(token, appToken -> {
             List<ShopOrder> ret = shopOrderService.findByStatusAndRider(OrderStatusEnum.valueOf(statusCode),
                 appToken.getId(), page);
             return success(ret, null);
+        });
+    }
+
+    @GetMapping("releaseOrder")
+    public Object release(@RequestParam String token, @RequestParam Long orderId) {
+        return verifyDoing(token, appToken -> {
+            ShopOrder order = shopOrderService.findById(orderId);
+            if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
+                return fail("订单不存在!");
+            }
+            if (!order.getBindRider().equals(appToken.getId())) {
+                return fail("只能释放自己抢到的订单!");
+            }
+            if (!order.getStatus().equals(OrderStatusEnum.DELIVERY.getCode())) {
+                return fail("订单状态错误!" + OrderStatusEnum.valueOf(order.getStatus()).getName());
+            }
+            order.setBindRider(null);
+            order.setStatus(OrderStatusEnum.PROCESSING.getCode());
+            shopOrderService.update(order);
+            return success();
+        });
+    }
+
+    @GetMapping("handOver")
+    public Object handOver(@RequestParam String token, @RequestParam Long orderId, @RequestParam Long rider) {
+        return verifyDoing(token, appToken -> {
+            ShopOrder order = shopOrderService.findById(orderId);
+            if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
+                return fail("订单不存在!");
+            }
+            if (!order.getBindRider().equals(appToken.getId())) {
+                return fail("只能转交自己抢到的订单!");
+            }
+            if (!order.getStatus().equals(OrderStatusEnum.DELIVERY.getCode())) {
+                return fail("订单状态错误!" + OrderStatusEnum.valueOf(order.getStatus()).getName());
+            }
+            order.setBindRider(rider);
+            shopOrderService.update(order);
+            return success();
         });
     }
 }
