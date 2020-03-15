@@ -41,24 +41,26 @@ public class AppDeliveryOrderController extends AppBaseController {
     }
 
     @GetMapping("deliveryOrder")
-    public Object deliveryOrder(@RequestParam String token, @RequestParam Long orderId) {
+    public Object deliveryOrder(@RequestParam String token, @RequestParam Long batchId) {
         return verifyDoing(token, appToken -> {
-            ShopOrder order = shopOrderService.findById(orderId);
-            if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
-                return fail("订单不存在!");
+            List<ShopOrder> orders = shopOrderService.findByBatchId(batchId);
+            for (ShopOrder order : orders) {
+                if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
+                    return fail("订单不存在!");
+                }
+                if (!order.getBindRider().equals(appToken.getId())) {
+                    return fail("只能处理自己抢到的订单!");
+                }
+                if (!order.getStatus().equals(OrderStatusEnum.DELIVERY.getCode())) {
+                    return fail("订单状态错误!" + OrderStatusEnum.valueOf(order.getStatus()).getName());
+                }
+                order.setBindRider(appToken.getId());
+                order.setStatus(OrderStatusEnum.COMPLETE.getCode());
+                shopOrderService.update(order);
+                System.out.println(appToken.getUserName() + " mark delivery complete : order " + order.getId());
             }
-            if (!order.getBindRider().equals(appToken.getId())) {
-                return fail("只能处理自己抢到的订单!");
-            }
-            if (!order.getStatus().equals(OrderStatusEnum.DELIVERY.getCode())) {
-                return fail("订单状态错误!" + OrderStatusEnum.valueOf(order.getStatus()).getName());
-            }
-            order.setBindRider(appToken.getId());
-            order.setStatus(OrderStatusEnum.COMPLETE.getCode());
-            shopOrderService.update(order);
-            System.out.println(appToken.getUserName() + " mark delivery complete : order " + orderId);
             AppConfig appConfig = kvService.get(AppConfig.class);
-            salaryLogService.book(appToken.getId(), orderId, SalaryScene.DELIVERY, appConfig.getDeliverySalary());
+            salaryLogService.book(appToken.getId(), batchId, SalaryScene.DELIVERY, appConfig.getDeliverySalary());
             return success();
         });
     }

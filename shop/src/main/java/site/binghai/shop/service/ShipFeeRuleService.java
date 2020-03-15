@@ -17,7 +17,7 @@ public class ShipFeeRuleService extends BaseService<ShipFeeRule> {
         int ret = Integer.MAX_VALUE;
         for (ShipFeeRule r : findAll()) {
             if (total >= r.getMuch()) {
-                ret = Math.min(ret, r.getMuch());
+                ret = Math.min(ret, r.getFee());
             }
         }
         return ret == Integer.MAX_VALUE ? 0 : ret;

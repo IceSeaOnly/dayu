@@ -10,6 +10,7 @@ import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.service.ShopOrderService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author huaishuo
@@ -25,24 +26,27 @@ public class AppTakingOrderController extends AppBaseController {
     @GetMapping("takingOrder")
     public Object takingOrder(@RequestParam String token) {
         return verifyDoing(token, appToken -> {
-            List<ShopOrder> orders = shopOrderService.findByStatusAndTime(0L, now(), OrderStatusEnum.PROCESSING);
+            Map<Long, List<ShopOrder>> orders = shopOrderService.findByStatusAndTime(0L, now(),
+                OrderStatusEnum.PROCESSING);
             return success(orders, null);
         });
     }
 
     @GetMapping("takeOrder")
-    public Object takeOrder(@RequestParam String token, @RequestParam Long orderId) {
+    public Object takeOrder(@RequestParam String token, @RequestParam Long batchId) {
         return verifyDoing(token, appToken -> {
-            ShopOrder order = shopOrderService.findById(orderId);
-            if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
-                return fail("订单不存在!");
+            List<ShopOrder> orders = shopOrderService.findByBatchId(batchId);
+            for (ShopOrder order : orders) {
+                if (order == null || !order.getSchoolId().equals(appToken.getSchoolId())) {
+                    return fail("订单不存在!");
+                }
+                if (!order.getStatus().equals(OrderStatusEnum.PROCESSING.getCode())) {
+                    return fail("手慢了没抢到!");
+                }
+                order.setBindRider(appToken.getId());
+                order.setStatus(OrderStatusEnum.DELIVERY.getCode());
+                shopOrderService.update(order);
             }
-            if (!order.getStatus().equals(OrderStatusEnum.PROCESSING.getCode())) {
-                return fail("手慢了没抢到!");
-            }
-            order.setBindRider(appToken.getId());
-            order.setStatus(OrderStatusEnum.DELIVERY.getCode());
-            shopOrderService.update(order);
             return success("抢单成功", null);
         });
     }

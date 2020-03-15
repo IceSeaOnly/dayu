@@ -155,11 +155,11 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         return "/shop/orders";
     }
 
-    public List<ShopOrder> findByStatusAndTime(Long ts, Long end, OrderStatusEnum... status) {
+    public Map<Long, List<ShopOrder>> findByStatusAndTime(Long ts, Long end, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
         List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
         return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
-            Collectors.toList());
+            Collectors.groupingBy(s -> s.getBatchId()));
     }
 
     public List<ShopOrder> findTuanByUserId(Long userId) {

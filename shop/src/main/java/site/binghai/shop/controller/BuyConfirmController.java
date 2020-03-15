@@ -64,7 +64,7 @@ public class BuyConfirmController extends BaseController {
         }
 
         int shipFee = shipFeeRuleService.calFee(total);
-        ;
+
         Coupon coupon = null;
         int sourceTotal = total;
         boolean moreCoupon = true;
@@ -98,11 +98,11 @@ public class BuyConfirmController extends BaseController {
         map.put("moreCoupon", moreCoupon);
         map.put("selectedCoupon", coupon);
         map.put("cartItems", cartItems);
-        map.put("shipFee", shipFee > 0 ? String.format("￥.2f", shipFee / 100.0) : "免邮费 ￥0");
+        map.put("shipFee", shipFee > 0 ? String.format("￥%.2f", shipFee / 100.0) : "免邮费 ￥0");
         map.put("user", user);
         map.put("maxPoints", maxPoints(user.getShoppingPoints(), total));
         map.put("totalSize", size);
-        map.put("totalPrice", Math.max(total, 0));
+        map.put("totalPrice", Math.max(total, 0) + shipFee);
         map.put("sourceTotal", Math.max(sourceTotal, 0));
         return "confirm";
     }
