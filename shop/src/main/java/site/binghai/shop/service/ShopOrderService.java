@@ -23,6 +23,7 @@ import site.binghai.shop.enums.TuanStatus;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,8 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     private WxEventHandler wxEventHandler;
     @Autowired
     private ShopOrderDao shopOrderDao;
+    @Autowired
+    private AppTokenService appTokenService;
 
     @Override
     protected JpaRepository<ShopOrder, Long> getDao() {
@@ -152,7 +155,7 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         return "/shop/orders";
     }
 
-    public List<ShopOrder> findByStatusAndTime(Long ts, long end, OrderStatusEnum... status) {
+    public List<ShopOrder> findByStatusAndTime(Long ts, Long end, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
         List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
         return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
@@ -166,20 +169,53 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         return sortQuery(exp, "id", true);
     }
 
-    public List<ShopOrder> findByStatusAndRider(OrderStatusEnum status, Long rider, Integer page) {
+    public Map<Long, List<ShopOrder>> findByStatusAndRider(OrderStatusEnum status, Long rider, Integer page) {
+        List<ShopOrder> ret = null;
         if (status == null) {
-            return shopOrderDao.findAllByBindRiderOrderByUpdatedDesc(rider, new PageRequest(page, 100));
+            ret = shopOrderDao.findAllByBindRiderOrderByUpdatedDesc(rider, new PageRequest(page, 1000));
         }
-        return shopOrderDao.findAllByStatusAndBindRiderOrderByIdDesc(status.getCode(), rider,
-            new PageRequest(page, 100));
+        ret = shopOrderDao.findAllByStatusAndBindRiderOrderByIdDesc(status.getCode(), rider,
+            new PageRequest(page, 1000));
+
+        return ret.stream().collect(
+            Collectors.groupingBy(s -> s.getBatchId()));
     }
 
     public Long countByRiderAndStatus(OrderStatusEnum status, Long id) {
+        Long ret = shopOrderDao.countByRiderAndStatus(id, status.getCode());
+        return ret == null ? 0 : ret;
+    }
+
+    public List<ShopOrder> findByBatchId(Long batchId) {
         ShopOrder exp = new ShopOrder();
-        exp.setBindRider(id);
-        if (status != null) {
-            exp.setStatus(status.getCode());
-        }
-        return count(exp);
+        exp.setBatchId(batchId);
+        List<ShopOrder> ret = query(exp);
+        return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
+            Collectors.toList());
+    }
+
+    public Map<Long, List<ShopOrder>> findByStatusAndTimeGroupingByBatchId(Long ts, long end,
+                                                                           OrderStatusEnum... status) {
+        List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
+        List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
+
+        return ret.stream().peek(s -> {
+            s.setProduct(productService.findById(s.getProductId()));
+            if (s.getBindRider() != null) {
+                s.setRider(appTokenService.findById(s.getBindRider()));
+            }
+        }).collect(
+            Collectors.groupingBy(s -> s.getBatchId()));
+    }
+
+    public Long countByRiderAndStatusAndTime(OrderStatusEnum status, Long tokenId, Long[] time) {
+        Long ret = shopOrderDao.countByRiderAndStatusAndTime(time[0], time[1], tokenId, status.getCode());
+        return ret == null ? 0 : ret;
+    }
+
+    public Long countByStateAndTime(Long begin, Long end, OrderStatusEnum... status) {
+        List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
+        Long ret = shopOrderDao.countByStatusAndTime(begin, end, ss);
+        return ret == null ? 0 : ret;
     }
 }

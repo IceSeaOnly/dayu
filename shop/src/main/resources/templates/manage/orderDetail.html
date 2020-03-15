@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+
+
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div style="height: 15px"></div>
+                    <table id="datatable-buttons" class="table table-striped dt-responsive nowrap">
+                        <thead>
+                        <tr>
+                            <th>类型</th>
+                            <th>商品</th>
+                            <th>规格</th>
+                            <th>单价</th>
+                            <th>数量</th>
+                            <th>小计</th>
+                        </tr>
+                        </thead>
+
+
+                        <tbody>
+                        <tr th:each="order:${orders}">
+                            <td>
+                                            <span class="badge badge-info badge-pill"
+                                                  th:if="${order.ptOrder == null || order.ptOrder == false}">普通</span>
+                                <span class="badge badge-secondary badge-pill"
+                                      th:if="${order.ptOrder != null && order.ptOrder == true}"
+                                      th:text="${order.product.ptSize+'人团'}">3人团</span>
+                            </td>
+
+                            <td>
+                                <a th:href="${'http://127.0.0.1:8080/manage/editGoods?id='+order.productId}"
+                                   target="_blank"><img
+                                        data-toggle="tooltip"
+                                        data-placement="top" title=""
+                                        th:data-original-title="${order.product.title}"
+                                        style="width: 50px;height: 50px" th:src="${order.product.imgUrl}"/>
+                                </a>
+                            </td>
+                            <td th:text="${order.standardInfo}">System Architect</td>
+                            <td th:text="${'￥'+order.price/100.0}">System Architect</td>
+                            <td th:text="${order.size}">System Architect</td>
+                            <td th:text="${'￥'+order.totalPrice/100.0}">System Architect</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div> <!-- end card body-->
+            </div> <!-- end card -->
+        </div><!-- end col-->
+    </div>
+    <div class="row" style="padding-left: 20px;padding-right: 20px;">
+        <div class="col-12">
+            <b style="font-size: 20px">订单总价:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
+                                                                        th:text="${'￥'+ total/100.0}">remark</span><br/>
+            <b style="font-size: 20px">订单备注:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: red"
+                                                                        th:text="${orders.get(0).remark}">remark</span><br/>
+            <b style="font-size: 20px">收货人名:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
+                                                                        th:text="${orders.get(0).receiver}">remark</span>&nbsp;&nbsp;&nbsp;
+            <b style="font-size: 20px">收货手机:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
+                                                                        th:text="${orders.get(0).receiverPhone}">remark</span>&nbsp;&nbsp;&nbsp;
+            <b style="font-size: 20px">收货地址:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
+                                                                        th:text="${orders.get(0).receiverAddress}">remark</span><br/>
+        </div>
+        <div class="col-12" style="text-align: right">
+            <div class="button-examples">
+                <span style="color: red" id="errMsg"></span>
+                <span style="color: green" id="okMsg"></span>
+                <!--<button type="button" class="btn btn-danger waves-effect waves-light">订单退款</button>-->
+                <!--<button type="button" class="btn btn-success waves-effect waves-light">标记完成</button>-->
+                <button type="button" class="btn btn-secondary waves-effect waves-light"
+                        th:if="${orders.get(0).ptOrder == true && orders.get(0).status == 2 && orders.get(0).tuanStatus.name() == 'FULL'}">标记发货</button>
+                <button type="button" class="btn btn-secondary waves-effect waves-light"
+                        th:if="${orders.get(0).ptOrder == false && orders.get(0).status == 2}">标记发货</button>
+                <button type="button" class="btn btn-info waves-effect waves-light"
+                        th:onclick="${'print('+batchId+')'}">打印订单
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END layout-wrapper -->
+<script>
+    function print(batchId) {
+        $.getJSON('printOrder?batchId=' + batchId, function (resp) {
+            if (resp.status != 'SUCCESS') {
+                err(resp.msg);
+            } else {
+                ok('已发送打印任务');
+            }
+        })
+    }
+
+    function err(msg) {
+        $("#errMsg").text(msg);
+        $("#okMsg").text('');
+    }
+
+    function ok(msg) {
+        $("#errMsg").text('');
+        $("#okMsg").text(msg);
+    }
+
+</script>
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

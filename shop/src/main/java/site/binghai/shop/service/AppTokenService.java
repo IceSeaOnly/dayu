@@ -55,4 +55,9 @@ public class AppTokenService extends BaseService<AppToken> {
     public List<AppToken> findAll() {
         return getDao().findAll();
     }
+
+    public List<AppToken> findAllBySchool() {
+        AppToken exp = new AppToken();
+        return query(exp);
+    }
 }

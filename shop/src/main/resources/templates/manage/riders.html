@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="header-border"></div>
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:include="manage/menus"></div>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18" th:text="${'配送管理 - '+school.schoolName}">总览页</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+                <div class="row">
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <h5 class="card-title mb-0">待接单</h5>
+                                </div>
+                                <div class="row d-flex align-items-center mb-4">
+                                    <div class="col-8">
+                                        <h2 class="d-flex align-items-center mb-0" th:text="${totalProcessing}">
+                                            $17.21
+                                        </h2>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--end card body-->
+                        </div><!-- end card-->
+                    </div> <!-- end col-->
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <h5 class="card-title mb-0">配送中</h5>
+                                </div>
+                                <div class="row d-flex align-items-center mb-4">
+                                    <div class="col-8">
+                                        <h2 class="d-flex align-items-center mb-0" th:text="${totalDelivery}">
+                                            $1875.54
+                                        </h2>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--end card body-->
+                        </div><!-- end card-->
+                    </div> <!-- end col-->
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <h5 class="card-title mb-0">配送完成</h5>
+                                </div>
+                                <div class="row d-flex align-items-center mb-4">
+                                    <div class="col-8">
+                                        <h2 class="d-flex align-items-center mb-0"
+                                            th:text="${totalComplete}">
+                                            $784.62
+                                        </h2>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <!--end card body-->
+                        </div>
+                        <!--end card-->
+                    </div> <!-- end col-->
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <h5 class="card-title mb-0">待定</h5>
+                                </div>
+                                <div class="row d-flex align-items-center mb-4">
+                                    <div class="col-8">
+                                        <h2 class="d-flex align-items-center mb-0">
+                                            待定
+                                        </h2>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--end card body-->
+                        </div><!-- end card-->
+                    </div> <!-- end col-->
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title">骑手列表</h4>
+
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>账号</th>
+                                            <th>备注</th>
+                                            <th>概况权限</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="token:${tokens}">
+                                            <th th:text="${token.id}">1</th>
+                                            <td th:text="${token.userName}">Mark</td>
+                                            <td th:text="${token.remark}">Otto</td>
+                                            <td th:text="${token.schoolReview?'有':'无'}">@mdo</td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" th:onclick="${'resetPassWord('+token.id+')'}">重置密码</button>
+                                                <button class="btn btn-outline-info" th:onclick="${'privilegeControl('+token.id+')'}">权限控制</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                        <!--end card-->
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">配送进度</h4>
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th>骑手</th>
+                                            <th>今天接单</th>
+                                            <th>今日待配送</th>
+                                            <th>今日已配送</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="token:${tokens}">
+                                            <th th:text="${token.remark}">1</th>
+                                            <td th:text="${token.todayTake}">Mark</td>
+                                            <td th:text="${token.todayDelivery}">Otto</td>
+                                            <td th:text="${token.todayComplete}">@mdo</td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" th:onclick="${'releaseDelivery('+token.id+')'}">释放未配送</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                        <!--end card-->
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title">新增骑手</h4>
+                                <form class="form-horizontal" id="addNewRider" action="addNewRider" method="post">
+                                    <div class="form-group row mb-3">
+                                        <div class="col-9">
+                                            <input type="hidden" name="schoolId" th:value="${school.id}">
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">账号</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="userName" class="form-control"
+                                                           placeholder="不可留空">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">备注</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="remark" class="form-control"
+                                                           placeholder="不可留空">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">初始密码</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="passWord" class="form-control"
+                                                           th:value="${initPass}"
+                                                           placeholder="不可留空">
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="token" th:value="${initToken}"/>
+                                            <div style="text-align: center;padding-top: 10px">
+                                                <button type="submit"
+                                                        class="btn btn-primary waves-effect waves-light">
+                                                    新增骑手
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+
+                </div>
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+
+    </div>
+    <!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+<script>
+    function releaseDelivery(token) {
+        $.getJSON('releaseDelivery?token=' + token, function (resp) {
+            if(resp.status != 'SUCCESS'){
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            }else{
+                window.location.reload();
+            }
+        })
+    }
+
+    function resetPassWord(token) {
+        $.getJSON('resetPassWord?token=' + token, function (resp) {
+            if(resp.status != 'SUCCESS'){
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            }else{
+                Swal.fire({
+                    icon: 'info',
+                    title: '新密码',
+                    text: resp.data
+                })
+            }
+        })
+    }
+
+    function privilegeControl(token) {
+        $.getJSON('privilegeControl?token=' + token, function (resp) {
+            if(resp.status != 'SUCCESS'){
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            }else{
+                window.location.reload();
+            }
+        })
+    }
+</script>
+<!-- Overlay-->
+<div class="menu-overlay"></div>
+
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+<!-- Sweet Alerts Js-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<!-- App js -->
+<script src="/js/theme.js"></script>
+</body>
+
+</html>

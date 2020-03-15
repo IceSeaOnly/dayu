@@ -16,6 +16,7 @@ import site.binghai.shop.entity.Address;
 import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.service.AddressService;
 import site.binghai.shop.service.CartItemService;
+import site.binghai.shop.service.ShipFeeRuleService;
 import site.binghai.shop.service.ProductService;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public class BuyConfirmController extends BaseController {
     private AddressService addressService;
     @Autowired
     private WxUserService wxUserService;
+    @Autowired
+    private ShipFeeRuleService shipFeeRuleService;
 
     @GetMapping("buyConfirm")
     public Object buyConfirm(String cartIds, Long selectedCoupon, Long addressId, ModelMap map) {
@@ -60,7 +63,8 @@ public class BuyConfirmController extends BaseController {
             return e500("整挺好，啥都没选");
         }
 
-        String shipFee = "免邮费 ￥0";
+        int shipFee = shipFeeRuleService.calFee(total);
+        ;
         Coupon coupon = null;
         int sourceTotal = total;
         boolean moreCoupon = true;
@@ -94,7 +98,7 @@ public class BuyConfirmController extends BaseController {
         map.put("moreCoupon", moreCoupon);
         map.put("selectedCoupon", coupon);
         map.put("cartItems", cartItems);
-        map.put("shipFee", shipFee);
+        map.put("shipFee", shipFee > 0 ? String.format("￥.2f", shipFee / 100.0) : "免邮费 ￥0");
         map.put("user", user);
         map.put("maxPoints", maxPoints(user.getShoppingPoints(), total));
         map.put("totalSize", size);

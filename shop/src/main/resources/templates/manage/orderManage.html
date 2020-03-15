@@ -78,16 +78,14 @@
                                     <thead>
                                     <tr>
                                         <th>订单类型</th>
-                                        <th>商品</th>
+                                        <th>商品预览</th>
+                                        <th>商品总数</th>
+                                        <th>商品总价</th>
                                         <th>买家</th>
-                                        <th>规格</th>
-                                        <th>单价</th>
-                                        <th>数量</th>
-                                        <th>总价</th>
-                                        <th>备注</th>
                                         <th>下单时间</th>
                                         <th>拼团状态</th>
                                         <th>订单状态</th>
+                                        <th>配送员</th>
                                         <th>操作</th>
                                     </tr>
                                     </thead>
@@ -97,66 +95,68 @@
                                     <tr th:each="order:${orders}">
                                         <td>
                                             <span class="badge badge-info badge-pill"
-                                                  th:if="${order.ptOrder == null || order.ptOrder == false}">普通</span>
+                                                  th:if="${order.value.get(0).ptOrder == null || order.value.get(0).ptOrder == false}">普通</span>
                                             <span class="badge badge-secondary badge-pill"
-                                                  th:if="${order.ptOrder != null && order.ptOrder == true}"
-                                                  th:text="${order.product.ptSize+'人团'}">3人团</span>
+                                                  th:if="${order.value.get(0).ptOrder != null && order.value.get(0).ptOrder == true}"
+                                                  th:text="${order.value.get(0).product.ptSize+'人团'}">3人团</span>
                                         </td>
 
                                         <td>
-                                            <a th:href="${'http://127.0.0.1:8080/manage/editGoods?id='+order.productId}"
+                                            <a th:each="it,stat:${order.value}"
+                                               th:if="${stat.index < 3}"
+                                               th:href="${'http://127.0.0.1:8080/manage/editGoods?id='+it.productId}"
                                                target="_blank"><img
                                                     data-toggle="tooltip"
                                                     data-placement="top" title=""
-                                                    th:data-original-title="${order.product.title}"
-                                                    style="width: 50px;height: 50px" th:src="${order.product.imgUrl}"/>
+                                                    th:data-original-title="${it.product.title}"
+                                                    style="width: 50px;height: 50px" th:src="${it.product.imgUrl}"/>
                                             </a>
+                                        </td>
+                                        <td>
+                                            <span th:text="${order.value.size()}">2</span>
+                                        </td>
+
+                                        <td>
+                                            <span th:text="${#numbers.formatDecimal(totalPrices[order.key]/100.0,1,1)}">2</span>
                                         </td>
 
                                         <td>
                                             <img style="width: 50px;height: 50px"
                                                  data-toggle="tooltip"
                                                  data-placement="top" title=""
-                                                 th:data-original-title="${order.buyerName}"
-                                                 th:src="${order.buyerAvatar}"/></td>
-                                        <td th:text="${order.standardInfo}">System Architect</td>
-                                        <td th:text="${'￥'+order.price/100.0}">System Architect</td>
-                                        <td th:text="${order.size}">System Architect</td>
-                                        <td th:text="${'￥'+order.totalPrice/100.0}">System Architect</td>
-                                        <td><img
-                                                data-toggle="tooltip"
-                                                data-placement="top" title=""
-                                                th:data-original-title="${order.remark}"
-                                                style="width: 20px;height: 20px"
-                                                src="http://cdn.binghai.site/7b21feae-d5d7-3600-bb70-fac967adeb3d.png"/>
-                                        </td>
-                                        <td th:text="${order.createdTime.substring(10)}">System Architect</td>
+                                                 th:data-original-title="${order.value.get(0).buyerName}"
+                                                 th:src="${order.value.get(0).buyerAvatar}"/></td>
+                                        <td th:text="${order.value.get(0).createdTime.substring(10)}">System Architect</td>
 
-                                        <td th:if="${order.ptOrder != null && order.ptOrder}"
-                                            th:text="${order.tuanStatus.desc}">System Architect
+                                        <td th:if="${order.value.get(0).ptOrder != null && order.value.get(0).ptOrder}"
+                                            th:text="${order.value.get(0).tuanStatus.desc}">System Architect
                                         </td>
-                                        <td th:if="${order.ptOrder == null || ptOrder == false}">-</td>
+                                        <td th:if="${order.value.get(0).ptOrder == null || order.value.get(0).ptOrder == false}">-</td>
 
-                                        <td th:text="${statusMap[order.status].getName()}">System Architect</td>
+                                        <td th:text="${statusMap[order.value.get(0).status].getName()}">System Architect</td>
+                                        <td th:text="${order.value.get(0).bindRider != null?order.value.get(0).rider.userName:'-'}">System Architect</td>
                                         <td>
-                                            <div class="btn-group" role="group"
-                                                 th:if="${order.status == 2 ||order.status == 3}">
-                                                <button id="btnGroupDrop1" type="button"
-                                                        class="btn btn-outline-secondary dropdown-toggle"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                    选择 <i class="mdi mdi-chevron-down"></i>
+                                            <div class="btn-group" role="group" th:if="${order.value.get(0).ptOrder == false && order.value.get(0).status == 2}">
+                                                <button type="button"
+                                                        th:onclick="${'markProcessing('+order.key+')'}"
+                                                        class="btn btn-success">
+                                                    发货
                                                 </button>
-                                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1"
-                                                     x-placement="bottom-start"
-                                                     style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 35px, 0px);">
-                                                    <a class="dropdown-item"
-                                                       th:href="${'javascript:markProcessing('+order.id+')'}"
-                                                       th:if="${order.status == 2}">标记发货</a>
-                                                    <a class="dropdown-item"
-                                                       th:href="${'javascript:markComplete('+order.id+')'}"
-                                                       th:if="${order.status == 3}">标记完成</a>
-                                                </div>
+                                            </div>
+                                            <div class="btn-group" role="group" th:if="${order.value.get(0).ptOrder == true && order.value.get(0).status == 2 && order.value.get(0).tuanStatus.name() == 'FULL'}">
+                                                <button type="button"
+                                                        th:onclick="${'markProcessing('+order.key+')'}"
+                                                        class="btn btn-success">
+                                                    发货
+                                                </button>
+                                            </div>
+                                            <button type="button" th:onclick="${'print('+order.key+')'}" class="btn btn-info waves-effect waves-light">打印</button>
+                                            <div class="btn-group" role="group">
+                                                <button type="button"
+                                                        th:onclick="${'orderDetail('+order.key+')'}"
+                                                        class="btn btn-secondary">
+                                                    详情
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -173,8 +173,6 @@
             </div> <!-- container-fluid -->
         </div>
         <!-- End Page-content -->
-
-
     </div>
     <!-- end main content-->
 
@@ -185,17 +183,47 @@
 <div class="menu-overlay"></div>
 
 <script>
-    function markProcessing(oid) {
-        markOrder2Status(oid,3);
+    function orderDetail(batchId) {
+        Swal.fire({
+            type: 'info',
+            width: 1100,
+            padding: 1,
+            html: '<iframe style="width: 100%;height: 500px"  src="/manage/orderDetail?batchId='+batchId+'"></iframe>',
+            showConfirmButton: false
+        });
     }
 
-    function markComplete(oid) {
-        markOrder2Status(oid,4);
+    function markProcessing(batchId) {
+        markOrder2Status(batchId, 3);
     }
 
-    function markOrder2Status(oid, status) {
-        $.getJSON('markOrder?oid=' + oid + '&status=' + status, function (resp) {
+    function markComplete(batchId) {
+        markOrder2Status(batchId, 4);
+    }
+
+    function markOrder2Status(batchId, status) {
+        $.getJSON('markOrder?batchId=' + batchId + '&status=' + status, function (resp) {
             window.location.reload();
+        })
+    }
+
+    function print(batchId) {
+        $.getJSON('printOrder?batchId=' + batchId, function (resp) {
+            if(resp.status != 'SUCCESS'){
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            }else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '已发送打印任务',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
         })
     }
 
@@ -239,6 +267,8 @@
 <script src="/plugins/datatables/dataTables.select.min.js"></script>
 <script src="/plugins/datatables/pdfmake.min.js"></script>
 <script src="/plugins/datatables/vfs_fonts.js"></script>
+<!-- Sweet Alerts Js-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <!-- Plugins js -->
 <script src="/plugins/autonumeric/autoNumeric-min.js"></script>

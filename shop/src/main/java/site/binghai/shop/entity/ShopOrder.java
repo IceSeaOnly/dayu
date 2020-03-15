@@ -21,12 +21,17 @@ public class ShopOrder extends PayBizEntity {
     @GeneratedValue
     private Long id;
     private Long productId;
+    /**
+     * 合并支付批次号
+     * */
+    private Long batchId;
     private String productImgUrl;
     private String buyerName;
     private String buyerAvatar;
     private Integer size;
     private Integer price;
     private Integer totalPrice;
+    private Integer deliveryFee;
     private String title;
     private String standardInfo;
     private String remark;
@@ -56,6 +61,8 @@ public class ShopOrder extends PayBizEntity {
 
     @Transient
     private UnifiedOrder unifiedOrder;
+    @Transient
+    private AppToken rider;
     @Transient
     private Product product;
 

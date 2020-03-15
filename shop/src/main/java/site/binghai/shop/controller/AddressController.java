@@ -6,13 +6,14 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.entity.Address;
+import site.binghai.shop.entity.School;
 import site.binghai.shop.service.AddressService;
+import site.binghai.shop.service.SchoolService;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @date 2020/2/5 下午8:13
  **/
 @Controller
@@ -21,6 +22,8 @@ public class AddressController extends BaseController {
 
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private SchoolService schoolService;
 
     @GetMapping("addressSelect")
     public String addressSelect(@RequestParam String cartIds, @RequestParam Long selectedCoupon, ModelMap map) {
@@ -33,8 +36,14 @@ public class AddressController extends BaseController {
 
     @GetMapping("addAddress")
     public String addAddress(@RequestParam String cartIds, @RequestParam Long selectedCoupon, ModelMap map) {
+        School school = schoolService.findById(getUser().getSchoolId());
+        String recommendAddr = school.getSchoolName() + getUser().getCountry() + getUser().getProvince() + getUser()
+            .getCity();
         map.put("cartIds", cartIds);
         map.put("selectedCoupon", selectedCoupon);
+        map.put("recommendAddr", recommendAddr);
+        map.put("recommendPhone", getUser().getUserName());
+        map.put("recommendReceiver", getUser().getPhone());
         return "addressAdd";
     }
 

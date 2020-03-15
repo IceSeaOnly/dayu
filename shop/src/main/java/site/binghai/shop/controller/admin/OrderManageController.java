@@ -35,23 +35,42 @@ public class OrderManageController extends BaseController {
     public String orderManage(String date, String status, ModelMap map) {
         OrderStatusEnum[] ss = hasEmptyString(status) ? OrderStatusEnum.values() : read(status);
         Long ts = hasEmptyString(date) ? TimeTools.today()[0] : TimeTools.dataTime2Timestamp(date, "MM/dd/yyyy");
-        List<ShopOrder> orderList = shopOrderService.findByStatusAndTime(ts, ts + 86400000L, ss);
+        Map<Long, List<ShopOrder>> orderList = shopOrderService.findByStatusAndTimeGroupingByBatchId(ts, ts + 86400000L,
+            ss);
+        Map<Long, Integer> totalPrices = new HashMap<>();
+        orderList.forEach((k, v) -> {
+            Integer t = v.stream().map(p -> p.getTotalPrice()).reduce(Integer::sum).get();
+            totalPrices.put(k, t);
+        });
         map.put("date", date);
+        map.put("totalPrices", totalPrices);
         map.put("orders", orderList);
         map.put("statusMap", getStatusMap());
         map.put("currentStatus", status == null ? "" : status);
         return "manage/orderManage";
     }
 
+    @GetMapping("orderDetail")
+    public String orderDetail(@RequestParam Long batchId, ModelMap map) {
+        List<ShopOrder> orders = shopOrderService.findByBatchId(batchId);
+        Integer total = orders.stream().map(o -> o.getTotalPrice()).reduce(Integer::sum).get();
+        map.put("orders", orders);
+        map.put("total", total);
+        map.put("batchId", batchId);
+        return "manage/orderDetail";
+    }
+
     @ResponseBody
     @GetMapping("markOrder")
-    public Object markOrder(@RequestParam Long oid, @RequestParam Integer status) {
-        ShopOrder shopOrder = shopOrderService.findById(oid);
-        shopOrder.setStatus(OrderStatusEnum.valueOf(status).getCode());
-        shopOrderService.update(shopOrder);
-        UnifiedOrder unifiedOrder = unifiedOrderService.findById(shopOrder.getUnifiedId());
-        unifiedOrder.setStatus(OrderStatusEnum.valueOf(status).getCode());
-        unifiedOrderService.update(unifiedOrder);
+    public Object markOrder(@RequestParam Long batchId, @RequestParam Integer status) {
+        List<ShopOrder> shopOrders = shopOrderService.findByBatchId(batchId);
+        for (ShopOrder shopOrder : shopOrders) {
+            shopOrder.setStatus(OrderStatusEnum.valueOf(status).getCode());
+            shopOrderService.update(shopOrder);
+            UnifiedOrder unifiedOrder = unifiedOrderService.findById(shopOrder.getUnifiedId());
+            unifiedOrder.setStatus(OrderStatusEnum.valueOf(status).getCode());
+            unifiedOrderService.update(unifiedOrder);
+        }
         return success();
     }
 

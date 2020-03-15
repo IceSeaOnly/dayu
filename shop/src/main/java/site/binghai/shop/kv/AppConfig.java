@@ -13,5 +13,6 @@ import site.binghai.shop.def.KvSupport;
 public class AppConfig implements KvSupport {
     @Conf("页首网页链接")
     private String indexWebViewUrl;
-
+    @Conf("配送工资(分/单）")
+    private Integer deliverySalary;
 }

@@ -7,9 +7,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.shop.entity.ShopOrder;
+import site.binghai.shop.enums.SalaryScene;
+import site.binghai.shop.kv.AppConfig;
+import site.binghai.shop.service.KvService;
+import site.binghai.shop.service.SalaryLogService;
 import site.binghai.shop.service.ShopOrderService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author huaishuo
@@ -21,13 +26,17 @@ public class AppDeliveryOrderController extends AppBaseController {
 
     @Autowired
     private ShopOrderService shopOrderService;
+    @Autowired
+    private SalaryLogService salaryLogService;
+    @Autowired
+    private KvService kvService;
 
     @GetMapping("myDeliveryList")
     public Object myDeliveryList(@RequestParam String token, @RequestParam Integer page) {
         return verifyDoing(token, appToken -> {
-            List<ShopOrder> orderList = shopOrderService.findByStatusAndRider(OrderStatusEnum.DELIVERY,
+            Map<Long, List<ShopOrder>> orderMap = shopOrderService.findByStatusAndRider(OrderStatusEnum.DELIVERY,
                 appToken.getId(), page);
-            return success(orderList, null);
+            return success(orderMap, null);
         });
     }
 
@@ -48,6 +57,8 @@ public class AppDeliveryOrderController extends AppBaseController {
             order.setStatus(OrderStatusEnum.COMPLETE.getCode());
             shopOrderService.update(order);
             System.out.println(appToken.getUserName() + " mark delivery complete : order " + orderId);
+            AppConfig appConfig = kvService.get(AppConfig.class);
+            salaryLogService.book(appToken.getId(), orderId, SalaryScene.DELIVERY, appConfig.getDeliverySalary());
             return success();
         });
     }

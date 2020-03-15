@@ -6,6 +6,7 @@ import site.binghai.lib.entity.BaseEntity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 /**
  * @author huaishuo
@@ -23,4 +24,15 @@ public class AppToken extends BaseEntity {
     private String passWord;
     private String token;
     private Long invalidTs;
+    /**
+     * 查看学校概况的权限
+     * */
+    private Boolean schoolReview;
+
+    @Transient
+    private Long todayTake;
+    @Transient
+    private Long todayDelivery;
+    @Transient
+    private Long todayComplete;
 }

@@ -1,10 +1,7 @@
 package site.binghai.shop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.Coupon;
 import site.binghai.lib.entity.MergePayOrder;
@@ -21,10 +18,8 @@ import site.binghai.shop.entity.CartItem;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.enums.TuanStatus;
-import site.binghai.shop.service.AddressService;
-import site.binghai.shop.service.CartItemService;
-import site.binghai.shop.service.ProductService;
-import site.binghai.shop.service.ShopOrderService;
+import site.binghai.shop.service.*;
+import site.binghai.shop.util.BatchIdGenerator;
 
 import java.util.Map;
 
@@ -50,6 +45,13 @@ public class SubmitController extends BaseController {
     private CouponService couponService;
     @Autowired
     private WxUserService wxUserService;
+    @Autowired
+    private ShipFeeRuleService shipFeeRuleService;
+
+    @GetMapping("getDeliveryFee")
+    public Object getDeliveryFee(@RequestParam Integer total) {
+        return success(shipFeeRuleService.calFee(total), null);
+    }
 
     @PostMapping("mergePay")
     public Object mergePay(@RequestBody Map map) {
@@ -84,6 +86,8 @@ public class SubmitController extends BaseController {
         if (ids.length < 1) {
             return e500("别搞了，你啥都没选啊");
         }
+
+        Long batchId = BatchIdGenerator.nextBatchId(getUser().getId());
         for (String id : ids) {
             CartItem item = cartItemService.findById(Long.parseLong(id));
             if (item == null || !item.getBuyerId().equals(user.getId())) {
@@ -104,7 +108,7 @@ public class SubmitController extends BaseController {
             cartItemService.delete(item.getId());
 
             //依次下单
-            ShopOrder shopOrder = submitOrder(product, item, remark, address);
+            ShopOrder shopOrder = submitOrder(batchId, product, item, remark, address);
 
             if (ids.length == 1) {
                 bindCouponAndPoints(shopOrder.getUnifiedId(), coupon, usePoints);
@@ -115,7 +119,7 @@ public class SubmitController extends BaseController {
         mergePayTitle += "等" + sum + "件商品";
 
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(PayBizEnum.MERGE_PAY, getUser(), mergePayTitle,
-            total);
+            total + shipFeeRuleService.calFee(total));
         bindCouponAndPoints(unifiedOrder.getId(), coupon, usePoints);
         MergePayOrder mergePayOrder = new MergePayOrder();
         mergePayOrder.setUnifiedId(unifiedOrder.getId());
@@ -161,11 +165,11 @@ public class SubmitController extends BaseController {
         return shoppingPoints;
     }
 
-    private ShopOrder submitOrder(Product product, CartItem cartItem, String remark, Address address) {
+    private ShopOrder submitOrder(Long batchId, Product product, CartItem cartItem, String remark, Address address) {
         int size = cartItem.getSize();
-
+        int deliveryFee = shipFeeRuleService.calFee(product.getPrice() * size);
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(PayBizEnum.SCHOOL_SHOP, getUser(), product.getTitle(),
-            product.getPrice() * size);
+            product.getPrice() * size + deliveryFee);
         ShopOrder order = new ShopOrder();
         order.setProductImgUrl(product.getImgUrl());
         order.setTitle(product.getTitle());
@@ -185,13 +189,17 @@ public class SubmitController extends BaseController {
         order.setReceiver(address.getReceiverName());
         order.setReceiverPhone(address.getReceiverPhone());
         order.setReceiverAddress(address.getReceiverAddr());
+        order.setBatchId(batchId);
         product.setStock(product.getStock() - size);
         product.setSold(product.getSold() + size);
         if (cartItem.getPtOrder() != null && cartItem.getPtOrder()) {
             order.setPtOrder(Boolean.TRUE);
             order.setTuanStatus(TuanStatus.INIT);
             order.setTuanId(cartItem.getJoinPtId());
+        } else {
+            order.setPtOrder(Boolean.FALSE);
         }
+        order.setDeliveryFee(deliveryFee);
         productService.update(product);
         order = shopOrderService.save(order);
         return order;
