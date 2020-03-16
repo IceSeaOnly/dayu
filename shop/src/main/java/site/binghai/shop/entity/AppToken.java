@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/10 下午8:02
  **/
 @Entity

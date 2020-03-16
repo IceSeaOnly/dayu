@@ -10,6 +10,7 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.dao.UnifiedOrderDao;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
@@ -54,9 +55,9 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         return dao.countByAppCodeAndStatus(pb.getCode(), status);
     }
 
-    public Long countByDate(PayBizEnum pb, Long[]date, OrderStatusEnum... status) {
+    public Long countByDate(PayBizEnum pb, Long[] date, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
-        return dao.countByAppCodeAndStatusInAndCreatedBetween(pb.getCode(), ss, date[0],date[1]);
+        return dao.countByAppCodeAndStatusInAndCreatedBetween(pb.getCode(), ss, date[0], date[1]);
     }
 
     public Long countToday(PayBizEnum pb) {
@@ -163,7 +164,8 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
     }
 
     public Integer sumShouldPay(PayBizEnum pb, Long[] date, OrderStatusEnum... status) {
-        Integer ret = dao.sum(pb.getCode(), date[0], date[1], Arrays.stream(status).map(s -> s.getCode())
+        Integer ret = dao.sum(SchoolIdThreadLocal.getSchoolId(), pb.getCode(), date[0], date[1], Arrays.stream(status)
+            .map(s -> s.getCode())
             .collect(Collectors.toList()));
         return ret == null ? 0 : ret;
     }

@@ -8,7 +8,7 @@ import site.binghai.shop.service.AppTokenService;
 import java.util.function.Function;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/10 下午10:26
  **/
 public abstract class AppBaseController extends BaseController {

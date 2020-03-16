@@ -3,7 +3,7 @@ package site.binghai.shop.pojo;
 import lombok.Data;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/23 下午9:26
  **/
 @Data

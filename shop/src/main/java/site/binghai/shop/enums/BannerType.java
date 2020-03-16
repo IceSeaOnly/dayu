@@ -1,7 +1,7 @@
 package site.binghai.shop.enums;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/29 下午7:57
  **/
 public enum BannerType {

@@ -6,7 +6,7 @@ import site.binghai.lib.entity.Manager;
 import javax.transaction.Transactional;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/27 下午11:54
  **/
 @Service

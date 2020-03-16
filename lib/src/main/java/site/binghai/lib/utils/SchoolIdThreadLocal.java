@@ -7,7 +7,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/8 下午12:06
  **/
 public class SchoolIdThreadLocal {

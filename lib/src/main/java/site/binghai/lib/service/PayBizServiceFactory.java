@@ -89,6 +89,10 @@ public class PayBizServiceFactory extends BaseBean {
         wxEventHandler.onPaid(unifiedOrder);
     }
 
+    public void mutePayEvent(UnifiedOrder unifiedOrder) {
+        get(unifiedOrder.getAppCode()).onPaid(unifiedOrder);
+    }
+
     public void cancel(UnifiedOrder unifiedOrder) {
         get(unifiedOrder.getAppCode()).cancel(unifiedOrder);
         wxEventHandler.onCanceled(unifiedOrder);

@@ -43,7 +43,7 @@ public class MergePayService extends BaseService<MergePayOrder> implements Unifi
         MergePayOrder mergePayOrder = loadByUnifiedOrder(order);
         for (String sid : mergePayOrder.getUnifiedIds().split(",")) {
             UnifiedOrder sub = unifiedOrderService.findById(Long.parseLong(sid));
-            payBizServiceFactory.payEvent(sub);
+            payBizServiceFactory.mutePayEvent(sub);
         }
     }
 

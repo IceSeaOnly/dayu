@@ -1,7 +1,7 @@
 package site.binghai.shop.util;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/15 下午12:38
  **/
 public class BatchIdGenerator {

@@ -16,7 +16,7 @@ import site.binghai.lib.utils.TimeTools;
 import site.binghai.shop.service.SchoolService;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/28 上午12:02
  **/
 @Controller

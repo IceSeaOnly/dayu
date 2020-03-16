@@ -7,7 +7,7 @@ import site.binghai.shop.enums.TuanStatus;
 import javax.persistence.*;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/23 下午9:21
  **/
 @Data

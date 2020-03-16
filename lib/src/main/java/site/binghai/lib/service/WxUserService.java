@@ -7,6 +7,7 @@ import site.binghai.lib.config.IceConfig;
 import site.binghai.lib.entity.WxInfo;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.dao.WxUserDao;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.lib.utils.TimeTools;
 
 import javax.transaction.Transactional;
@@ -90,6 +91,6 @@ public class WxUserService extends BaseService<WxUser> {
     }
 
     public long countToday() {
-        return wxUserDao.countByCreatedAfter(TimeTools.today()[0]);
+        return wxUserDao.countBySchoolIdAndCreatedAfter(SchoolIdThreadLocal.getSchoolId(), TimeTools.today()[0]);
     }
 }

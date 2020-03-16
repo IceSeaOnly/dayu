@@ -7,7 +7,7 @@ import site.binghai.shop.entity.ShipFeeRule;
 import java.util.List;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/15 下午11:00
  **/
 @Service

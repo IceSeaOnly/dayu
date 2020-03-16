@@ -5,7 +5,7 @@ import site.binghai.shop.anno.Conf;
 import site.binghai.shop.def.KvSupport;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/1 下午11:45
  **/
 @Data

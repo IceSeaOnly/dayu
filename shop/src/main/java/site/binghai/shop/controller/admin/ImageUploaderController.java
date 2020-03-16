@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/28 下午10:10
  **/
 @RequestMapping("manage")

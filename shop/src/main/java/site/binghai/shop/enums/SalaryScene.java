@@ -3,7 +3,7 @@ package site.binghai.shop.enums;
 import lombok.Getter;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/14 下午9:25
  **/
 @Getter

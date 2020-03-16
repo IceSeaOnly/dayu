@@ -12,7 +12,7 @@ import site.binghai.shop.entity.ShipFeeRule;
 import site.binghai.shop.service.ShipFeeRuleService;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/15 下午11:12
  **/
 @RequestMapping("manage")

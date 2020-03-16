@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.service.BaseService;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.shop.dao.ProductDao;
 import site.binghai.shop.entity.Product;
 
@@ -23,12 +24,14 @@ public class ProductService extends BaseService<Product> {
         List<Product> pages = emptyList();
 
         int page = 0;
-        List<Product> tmp = productDao.findProductsByOfflineAndTitleLike(Boolean.FALSE, "%" + search + "%",
+        List<Product> tmp = productDao.findProductsBySchoolIdAndOfflineAndTitleLike(SchoolIdThreadLocal.getSchoolId(),
+            Boolean.FALSE, "%" + search + "%",
             new PageRequest(page, 100));
         while (!isEmptyList(tmp)) {
             pages.addAll(tmp);
             page++;
-            tmp = productDao.findProductsByOfflineAndTitleLike(Boolean.FALSE, "%" + search + "%",
+            tmp = productDao.findProductsBySchoolIdAndOfflineAndTitleLike(SchoolIdThreadLocal.getSchoolId(),
+                Boolean.FALSE, "%" + search + "%",
                 new PageRequest(page, 100));
         }
         return pages;
@@ -43,12 +46,14 @@ public class ProductService extends BaseService<Product> {
         List<Product> pages = emptyList();
 
         int page = 0;
-        List<Product> tmp = productDao.findProductsByOfflineAndCategoryId(Boolean.FALSE, category,
+        List<Product> tmp = productDao.findProductsBySchoolIdAndOfflineAndCategoryId(SchoolIdThreadLocal.getSchoolId(),
+            Boolean.FALSE, category,
             new PageRequest(page, 100));
         while (!isEmptyList(tmp)) {
             pages.addAll(tmp);
             page++;
-            tmp = productDao.findProductsByOfflineAndCategoryId(Boolean.FALSE, category,
+            tmp = productDao.findProductsBySchoolIdAndOfflineAndCategoryId(SchoolIdThreadLocal.getSchoolId(),
+                Boolean.FALSE, category,
                 new PageRequest(page, 100));
         }
         return pages;

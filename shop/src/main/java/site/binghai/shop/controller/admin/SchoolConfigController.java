@@ -13,7 +13,7 @@ import site.binghai.shop.service.SchoolService;
 import java.util.Map;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/8 下午12:58
  **/
 @Controller

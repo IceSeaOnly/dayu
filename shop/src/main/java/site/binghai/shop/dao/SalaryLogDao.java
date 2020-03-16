@@ -9,7 +9,7 @@ import site.binghai.shop.entity.SalaryLog;
 import java.util.List;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/14 下午9:29
  **/
 public interface SalaryLogDao extends JpaRepository<SalaryLog, Long> {

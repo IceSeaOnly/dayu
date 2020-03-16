@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/14 下午8:27
  **/
 @RestController

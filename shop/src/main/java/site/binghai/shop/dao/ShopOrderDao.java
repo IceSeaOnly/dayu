@@ -9,31 +9,40 @@ import site.binghai.shop.entity.ShopOrder;
 import java.util.List;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/2 下午9:33
  **/
 public interface ShopOrderDao extends JpaRepository<ShopOrder, Long> {
 
-    List<ShopOrder> findAllByStatusInAndCreatedBetween(List<Integer> status, Long start, Long end);
+    List<ShopOrder> findAllBySchoolIdAndStatusInAndCreatedBetween(Long schoolId, List<Integer> status, Long start,
+                                                                  Long end);
 
-    List<ShopOrder> findAllByStatusAndBindRiderOrderByIdDesc(Integer status, Long rider, Pageable pageable);
+    List<ShopOrder> findAllBySchoolIdAndStatusAndBindRiderOrderByIdDesc(Long schoolId, Integer status, Long rider,
+                                                                        Pageable pageable);
 
-    List<ShopOrder> findAllByBindRiderOrderByUpdatedDesc(Long rider, Pageable pageable);
-
-    @Query(value = "select count(distinct (batch_id)) from shop_order where bind_rider = :R and status = :S",
-        nativeQuery = true)
-    Long countByRiderAndStatus(@Param("R") Long riderId, @Param("S") Integer status);
+    List<ShopOrder> findAllBySchoolIdAndBindRiderOrderByUpdatedDesc(Long schoolId, Long rider, Pageable pageable);
 
     @Query(
-        value = "select count(distinct (batch_id)) from shop_order where bind_rider = :R and status = :S and created >= :B "
-            + "and created <= :E",
+        value = "select count(distinct (batch_id)) from shop_order where bind_rider = :R and status = :S and "
+            + "school_id = :SCHOOL",
         nativeQuery = true)
-    Long countByRiderAndStatusAndTime(@Param("B") Long beigin, @Param("E") Long end, @Param("R") Long riderId,
+    Long countByRiderAndStatus(@Param("R") Long riderId, @Param("S") Integer status, @Param("SCHOOL") Long schoolId);
+
+    @Query(
+        value =
+            "select count(distinct (batch_id)) from shop_order where bind_rider = :R and status = :S and school_id = "
+                + ":SCHOOL and created >= :B "
+                + "and created <= :E",
+        nativeQuery = true)
+    Long countByRiderAndStatusAndTime(@Param("SCHOOL") Long schoolId, @Param("B") Long beigin, @Param("E") Long end,
+                                      @Param("R") Long riderId,
                                       @Param("S") Integer status);
 
     @Query(
-        value = "select count(distinct (batch_id)) from shop_order where status in :S and created >= :B "
-            + "and created <= :E",
+        value =
+            "select count(distinct (batch_id)) from shop_order where status in :S and school_id = :SCHOOL and created >= :B "
+                + "and created <= :E",
         nativeQuery = true)
-    Long countByStatusAndTime(@Param("B") Long begin, @Param("E") Long end, @Param("S") List<Integer> status);
+    Long countByStatusAndTime(@Param("SCHOOL") Long schoolId, @Param("B") Long begin, @Param("E") Long end,
+                              @Param("S") List<Integer> status);
 }

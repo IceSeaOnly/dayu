@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/28 下午9:31
  **/
 @RequestMapping("manage")

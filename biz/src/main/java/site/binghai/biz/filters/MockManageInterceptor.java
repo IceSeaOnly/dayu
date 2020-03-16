@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/27 下午11:50
  **/
 public class MockManageInterceptor extends HandlerInterceptorAdapter {

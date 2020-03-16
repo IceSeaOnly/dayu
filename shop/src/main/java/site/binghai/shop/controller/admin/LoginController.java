@@ -12,7 +12,7 @@ import site.binghai.lib.service.ManagerService;
 import site.binghai.lib.utils.SchoolIdThreadLocal;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/26 上午12:19
  **/
 @RequestMapping("p")

@@ -7,7 +7,7 @@ import site.binghai.shop.entity.School;
 import java.util.List;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/8 上午11:08
  **/
 @Service

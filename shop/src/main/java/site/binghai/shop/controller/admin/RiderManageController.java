@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/15 下午9:57
  **/
 @RequestMapping("manage")

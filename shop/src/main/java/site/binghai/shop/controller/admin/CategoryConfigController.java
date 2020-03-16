@@ -10,7 +10,7 @@ import site.binghai.shop.service.ProductService;
 import site.binghai.shop.service.ShopCategoryService;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/28 下午1:42
  **/
 @Controller
@@ -82,7 +82,7 @@ public class CategoryConfigController extends BaseController {
         category.setHidden(Boolean.FALSE);
         category.setImgUrl(url);
         category.setSuperCategory(superId < 0);
-        category.setSuperId(superId > 0 ? superId : null);
+        category.setSuperId(superId > 0 ? superId : -1);
         category.setTitle(title);
         shopCategoryService.save(category);
         return success();

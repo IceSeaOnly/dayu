@@ -14,6 +14,7 @@ import site.binghai.lib.enums.PayBizEnum;
 import site.binghai.lib.service.BaseService;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.CompareUtils;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.shop.dao.ShopOrderDao;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ShopOrder;
@@ -157,7 +158,8 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
 
     public Map<Long, List<ShopOrder>> findByStatusAndTime(Long ts, Long end, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
-        List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
+        List<ShopOrder> ret = shopOrderDao.findAllBySchoolIdAndStatusInAndCreatedBetween(
+            SchoolIdThreadLocal.getSchoolId(), ss, ts, end);
         return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
             Collectors.groupingBy(s -> s.getBatchId()));
     }
@@ -172,17 +174,19 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     public Map<Long, List<ShopOrder>> findByStatusAndRider(OrderStatusEnum status, Long rider, Integer page) {
         List<ShopOrder> ret = null;
         if (status == null) {
-            ret = shopOrderDao.findAllByBindRiderOrderByUpdatedDesc(rider, new PageRequest(page, 1000));
+            ret = shopOrderDao.findAllBySchoolIdAndBindRiderOrderByUpdatedDesc(SchoolIdThreadLocal.getSchoolId(), rider,
+                new PageRequest(page, 1000));
+        } else {
+            ret = shopOrderDao.findAllBySchoolIdAndStatusAndBindRiderOrderByIdDesc(SchoolIdThreadLocal.getSchoolId(),
+                status.getCode(), rider,
+                new PageRequest(page, 1000));
         }
-        ret = shopOrderDao.findAllByStatusAndBindRiderOrderByIdDesc(status.getCode(), rider,
-            new PageRequest(page, 1000));
-
         return ret.stream().collect(
             Collectors.groupingBy(s -> s.getBatchId()));
     }
 
     public Long countByRiderAndStatus(OrderStatusEnum status, Long id) {
-        Long ret = shopOrderDao.countByRiderAndStatus(id, status.getCode());
+        Long ret = shopOrderDao.countByRiderAndStatus(id, status.getCode(), SchoolIdThreadLocal.getSchoolId());
         return ret == null ? 0 : ret;
     }
 
@@ -197,7 +201,8 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     public Map<Long, List<ShopOrder>> findByStatusAndTimeGroupingByBatchId(Long ts, long end,
                                                                            OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
-        List<ShopOrder> ret = shopOrderDao.findAllByStatusInAndCreatedBetween(ss, ts, end);
+        List<ShopOrder> ret = shopOrderDao.findAllBySchoolIdAndStatusInAndCreatedBetween(
+            SchoolIdThreadLocal.getSchoolId(), ss, ts, end);
 
         return ret.stream().peek(s -> {
             s.setProduct(productService.findById(s.getProductId()));
@@ -209,13 +214,14 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     }
 
     public Long countByRiderAndStatusAndTime(OrderStatusEnum status, Long tokenId, Long[] time) {
-        Long ret = shopOrderDao.countByRiderAndStatusAndTime(time[0], time[1], tokenId, status.getCode());
+        Long ret = shopOrderDao.countByRiderAndStatusAndTime(SchoolIdThreadLocal.getSchoolId(), time[0], time[1],
+            tokenId, status.getCode());
         return ret == null ? 0 : ret;
     }
 
     public Long countByStateAndTime(Long begin, Long end, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
-        Long ret = shopOrderDao.countByStatusAndTime(begin, end, ss);
+        Long ret = shopOrderDao.countByStatusAndTime(SchoolIdThreadLocal.getSchoolId(), begin, end, ss);
         return ret == null ? 0 : ret;
     }
 }

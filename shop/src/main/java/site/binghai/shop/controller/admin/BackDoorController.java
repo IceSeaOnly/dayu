@@ -9,7 +9,7 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.service.PayBizServiceFactory;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/23 下午3:16
  **/
 @RequestMapping("/manage/door")

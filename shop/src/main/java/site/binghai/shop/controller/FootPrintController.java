@@ -15,7 +15,7 @@ import site.binghai.shop.service.ProductService;
 import java.util.List;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/6 下午12:02
  **/
 @RequestMapping("shop")

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/27 下午11:43
  **/
 public class ManagerInterceptor extends BaseInterceptor<Manager> {

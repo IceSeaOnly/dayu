@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/28 下午9:32
  **/
 @Target({ElementType.TYPE, ElementType.FIELD})

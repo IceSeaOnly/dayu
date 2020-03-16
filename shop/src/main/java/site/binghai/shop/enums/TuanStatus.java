@@ -1,7 +1,7 @@
 package site.binghai.shop.enums;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/2/23 下午9:28
  **/
 public enum TuanStatus {

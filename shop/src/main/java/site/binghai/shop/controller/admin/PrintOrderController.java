@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import site.binghai.lib.controller.BaseController;
 
 /**
- * @author huaishuo
+ * @author icesea
  * @date 2020/3/15 下午9:41
  **/
 @RestController
