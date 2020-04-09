@@ -57,6 +57,12 @@
                             </button>
                         </a>
                     </div>
+                    <div class="col-xl-4">
+                        <form action="goodsManage" method="get">
+                            <input placeholder="商品名称，支持模糊搜索" name="search"/>
+                            <button class="btn btn-primary">搜索</button>
+                        </form>
+                    </div>
                 </div>
 
                 <ul class="nav nav-tabs mb-3" style="padding-top: 15px">
@@ -129,6 +135,7 @@
                                     <div class="dropdown-menu" x-placement="bottom-start"
                                          style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(95px, 35px, 0px);">
                                         <a class="dropdown-item" th:href="${'javascript:recommend('+prd.id+')'}" style="color:green">推荐/取消</a>
+                                        <a class="dropdown-item" th:href="${'javascript:asChildCategory('+prd.id+','''+prd.title+''')'}" style="color:deeppink">分类直通车</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" th:href="${'javascript:removeItem('+prd.id+')'}" style="color:red">移除</a>
                                     </div>
@@ -186,15 +193,61 @@
 
 <!-- Overlay-->
 <div class="menu-overlay"></div>
-
+<script th:inline="javascript">
+    var categories = [[${categories}]];
+    function asChildCategory(pid,name) {
+        var mapping = {};
+        for(var idx in categories){
+            mapping[categories[idx].id] = categories[idx].title;
+        }
+        Swal.fire({
+            title: '直推到哪个主分类下？',
+            input: 'select',
+            inputOptions: mapping,
+            inputPlaceholder: '选择后它将与子分类同级显示'
+        }).then(function (superId) {
+            Swal.fire({
+                title: '重命名,建议5个字内',
+                input: 'text',
+                inputValue: name,
+                inputPlaceholder: '名称不要太长'
+            }).then(function (rename) {
+                $.getJSON('ajaxPushAsChildCategory?superId='+superId.value+"&name="+rename.value+"&productId="+pid,function (resp) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '操作成功!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                })
+            });
+        });
+    }
+</script>
 <script th:inline="javascript">
     var baseUrl = [[${categoryId == 999?'http://fastshop.bigdata8.xin/shop/ptDetail?item=':'http://fastshop.bigdata8.xin/shop/detail?productId='}]]
 
     function copyCategoryUrl(cid) {
         if (copyText(baseUrl + cid)) {
-            alert("复制成功!");
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: '复制成功!',
+                showConfirmButton: false,
+                timer: 1000
+            });
         } else {
-            alert("复制失败!浏览器不支持");
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: '复制失败!浏览器不支持!',
+                showConfirmButton: false,
+                timer: 1500
+            });
         }
     }
 
@@ -242,6 +295,8 @@
 <script src="/js/metismenu.min.js"></script>
 <script src="/js/waves.js"></script>
 <script src="/js/simplebar.min.js"></script>
+<!-- Sweet Alerts Js-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 
 <!-- Sparkline Js-->

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.service.ShopOrderService;
 
+import java.util.List;
+
 /**
  * @author icesea
  * @date 2020/3/12 下午8:15
@@ -29,6 +31,17 @@ public class AppOrderDetailController extends AppBaseController {
                 return fail("只能查看自己抢到的订单!");
             }
             return success(order, null);
+        });
+    }
+
+    @GetMapping("queryByBatchId")
+    public Object queryByBatchId(@RequestParam String token, @RequestParam Long batchId) {
+        return verifyDoing(token, appToken -> {
+            List<ShopOrder> orders = shopOrderService.findByBatchId(batchId);
+            if (isEmptyList(orders)) {
+                return fail("找不到订单");
+            }
+            return success(orders, null);
         });
     }
 }

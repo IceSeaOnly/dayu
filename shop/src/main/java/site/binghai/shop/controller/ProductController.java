@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.entity.Product;
+import site.binghai.shop.entity.ShopCategory;
 import site.binghai.shop.service.ProductService;
+import site.binghai.shop.service.ShopCategoryService;
 
 import java.util.List;
 
 /**
- *
  * @date 2020/2/1 上午11:02
  **/
 @Controller
@@ -22,6 +23,8 @@ public class ProductController extends BaseController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ShopCategoryService shopCategoryService;
 
     @GetMapping("searchProducts")
     public String searchProducts(ModelMap map, @RequestParam String search, String sort,
@@ -41,6 +44,10 @@ public class ProductController extends BaseController {
     @GetMapping("productCategoryList")
     public String productCategoryList(ModelMap map, @RequestParam Long category, String sort,
                                       String filter) {
+        ShopCategory cate = shopCategoryService.findById(category);
+        if (cate.getBindProductId() != null) {
+            return "redirect:detail?productId=" + cate.getBindProductId();
+        }
         List<Product> products = productService.searchByCategory(category);
 
         if (!hasEmptyString(sort)) {

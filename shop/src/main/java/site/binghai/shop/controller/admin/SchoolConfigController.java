@@ -8,7 +8,7 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.Manager;
 import site.binghai.lib.service.ManagerService;
 import site.binghai.shop.entity.School;
-import site.binghai.shop.service.SchoolService;
+import site.binghai.shop.service.*;
 
 import java.util.Map;
 
@@ -23,12 +23,23 @@ public class SchoolConfigController extends BaseController {
     private ManagerService managerService;
     @Autowired
     private SchoolService schoolService;
+    @Autowired
+    private ProductDetailService productDetailService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ShipFeeRuleService shipFeeRuleService;
+    @Autowired
+    private ShopCategoryService shopCategoryService;
+    @Autowired
+    private KvService kvService;
+    @Autowired
+    private BannerService bannerService;
 
     @GetMapping("schoolConfig")
     public String schoolConfig(ModelMap map) {
         map.put("schools", schoolService.findAll());
         map.put("manager", getManager());
-
         return "manage/schoolConfig";
     }
 
@@ -59,7 +70,31 @@ public class SchoolConfigController extends BaseController {
         school.setSchoolImg(getString(map, "schoolImg"));
         school.setSchoolName(getString(map, "schoolName"));
         school.setVisible(Boolean.FALSE);
-        schoolService.save(school);
+        School newCreate = schoolService.saveNew(school);
+        shopCategoryService.createSystemCategoryFor(newCreate);
+        schoolService.update(newCreate);
+        return success();
+    }
+
+
+    @GetMapping("ajaxCopySchool")
+    @ResponseBody
+    public Object ajaxCopySchool(@RequestParam Long from) {
+        try {
+            School fm = schoolService.findById(from);
+            School now = schoolService.findById(getManager().getSchoolId());
+            Map<Long, Long> mapping = shopCategoryService.copyFromSchool(from);
+            mapping.put(fm.getSystemSuperCategoryId(), now.getSystemSuperCategoryId());
+            mapping.put(fm.getPintTuanCategoryId(), now.getPintTuanCategoryId());
+            mapping.put(fm.getRecycleCategoryId(), now.getRecycleCategoryId());
+            mapping = productService.copyFromWithCategoryMapping(from, mapping);
+            productDetailService.copyFromWithMapping(from, mapping);
+            bannerService.copyFrom(from);
+            kvService.copyFrom(from);
+            shipFeeRuleService.copyFrom(from);
+        } catch (Exception e) {
+            return fail(e.getMessage());
+        }
         return success();
     }
 }

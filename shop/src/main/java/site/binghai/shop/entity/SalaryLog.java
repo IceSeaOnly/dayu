@@ -25,4 +25,5 @@ public class SalaryLog extends BaseEntity {
     private SalaryScene scene;
     private SalaryState state;
     private String settlementDate;
+    private String summary;
 }

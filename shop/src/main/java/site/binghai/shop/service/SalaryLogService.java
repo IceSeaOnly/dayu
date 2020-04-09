@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import site.binghai.lib.service.BaseService;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.shop.dao.SalaryLogDao;
 import site.binghai.shop.entity.SalaryLog;
 import site.binghai.shop.enums.SalaryScene;
@@ -40,5 +41,14 @@ public class SalaryLogService extends BaseService<SalaryLog> {
 
     public List<SalaryLog> sortPageQuery(Long appId, Integer page) {
         return salaryLogDao.findAllByUserIdOrderByIdDesc(appId, new PageRequest(page, 100));
+    }
+
+    public Integer sumByStateAndSceneAndDate(Long id, SalaryScene scene, SalaryState state, Long start, Long end) {
+        return salaryLogDao.sumByUserIdAndSceneAndStateAndDate(id, state.ordinal(), scene.ordinal(), start, end);
+    }
+
+    public List<SalaryLog> findByStateAndSceneAndDate(Long userId, SalaryScene scene, SalaryState state, Long start, Long end) {
+        List<SalaryLog> ret = salaryLogDao.findAllBySchoolIdAndUserIdAndSceneAndStateAndCreatedGreaterThanAndCreatedLessThan(SchoolIdThreadLocal.getSchoolId(), userId, scene, state, start, end);
+        return empty(ret);
     }
 }

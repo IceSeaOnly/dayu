@@ -74,8 +74,11 @@
                                                 <label class="col-3 col-form-label">学生是否可见</label>
                                                 <div class="col-9">
                                                     <select name="visible">
-                                                        <option th:selected="${item.visible == true}" value="true">可见</option>
-                                                        <option th:selected="${item.visible == false}" value="false">不可见</option>
+                                                        <option th:selected="${item.visible == true}" value="true">可见
+                                                        </option>
+                                                        <option th:selected="${item.visible == false}" value="false">
+                                                            不可见
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -159,7 +162,13 @@
                         </div> <!-- end card-->
 
                     </div> <!-- end col -->
-
+                    <div class="col-12">
+                        <div class="page-title-box d-flex  justify-content-between">
+                            <button class="btn btn-danger btn-lg" onclick="copyFrom()">
+                                系统初始化
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
             </div> <!-- container-fluid -->
@@ -176,7 +185,56 @@
 <!-- Overlay-->
 <div class="menu-overlay"></div>
 
-<script>
+<script th:inline="javascript">
+    var schools = [[${schools}]];
+
+    function copyFrom() {
+        Swal.fire({
+            title: '你确定初始化吗?',
+            text: "这将删除本校已存在的数据后导入其他学校数据!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '是的',
+            cancelButtonText: '我再想想',
+        }).then((result) => {
+            if (result.value) {
+                doCopyFrom();
+            }
+        })
+    }
+
+    function doCopyFrom() {
+        var schoolMapping = {};
+        var optMapping = {GOODS: '商品(含分类)', CATEGORY: '(商品分类)', BANNER: '滚动图', PAGECONFIG: '页面配置', SHIPFEE: '运费规则'};
+        for (var i in schools) {
+            schoolMapping[schools[i].id] = schools[i].schoolName;
+        }
+        Swal.fire({
+            title: '从哪个学校导入？',
+            input: 'select',
+            inputOptions: schoolMapping,
+            showLoaderOnConfirm: true
+        }).then((result) => {
+            $.getJSON('ajaxCopySchool?from=' + result.value, function (resp) {
+                if(resp.status == 'SUCCESS'){
+                    Swal.fire({
+                        icon: 'success',
+                        title: '操作成功'
+                    })
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: '出现错误',
+                        text: resp.msg
+                    })
+                }
+            })
+        })
+    }
+
+
     function addNewSchool() {
         var data = {};
         var params = $("#addNewSchoolForm").serializeArray();
@@ -241,6 +299,8 @@
 <script src="/js/waves.js"></script>
 <script src="/js/simplebar.min.js"></script>
 
+<!-- Sweet Alerts Js-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <!-- Sparkline Js-->
 <script src="/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>

@@ -74,7 +74,7 @@
                 <ul>
                     <li th:each="child:${hotCategories}">
                         <a th:href="${'productCategoryList?category='+child.id}">
-                            <img th:src="${child.imgUrl}"/>
+                            <img th:src="${child.imgUrl}" name="catImg"/>
                             <p th:text="${child.title}">毛呢外套</p>
                         </a>
                     </li>
@@ -90,7 +90,7 @@
                     <ul>
                         <li th:each="child:${item.value}">
                             <a th:href="${'productCategoryList?category='+child.id}">
-                                <img th:src="${child.imgUrl}"/>
+                                <img th:src="${child.imgUrl}" name="catImg"/>
                                 <p th:text="${child.title}">毛呢外套</p>
                             </a>
                         </li>
@@ -132,5 +132,10 @@
         </ul>
     </div>
 </div>
+<script>
+    $("[name='catImg']").each(function () {
+        $(this).css("height", $(this).width());
+    })
+</script>
 </body>
 </html>

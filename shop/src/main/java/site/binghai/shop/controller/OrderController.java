@@ -53,6 +53,7 @@ public class OrderController extends BaseController {
         if (!isEmptyList(shopOrders)) {
             shopOrders.forEach(this::enrichUnifiedOrder);
         }
+        shopOrders.sort((a, b) -> b.getId() > a.getId() ? 1 : -1);
         map.put("orders", shopOrders);
         map.put("type", type);
         map.put("typeEnum", OrderStatusEnum.class);
@@ -60,8 +61,8 @@ public class OrderController extends BaseController {
         map.put("payingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.CREATED));
         map.put("processingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PAIED));
         map.put("shippingSize",
-            shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PROCESSING) + shopOrderService
-                .countByUserIdAndState(user.getId(), OrderStatusEnum.DELIVERY));
+                shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.PROCESSING) + shopOrderService
+                        .countByUserIdAndState(user.getId(), OrderStatusEnum.DELIVERY));
         map.put("feedingSize", shopOrderService.countByUserIdAndState(user.getId(), OrderStatusEnum.COMPLETE));
         return "orders";
     }
@@ -78,7 +79,7 @@ public class OrderController extends BaseController {
             return e500("非法访问!");
         }
         if (order.getStatus() >= OrderStatusEnum.PAIED.getCode() && order.getStatus() < OrderStatusEnum.COMPLETE
-            .getCode()) {
+                .getCode()) {
             order.setStatus(OrderStatusEnum.COMPLETE.getCode());
             shopOrderService.update(order);
         }

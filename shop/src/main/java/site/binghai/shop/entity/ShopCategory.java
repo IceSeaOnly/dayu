@@ -23,4 +23,5 @@ public class ShopCategory extends BaseEntity {
     private String title;
     private String imgUrl;
     private Long superId;
+    private Long bindProductId;
 }

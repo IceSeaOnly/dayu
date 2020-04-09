@@ -79,7 +79,7 @@
     </div>
     <div class="clear"></div>
     <div class="yijian">
-        <textarea name="comment" cols="" rows="" placeholder="请输入您的评价"></textarea>
+        <textarea name="comment" id="comment" cols="" rows="" placeholder="请输入您的评价"></textarea>
     </div>
     <!--<div class="picture">-->
     <!--<img src="/images/pic.png"/>-->
@@ -113,9 +113,9 @@
 </div>
 <div class="fbox2"></div>
 <div class="hejiBox jiesuan">
-    <div class="heji">
+    <div class="heji" onclick="submit()">
         <div class="fabiao">
-            <a href="javascript:submit()">确认发表</a>
+            <a >确认发表</a>
         </div>
     </div>
 </div>
@@ -140,6 +140,7 @@
                     warnInfo("你可以真懒得可以,罢了,再点一次放你走");
                     return;
             }
+            comment = '我就是懒得写...';
         }
 
         var submitForm = {};
@@ -147,7 +148,7 @@
         submitForm.quality_star = getGrade("quality_star");
         submitForm.service_star = getGrade("service_star");
         submitForm.ship_star = getGrade("ship_star");
-        submitForm.comment = $("comment").text() == '' ? '我就是懒得写...' : $("comment").text();
+        submitForm.comment = comment;
         $.ajax({
             type: "post",
             url: '/shop/comment/' + orderId,

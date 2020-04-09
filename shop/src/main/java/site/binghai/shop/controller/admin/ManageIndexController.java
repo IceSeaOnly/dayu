@@ -34,17 +34,19 @@ public class ManageIndexController extends BaseController {
         map.put("newMemberSize", wxUserService.countToday());
         map.put("totalMemberSize", wxUserService.count());
         Long paidOrder = unifiedOrderService
-            .countByDate(PayBizEnum.SCHOOL_SHOP, TimeTools.today(), OrderStatusEnum.PAIED, OrderStatusEnum.PROCESSING,
-                OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
+                .countByDate(PayBizEnum.SCHOOL_SHOP, TimeTools.today(), OrderStatusEnum.PAIED, OrderStatusEnum.PROCESSING,
+                        OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
         map.put("todayPaidOrder", paidOrder);
         map.put("todayTotalOrder", unifiedOrderService.countToday(PayBizEnum.SCHOOL_SHOP));
         Integer totalPaid = unifiedOrderService
-            .sumShouldPay(PayBizEnum.SCHOOL_SHOP, TimeTools.today(), OrderStatusEnum.PAIED, OrderStatusEnum.PROCESSING,
-                OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
+                .sumShouldPay(PayBizEnum.SCHOOL_SHOP, TimeTools.today(), OrderStatusEnum.PAIED, OrderStatusEnum.PROCESSING,
+                        OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
         map.put("todayPaidAmount", totalPaid);
         map.put("todayAvgAmount", totalPaid > 0 ? totalPaid / paidOrder : 0);
         map.put("weekDealData", generateWeekDealData());
         map.put("weekOrderData", generateWeekOrderData());
+        map.put("refundingOrderCnt", unifiedOrderService.countByAppCodeAndStatus(PayBizEnum.SCHOOL_SHOP, OrderStatusEnum.REFUNDING.getCode()));
+        map.put("refundingOrderSum", unifiedOrderService.sumShouldPay(PayBizEnum.SCHOOL_SHOP, new Long[]{0l, now()}, OrderStatusEnum.REFUNDING));
         map.put("school", schoolService.findById(getManager().getSchoolId()));
         return "manage/index";
     }
@@ -55,13 +57,13 @@ public class ManageIndexController extends BaseController {
         for (int i = 0; i < 7; i++) {
             String date = TimeTools.format2yyyy_MM_dd(begin + i * 86400000L);
             Long orderSize = unifiedOrderService
-                .countByDate(PayBizEnum.SCHOOL_SHOP, new Long[] {begin + i * 86400000L, begin + (i + 1) * 86400000L},
-                    OrderStatusEnum.values());
+                    .countByDate(PayBizEnum.SCHOOL_SHOP, new Long[]{begin + i * 86400000L, begin + (i + 1) * 86400000L},
+                            OrderStatusEnum.values());
 
             Long paidSize = unifiedOrderService
-                .countByDate(PayBizEnum.SCHOOL_SHOP, new Long[] {begin + i * 86400000L, begin + (i + 1) * 86400000L},
-                    OrderStatusEnum.PAIED, OrderStatusEnum.PROCESSING,
-                    OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
+                    .countByDate(PayBizEnum.SCHOOL_SHOP, new Long[]{begin + i * 86400000L, begin + (i + 1) * 86400000L},
+                            OrderStatusEnum.PAIED, OrderStatusEnum.PROCESSING,
+                            OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
             JSONObject obj = newJSONObject();
             obj.put("date", date);
             obj.put("orderSize", orderSize);
@@ -77,13 +79,13 @@ public class ManageIndexController extends BaseController {
         for (int i = 0; i < 7; i++) {
             String date = TimeTools.format2yyyy_MM_dd(begin + i * 86400000L);
             Integer orderAmt = unifiedOrderService
-                .sumShouldPay(PayBizEnum.SCHOOL_SHOP, new Long[] {begin + i * 86400000L, begin + (i + 1) * 86400000L},
-                    OrderStatusEnum.values());
+                    .sumShouldPay(PayBizEnum.SCHOOL_SHOP, new Long[]{begin + i * 86400000L, begin + (i + 1) * 86400000L},
+                            OrderStatusEnum.values());
             Integer paidAmt = unifiedOrderService
-                .sumShouldPay(PayBizEnum.SCHOOL_SHOP, new Long[] {begin + i * 86400000L, begin + (i + 1) * 86400000L},
-                    OrderStatusEnum.PAIED,
-                    OrderStatusEnum.PROCESSING,
-                    OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
+                    .sumShouldPay(PayBizEnum.SCHOOL_SHOP, new Long[]{begin + i * 86400000L, begin + (i + 1) * 86400000L},
+                            OrderStatusEnum.PAIED,
+                            OrderStatusEnum.PROCESSING,
+                            OrderStatusEnum.COMPLETE, OrderStatusEnum.FEED_DONE);
             JSONObject obj = newJSONObject();
             obj.put("date", date);
             obj.put("orderAmt", orderAmt / 100.0);

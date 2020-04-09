@@ -139,6 +139,27 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
+                                        <label class="col-3 col-form-label">
+                                            商品滚动图
+                                        </label>
+                                        <div class="col-9">
+                                            <div class="btn-group mb-2" th:each="ptImg,stat:${images}">
+                                                <input type="hidden" name="ptDetailImg" th:value="${ptImg}"
+                                                       th:id="${'ptDetailImg'+stat.index}">
+                                                <input class="dropify" type="file"
+                                                       th:id="${'bind_ptDetailImg'+stat.index}"
+                                                       onchange="doUpload(this)" th:data-default-file="${ptImg}">
+                                            </div>
+                                            <div class="btn-group mb-2" th:each="b,stat:${blankImages}">
+                                                <input type="hidden" name="ptDetailImg"
+                                                       th:id="${'ptDetailImg'+(4-stat.index)}">
+                                                <input class="dropify" type="file"
+                                                       th:id="${'bind_ptDetailImg'+(4-stat.index)}"
+                                                       onchange="doUpload(this)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">品牌</label>
                                         <div class="col-9">
                                             <input type="text" id="brand" th:value="${product.brand}"
@@ -146,7 +167,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row mb-3">
-                                        <label class="col-3 col-form-label">具体子类</label>
+                                        <label class="col-3 col-form-label">具体子类(品牌等)</label>
                                         <div class="col-9">
                                             <input type="text" id="subType" th:value="${product.subType}"
                                                    class="form-control">
@@ -254,27 +275,7 @@
                                     <div class="form-group row mb-3" style="text-align: center">
                                         <h5 style="width: 100%">------------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下为拼团商品特有参数，普通商品勿填&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;------------------</h5>
                                     </div>
-                                    <div class="form-group row mb-3">
-                                        <label class="col-3 col-form-label">
-                                            拼团商品滚动图<b style="color:red">(普通商品不填)</b>
-                                        </label>
-                                        <div class="col-9">
-                                            <div class="btn-group mb-2" th:each="ptImg,stat:${images}">
-                                                <input type="hidden" name="ptDetailImg" th:value="${ptImg}"
-                                                       th:id="${'ptDetailImg'+stat.index}">
-                                                <input class="dropify" type="file"
-                                                       th:id="${'bind_ptDetailImg'+stat.index}"
-                                                       onchange="doUpload(this)" th:data-default-file="${ptImg}">
-                                            </div>
-                                            <div class="btn-group mb-2" th:each="b,stat:${blankImages}">
-                                                <input type="hidden" name="ptDetailImg"
-                                                       th:id="${'ptDetailImg'+(4-stat.index)}">
-                                                <input class="dropify" type="file"
-                                                       th:id="${'bind_ptDetailImg'+(4-stat.index)}"
-                                                       onchange="doUpload(this)">
-                                            </div>
-                                        </div>
-                                    </div>
+
                                     <div class="form-group row mb-3">
                                         <label class="col-3 col-form-label">成团人数(非拼团商品不填)</label>
                                         <div class="col-9">

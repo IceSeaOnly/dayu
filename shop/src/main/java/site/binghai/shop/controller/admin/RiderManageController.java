@@ -71,6 +71,7 @@ public class RiderManageController extends BaseController {
         appToken.setRemark(remark);
         appToken.setToken(token);
         appToken.setInvalidTs(now());
+        appToken.setSchoolReview(Boolean.FALSE);
 
         appTokenService.save(appToken);
         return "redirect:riders";

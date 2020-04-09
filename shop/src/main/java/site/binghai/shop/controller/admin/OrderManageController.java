@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.binghai.biz.service.WxTplMessageService;
 import site.binghai.lib.controller.BaseController;
+import site.binghai.lib.def.WxEventHandler;
 import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.UnifiedOrderService;
@@ -30,13 +32,31 @@ public class OrderManageController extends BaseController {
     private ShopOrderService shopOrderService;
     @Autowired
     private UnifiedOrderService unifiedOrderService;
+    @Autowired
+    private WxEventHandler wxEventHandler;
+
+    @GetMapping("orderSearch")
+    public String orderManage(@RequestParam String search, ModelMap map) {
+        Map<Long, List<ShopOrder>> orderList = shopOrderService.searchBy(search);
+        Map<Long, Integer> totalPrices = new HashMap<>();
+        orderList.forEach((k, v) -> {
+            Integer t = v.stream().map(p -> p.getTotalPrice()).reduce(Integer::sum).get();
+            totalPrices.put(k, t);
+        });
+        map.put("date", TimeTools.format(now(), "MM/dd/yyyy"));
+        map.put("totalPrices", totalPrices);
+        map.put("orders", orderList);
+        map.put("statusMap", getStatusMap());
+        map.put("currentStatus", "");
+        return "manage/orderManage";
+    }
 
     @GetMapping("orderManage")
     public String orderManage(String date, String status, ModelMap map) {
-        OrderStatusEnum[] ss = hasEmptyString(status) ? OrderStatusEnum.values() : read(status);
+        OrderStatusEnum[] ss = hasEmptyString(status) ? new OrderStatusEnum[]{OrderStatusEnum.PAIED} : read(status);
         Long ts = hasEmptyString(date) ? TimeTools.today()[0] : TimeTools.dataTime2Timestamp(date, "MM/dd/yyyy");
         Map<Long, List<ShopOrder>> orderList = shopOrderService.findByStatusAndTimeGroupingByBatchId(ts, ts + 86400000L,
-            ss);
+                ss);
         Map<Long, Integer> totalPrices = new HashMap<>();
         orderList.forEach((k, v) -> {
             Integer t = v.stream().map(p -> p.getTotalPrice()).reduce(Integer::sum).get();
@@ -46,7 +66,7 @@ public class OrderManageController extends BaseController {
         map.put("totalPrices", totalPrices);
         map.put("orders", orderList);
         map.put("statusMap", getStatusMap());
-        map.put("currentStatus", status == null ? "" : status);
+        map.put("currentStatus", status == null ? "PAIED" : status);
         return "manage/orderManage";
     }
 
@@ -64,12 +84,23 @@ public class OrderManageController extends BaseController {
     @GetMapping("markOrder")
     public Object markOrder(@RequestParam Long batchId, @RequestParam Integer status) {
         List<ShopOrder> shopOrders = shopOrderService.findByBatchId(batchId);
+        StringBuilder sb = new StringBuilder();
+        String openId = null;
+        String userName = null;
         for (ShopOrder shopOrder : shopOrders) {
             shopOrder.setStatus(OrderStatusEnum.valueOf(status).getCode());
             shopOrderService.update(shopOrder);
             UnifiedOrder unifiedOrder = unifiedOrderService.findById(shopOrder.getUnifiedId());
             unifiedOrder.setStatus(OrderStatusEnum.valueOf(status).getCode());
             unifiedOrderService.update(unifiedOrder);
+            sb.append("," + shopOrder.getTitle());
+            openId = unifiedOrder.getOpenId();
+            userName = unifiedOrder.getUserName();
+        }
+        switch (OrderStatusEnum.valueOf(status)) {
+            case PROCESSING:
+                wxEventHandler.onOrderProcessing(openId,userName, sb.toString().substring(1));
+                break;
         }
         return success();
     }

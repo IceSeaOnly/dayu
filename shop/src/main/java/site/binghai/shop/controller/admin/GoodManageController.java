@@ -7,13 +7,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.controller.BaseController;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.lib.utils.TimeTools;
 import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ProductDetail;
+import site.binghai.shop.entity.School;
 import site.binghai.shop.entity.ShopCategory;
 import site.binghai.shop.pojo.StandardObj;
 import site.binghai.shop.service.ProductDetailService;
 import site.binghai.shop.service.ProductService;
+import site.binghai.shop.service.SchoolService;
 import site.binghai.shop.service.ShopCategoryService;
 
 import java.util.ArrayList;
@@ -35,22 +38,46 @@ public class GoodManageController extends BaseController {
     private ProductService productService;
     @Autowired
     private ProductDetailService productDetailService;
+    @Autowired
+    private SchoolService schoolService;
+
+    @ResponseBody
+    @GetMapping("ajaxPushAsChildCategory")
+    public Object ajaxPushAsChildCategory(@RequestParam Long superId, @RequestParam Long productId, @RequestParam String name) {
+        Product product = productService.findById(productId);
+        ShopCategory category = new ShopCategory();
+        category.setBindProductId(productId);
+        category.setImgUrl(product.getImgUrl());
+        category.setRecommend(Boolean.FALSE);
+        category.setSuperCategory(Boolean.FALSE);
+        category.setSuperId(superId);
+        category.setHidden(Boolean.FALSE);
+        category.setTitle(name);
+        shopCategoryService.save(category);
+        return success();
+    }
 
     @GetMapping("goodsManage")
-    public String goodsManage(Long categoryId, ModelMap map, Integer page, Boolean offline) {
+    public String goodsManage(String search, Long categoryId, ModelMap map, Integer page, Boolean offline) {
+        List<Product> ps;
         page = page == null ? 0 : page;
         page = Math.max(0, page);
 
-        Product exp = new Product();
-        exp.setCategoryId(categoryId);
-        exp.setOffline(offline);
-        List<Product> ps = productService.pageQuery(exp, page, 100);
-
+        if (!hasEmptyString(search)) {
+            ps = productService.searchBy(search);
+        } else {
+            Product exp = new Product();
+            exp.setCategoryId(categoryId);
+            exp.setOffline(offline);
+            ps = productService.pageQuery(exp, page, 100);
+        }
         map.put("offline", String.valueOf(offline));
         map.put("page", page);
         map.put("products", ps);
         map.put("category", categoryId == null ? null : shopCategoryService.findById(categoryId));
         map.put("categoryId", categoryId == null ? "" : categoryId);
+        map.put("categories", shopCategoryService.listAllSuper());
+        map.put("schools", schoolService.findAllExcepte(SchoolIdThreadLocal.getSchoolId()));
         return "manage/goodsManage";
     }
 
@@ -93,7 +120,7 @@ public class GoodManageController extends BaseController {
     }
 
     private Integer[] generateBlank(Object images) {
-        int size = images == null ? 4 : 4 - ((JSONArray)images).size();
+        int size = images == null ? 4 : 4 - ((JSONArray) images).size();
         return new Integer[size];
     }
 
@@ -123,7 +150,7 @@ public class GoodManageController extends BaseController {
 
         Product product = productService.findById(productId);
         JSONObject std = JSONObject.parseObject(product.getStandards());
-        JSONArray arr = (JSONArray)std.getOrDefault(key, new JSONArray());
+        JSONArray arr = (JSONArray) std.getOrDefault(key, new JSONArray());
         if (!hasEmptyString(option)) {
             arr.add(option);
         }
@@ -193,16 +220,16 @@ public class GoodManageController extends BaseController {
         obj.putAll(map);
         Product product = obj.toJavaObject(Product.class);
         if (hasEmptyString(
-            product.getBrand(),
-            product.getCategoryId(),
-            product.getImgUrl(),
-            product.getPreviousPrice(),
-            product.getPrice(),
-            product.getProductNo(),
-            product.getSimpleDesc(),
-            product.getStock(),
-            product.getTitle(),
-            product.getTags()
+                product.getBrand(),
+                product.getCategoryId(),
+                product.getImgUrl(),
+                product.getPreviousPrice(),
+                product.getPrice(),
+                product.getProductNo(),
+                product.getSimpleDesc(),
+                product.getStock(),
+                product.getTitle(),
+                product.getTags()
         )) {
             return fail("填写不完整!");
         }
@@ -235,16 +262,16 @@ public class GoodManageController extends BaseController {
 
         product = obj.toJavaObject(Product.class);
         if (hasEmptyString(
-            product.getBrand(),
-            product.getCategoryId(),
-            product.getImgUrl(),
-            product.getPreviousPrice(),
-            product.getPrice(),
-            product.getProductNo(),
-            product.getSimpleDesc(),
-            product.getStock(),
-            product.getTitle(),
-            product.getTags()
+                product.getBrand(),
+                product.getCategoryId(),
+                product.getImgUrl(),
+                product.getPreviousPrice(),
+                product.getPrice(),
+                product.getProductNo(),
+                product.getSimpleDesc(),
+                product.getStock(),
+                product.getTitle(),
+                product.getTags()
         )) {
             return fail("填写不完整!");
         }
@@ -277,9 +304,10 @@ public class GoodManageController extends BaseController {
     @GetMapping("removeItem")
     @ResponseBody
     public Object removeItem(@RequestParam Long id) {
+        School school = schoolService.findById(getManager().getSchoolId());
         Product product = productService.findById(id);
         product.setOffline(true);
-        product.setCategoryId(1000L);
+        product.setCategoryId(school.getRecycleCategoryId());
         productService.update(product);
         return success();
     }

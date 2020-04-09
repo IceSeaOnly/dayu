@@ -3,9 +3,12 @@ package site.binghai.shop.service;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import site.binghai.biz.controller.UnifiedOrderController;
 import site.binghai.lib.def.WxEventHandler;
+import site.binghai.lib.entity.UnifiedOrder;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.BaseService;
+import site.binghai.lib.service.UnifiedOrderService;
 import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.TuanStatus;
@@ -22,10 +25,24 @@ import java.util.stream.Collectors;
 @Service
 public class TuanService extends BaseService<Tuan> {
     @Autowired
+    private UnifiedOrderController unifiedOrderController;
+    @Autowired
+    private UnifiedOrderService unifiedOrderService;
+    @Autowired
+    private ShopOrderService shopOrderService;
+    @Autowired
     private WxEventHandler wxEventHandler;
 
     @Transactional
     public void cancel(Tuan t) {
+        List<ShopOrder> orders = shopOrderService.findByTuanId(t.getId());
+        if (!isEmptyList(orders)) {
+            for (ShopOrder order : orders) {
+                UnifiedOrder uo = unifiedOrderService.findById(order.getUnifiedId());
+                shopOrderService.cancel(uo);
+                unifiedOrderService.cancel(order.getUnifiedId());
+            }
+        }
         t.setStatus(TuanStatus.FAIL);
         update(t);
     }
@@ -98,8 +115,8 @@ public class TuanService extends BaseService<Tuan> {
 
     public List<Tuan> scanTimeOut() {
         List<Tuan> all = searchByProductIdAndStatus(null, TuanStatus.INIT, 999);
-        return isEmptyList(all) ? null : all.stream().filter(p -> p.getCreated() < now() - 86400000L).collect(
-            Collectors.toList());
+        return isEmptyList(all) ? emptyList() : all.stream().filter(p -> p.getEndTs() < now()).collect(
+                Collectors.toList());
     }
 
     public Tuan findByTuanId(Long t) {

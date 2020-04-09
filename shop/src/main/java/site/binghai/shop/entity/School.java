@@ -20,4 +20,7 @@ public class School extends BaseEntity {
     private String schoolName;
     private String schoolImg;
     private Boolean visible;
+    private Long systemSuperCategoryId;
+    private Long recycleCategoryId;
+    private Long pintTuanCategoryId;
 }

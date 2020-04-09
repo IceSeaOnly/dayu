@@ -13,142 +13,10 @@
     <script type="text/javascript" src="/js/jquery-1.8.1.min.js"></script>
     <!--fy-alert-->
     <link type="text/css" rel="stylesheet" href="/css/fy-alert.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/cxslide.css"/>
     <script type="text/javascript" src="/js/fy-alert.js"></script>
+    <script src="/js/jquery.cxslide.min.js"></script>
 
-    <script th:inline="javascript">
-        var submitForm = $.parseJSON([[${detail.submitForm}]]);
-        var action = "buy";
-        var buyLimit = [[${buyLimit}]];
-        var buyCnt = 1;
-        var pid = [[${detail.product.id}]];
-
-        function successInfo(msg) {
-            fyAlert.msg(msg, {icon: 1, animateType: 1});
-        }
-
-        function warnInfo(msg) {
-            fyAlert.msg(msg, {icon: 2, animateType: 1});
-        }
-
-        function errorInfo(msg) {
-            fyAlert.msg(msg, {icon: 3, animateType: 1});
-        }
-
-        $(document).ready(function () {
-            $('.sizetype').click(function () {
-                action = $(this).attr('value');
-                $("#size").animate({bottom: "0"}, 500);
-                $('.f_mask0').show();
-                $("body").css({'height': '100%', 'overflow': 'hidden'});
-            })
-
-            $('.size3 a').click(function () {
-                //提交
-                for (key in submitForm) {
-                    if (submitForm[key] == "") {
-                        warnInfo('还没有选择[' + key + ']!');
-                        return;
-                    }
-                }
-                $('.f_mask0').hide();
-                $('#size').animate({bottom: "-80%"}, 500);
-                $("body").css({'height': 'auto', 'overflow': ''});
-
-                if (action == 'buy') {
-                    submitForm.hidden = true;
-                    $.ajax({
-                        type: "post",
-                        url: '/shop/addCart/' + pid + '/' + buyCnt,
-                        contentType: "application/json",
-                        dataType: "json",
-                        data: JSON.stringify(submitForm),
-                        success: function (resp) {
-                            if (resp.status == 'SUCCESS') {
-                                window.location.href = 'buyConfirm?cartIds=' + resp.data.id
-                            } else {
-                                errorInfo(resp.msg);
-                            }
-                        }
-                    });
-                    // $.ajax({
-                    //     type: "post",
-                    //     url: '/shop/submit/' + pid + '/' + buyCnt,
-                    //     contentType: "application/json",
-                    //     dataType: "json",
-                    //     data: JSON.stringify(submitForm),
-                    //     success: function (resp) {
-                    //         if (resp.status == 'SUCCESS') {
-                    //             window.location.href = "/user/unified/cashier?unifiedId=" + resp.data.unifiedId;
-                    //         } else {
-                    //             errorInfo(resp.msg);
-                    //         }
-                    //     }
-                    // });
-                } else if (action == 'addCart') {
-                    $.ajax({
-                        type: "post",
-                        url: '/shop/addCart/' + pid + '/' + buyCnt,
-                        contentType: "application/json",
-                        dataType: "json",
-                        data: JSON.stringify(submitForm),
-                        success: function (resp) {
-                            if (resp.status == 'SUCCESS') {
-                                successInfo("成功添加购物车")
-                            } else {
-                                errorInfo(resp.msg);
-                            }
-                        }
-                    });
-                }
-            })
-
-            $('.size1_3 img').click(function () {
-                $('.f_mask0').hide();
-                $('#size').animate({bottom: "-80%"}, 500);
-                $("body").css({'height': 'auto', 'overflow': ''});
-            })
-
-            //
-            $('.hdbox_2 ul li').click(function () {
-                $('.hdbox_2 ul li').removeClass('on');
-                $(this).addClass('on');
-            })
-
-            $('.size2_1 a').click(function () {
-                if ($(this).hasClass('on')) {
-                    var k = $(this).parent().children('.tit').text();
-                    submitForm[k] = "";
-                    console.log(submitForm);
-                    $(this).siblings().removeClass('on');
-                } else {
-                    var k = $(this).parent().children('.tit').text();
-                    submitForm[k] = $(this).text();
-                    console.log(submitForm);
-                    $(this).siblings().removeClass('on');
-                    $(this).addClass('on');
-                }
-            })
-
-        })
-
-        function addItem(size) {
-            var cnt = parseInt($("#numberCnt").text()) + size;
-            buyCnt = cnt > buyLimit ? buyLimit : cnt;
-            buyCnt = cnt > 0 ? cnt : 1;
-            $("#numberCnt").text(buyCnt);
-        }
-    </script>
-    <script type="text/javascript">
-        //选项卡
-        function setTab(name, cursel, n) {
-            for (i = 1; i <= n; i++) {
-                var menu = document.getElementById(name + i);
-                var con = document.getElementById("con_" + name + "_" + i);
-                menu.className = i == cursel ? "hover" : "";
-                con.style.display = i == cursel ? "block" : "none";
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -170,9 +38,19 @@
     </div>
 </div>
 <div class="hbox"></div>
-<a name="m1">
+<a name="m1" style="overflow:hidden;">
     <div class="xqbox1">
-        <img th:src="${detail.product.imgUrl}" width="100%"/>
+        <div width="100%" id="slider" class="cxslide">
+            <div class="box">
+                <ul class="list">
+                    <li name="imgLi"><a href="#"><img  th:src="${detail.product.imgUrl}"/></a></li>
+                    <li name="imgLi" th:if="${images != null}" th:each="img:${images}">
+                        <a href="#"><img th:src="${img}"/></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <p class="tit" th:text="${detail.product.brand+' '+detail.product.title+' '+detail.product.simpleDesc}">Pristian
             zouboutin 2015秋季新款羽毛蕾丝抹胸长拖尾镶钻拉链婚纱</p>
         <div class="qita">
@@ -312,7 +190,7 @@
         </div>
         <div style="display:none" id="con_two_2">
             <div class="canshu" th:each="kv:${detail.infos}">
-                <div class="canshu_1">
+                <div class="canshu_1" th:if="${kv.key != 'images'}">
                     <p class="pl" th:text="${kv.key}">袖长</p>
                     <p class="pr" th:text="${kv.value}">七分袖</p>
                 </div>
@@ -404,10 +282,161 @@
         </div>
     </div>
 </div>
+
 <script th:inline="javascript">
-    $.get([[${detail.html}]],function (resp) {
+    var submitForm = $.parseJSON([[${detail.submitForm}]]);
+    var action = "buy";
+    var buyLimit = [[${buyLimit}]];
+    var buyCnt = 1;
+    var pid = [[${detail.product.id}]];
+
+    function successInfo(msg) {
+        fyAlert.msg(msg, {icon: 1, animateType: 1});
+    }
+
+    function warnInfo(msg) {
+        fyAlert.msg(msg, {icon: 2, animateType: 1});
+    }
+
+    function errorInfo(msg) {
+        fyAlert.msg(msg, {icon: 3, animateType: 1});
+    }
+
+    $(document).ready(function () {
+        initSlide();
+        $('.sizetype').click(function () {
+            action = $(this).attr('value');
+            $("#size").animate({bottom: "0"}, 500);
+            $('.f_mask0').show();
+            $("body").css({'height': '100%', 'overflow': 'hidden'});
+        })
+
+        $('.size3 a').click(function () {
+            //提交
+            for (key in submitForm) {
+                if (submitForm[key] == "") {
+                    warnInfo('还没有选择[' + key + ']!');
+                    return;
+                }
+            }
+            $('.f_mask0').hide();
+            $('#size').animate({bottom: "-80%"}, 500);
+            $("body").css({'height': 'auto', 'overflow': ''});
+
+            if (action == 'buy') {
+                submitForm.hidden = true;
+                $.ajax({
+                    type: "post",
+                    url: '/shop/addCart/' + pid + '/' + buyCnt,
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(submitForm),
+                    success: function (resp) {
+                        if (resp.status == 'SUCCESS') {
+                            window.location.href = 'buyConfirm?cartIds=' + resp.data.id
+                        } else {
+                            errorInfo(resp.msg);
+                        }
+                    }
+                });
+                // $.ajax({
+                //     type: "post",
+                //     url: '/shop/submit/' + pid + '/' + buyCnt,
+                //     contentType: "application/json",
+                //     dataType: "json",
+                //     data: JSON.stringify(submitForm),
+                //     success: function (resp) {
+                //         if (resp.status == 'SUCCESS') {
+                //             window.location.href = "/user/unified/cashier?unifiedId=" + resp.data.unifiedId;
+                //         } else {
+                //             errorInfo(resp.msg);
+                //         }
+                //     }
+                // });
+            } else if (action == 'addCart') {
+                $.ajax({
+                    type: "post",
+                    url: '/shop/addCart/' + pid + '/' + buyCnt,
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(submitForm),
+                    success: function (resp) {
+                        if (resp.status == 'SUCCESS') {
+                            successInfo("成功添加购物车")
+                        } else {
+                            errorInfo(resp.msg);
+                        }
+                    }
+                });
+            }
+        })
+
+        $('.size1_3 img').click(function () {
+            $('.f_mask0').hide();
+            $('#size').animate({bottom: "-80%"}, 500);
+            $("body").css({'height': 'auto', 'overflow': ''});
+        })
+
+        //
+        $('.hdbox_2 ul li').click(function () {
+            $('.hdbox_2 ul li').removeClass('on');
+            $(this).addClass('on');
+        })
+
+        $('.size2_1 a').click(function () {
+            if ($(this).hasClass('on')) {
+                var k = $(this).parent().children('.tit').text();
+                submitForm[k] = "";
+                console.log(submitForm);
+                $(this).siblings().removeClass('on');
+            } else {
+                var k = $(this).parent().children('.tit').text();
+                submitForm[k] = $(this).text();
+                console.log(submitForm);
+                $(this).siblings().removeClass('on');
+                $(this).addClass('on');
+            }
+        });
+    });
+
+    function initSlide() {
+        $('#slider').cxSlide({
+            type: 'x',
+            auto: true,
+            btn: false,
+            speed: 800,
+            time: 1500
+        });
+    }
+
+    function addItem(size) {
+        var cnt = parseInt($("#numberCnt").text()) + size;
+        buyCnt = cnt > buyLimit ? buyLimit : cnt;
+        buyCnt = cnt > 0 ? cnt : 1;
+        $("#numberCnt").text(buyCnt);
+    }
+</script>
+<script type="text/javascript">
+    //选项卡
+    function setTab(name, cursel, n) {
+        for (i = 1; i <= n; i++) {
+            var menu = document.getElementById(name + i);
+            var con = document.getElementById("con_" + name + "_" + i);
+            menu.className = i == cursel ? "hover" : "";
+            con.style.display = i == cursel ? "block" : "none";
+        }
+    }
+</script>
+<script th:inline="javascript">
+    $.get([[${detail.html}]], function (resp) {
         $("#detailHtmlContainer").html(resp);
     });
+</script>
+<script>
+    $("[name='imgLi']").each(function () {
+        $(this).css("width", $('#slider').width());
+        $(this).css("height", "auto");
+    })
 </script>
 </body>
 </html>

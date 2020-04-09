@@ -89,7 +89,7 @@
     <ul>
         <li th:each="goods:${products}">
             <a th:href="${'detail?productId='+goods.id}">
-                <img th:src="${goods.imgUrl}" class="proimg"/>
+                <img name="prdItemImg" th:src="${goods.imgUrl}" class="proimg"/>
                 <p class="tit" th:text="${goods.brand+' '+goods.title}">三利 毛巾家纺纯棉吸水 提缎面巾两条装</p>
                 <p class="price"><b th:text="${'￥'+goods.price/100.0}">￥29.9</b><span
                         th:text="${'￥'+goods.previousPrice/100.0}">￥49.9</span><img src="/images/f3.png"/></p>
@@ -101,7 +101,7 @@
     <ul>
         <li th:each="goods:${products}">
             <a th:href="${'detail?productId='+goods.id}">
-                <div class="listL"><img th:src="${goods.imgUrl}"/></div>
+                <div class="listL"><img name="prdItemImg" th:src="${goods.imgUrl}"/></div>
                 <div class="listR">
                     <div class="v1" th:text="${goods.brand+' '+goods.title}">高贵塔夫绸抹胸长拖尾婚纱高贵塔夫绸抹胸长拖尾婚纱</div>
                     <div class="v2">
@@ -159,4 +159,9 @@
 </div>
 
 </body>
+<script>
+    $("[name='prdItemImg']").each(function () {
+        $(this).css("height", $(this).width());
+    })
+</script>
 </html>

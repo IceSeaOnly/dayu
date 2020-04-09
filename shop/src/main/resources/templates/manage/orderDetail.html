@@ -70,6 +70,10 @@
     </div>
     <div class="row" style="padding-left: 20px;padding-right: 20px;">
         <div class="col-12">
+            <b style="font-size: 20px">创单时间:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
+                                                                        th:text="${orders.get(0).createdTime}">createdTime</span><br/>
+            <b style="font-size: 20px">拼团序号:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
+                                                                        th:text="${orders.get(0).tuanId}">tuanId</span><br/>
             <b style="font-size: 20px">订单总价:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: black"
                                                                         th:text="${'￥'+ total/100.0}">remark</span><br/>
             <b style="font-size: 20px">订单备注:</b>&nbsp;&nbsp;&nbsp;<span style="font-size: 20px;color: red"
@@ -88,8 +92,10 @@
                 <!--<button type="button" class="btn btn-danger waves-effect waves-light">订单退款</button>-->
                 <!--<button type="button" class="btn btn-success waves-effect waves-light">标记完成</button>-->
                 <button type="button" class="btn btn-secondary waves-effect waves-light"
+                        th:onclick="${'markProcessing('+batchId+')'}"
                         th:if="${orders.get(0).ptOrder == true && orders.get(0).status == 2 && orders.get(0).tuanStatus.name() == 'FULL'}">标记发货</button>
                 <button type="button" class="btn btn-secondary waves-effect waves-light"
+                        th:onclick="${'markProcessing('+batchId+')'}"
                         th:if="${orders.get(0).ptOrder == false && orders.get(0).status == 2}">标记发货</button>
                 <button type="button" class="btn btn-info waves-effect waves-light"
                         th:onclick="${'print('+batchId+')'}">打印订单
@@ -100,6 +106,14 @@
 </div>
 <!-- END layout-wrapper -->
 <script>
+    function markProcessing(batchId) {
+        markOrder2Status(batchId, 3);
+    }
+    function markOrder2Status(batchId, status) {
+        $.getJSON('markOrder?batchId=' + batchId + '&status=' + status, function (resp) {
+            window.location.reload();
+        })
+    }
     function print(batchId) {
         $.getJSON('printOrder?batchId=' + batchId, function (resp) {
             if (resp.status != 'SUCCESS') {

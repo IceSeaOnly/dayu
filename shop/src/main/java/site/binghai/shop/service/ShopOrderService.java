@@ -20,11 +20,14 @@ import site.binghai.shop.entity.Product;
 import site.binghai.shop.entity.ShopOrder;
 import site.binghai.shop.entity.Tuan;
 import site.binghai.shop.enums.TuanStatus;
+import site.binghai.shop.kv.AutoAcceptOrderConfig;
+import site.binghai.shop.pinter.CloudPrinter;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +47,12 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     private ShopOrderDao shopOrderDao;
     @Autowired
     private AppTokenService appTokenService;
+    @Autowired
+    private KvService kvService;
+    @Autowired
+    private CloudPrinter cloudPrinter;
+
+    private Map<Long, Boolean> printCache = new ConcurrentHashMap<>();
 
     @Override
     protected JpaRepository<ShopOrder, Long> getDao() {
@@ -77,11 +86,16 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     @Transactional
     public ShopOrder cancel(UnifiedOrder order) {
         ShopOrder shopOrder = loadByUnifiedOrder(order);
-        if (CompareUtils.inAny(shopOrder.getTuanStatus(), TuanStatus.FULL, TuanStatus.FAIL)) {
-            throw new RuntimeException("拼团订单请在拼团成功后取消或等待超时自动取消");
-        } else {
-            wxEventHandler.onTuanFail(shopOrder.getTuanId(), shopOrder.getTitle(), order.getShouldPay(),
-                order.getOpenId());
+        if (shopOrder == null) {
+            return null;
+        }
+        if (shopOrder.getPtOrder() != null && shopOrder.getPtOrder()) {
+            if (CompareUtils.inAny(shopOrder.getTuanStatus(), TuanStatus.FULL, TuanStatus.FAIL)) {
+                throw new RuntimeException("拼团订单请在拼团成功后取消或等待超时自动取消");
+            } else {
+                wxEventHandler.onTuanFail(shopOrder.getTuanId(), shopOrder.getTitle(), order.getShouldPay(),
+                        order.getOpenId());
+            }
         }
         shopOrder.setStatus(OrderStatusEnum.CANCELED.getCode());
         update(shopOrder);
@@ -94,23 +108,66 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         ShopOrder shopOrder = loadByUnifiedOrder(order);
         WxUser user = wxUserService.findById(shopOrder.getUserId());
         Product product = productService.findById(shopOrder.getProductId());
+        boolean tuanSuccess = false;
         if (shopOrder.getPtOrder() != null && shopOrder.getPtOrder()) {
             if (shopOrder.getTuanId() == null) {
                 Tuan tuan = tuanService.create(user, product.getTags(), shopOrder, product.getPtSize());
                 shopOrder.setTuanId(tuan.getId());
                 wxEventHandler.onTuanCreate(tuan.getId(), product.getTitle(), user.getOpenId(), product.getPrice(),
-                    product.getPtSize());
+                        product.getPtSize());
             } else {
                 Tuan tuan = tuanService.join(user, shopOrder);
                 if (tuan.getStatus() == TuanStatus.INIT) {
                     wxEventHandler.onTuanJoin(shopOrder.getTuanId(), product.getTitle(), order.getShouldPay(),
-                        order.getOpenId());
+                            order.getOpenId());
+                } else if (tuan.getStatus() == TuanStatus.FULL) {
+                    tuanSuccess = true;
                 }
             }
         }
         shopOrder.setStatus(OrderStatusEnum.PAIED.getCode());
         shopOrder.setPaid(Boolean.TRUE);
         update(shopOrder);
+        if (tuanSuccess) {
+            markAllTuanSuccess(shopOrder.getTuanId());
+        }
+        printByBatchId(shopOrder.getBatchId());
+    }
+
+    private void printByBatchId(Long batchId) {
+        if (printCache.get(batchId) != null) {
+            return;
+        }
+        printCache.put(batchId, Boolean.TRUE);
+        AutoAcceptOrderConfig config = kvService.get(AutoAcceptOrderConfig.class);
+        if (null == config || !config.getEnable().equals("Y")) {
+            return;
+        }
+        List<ShopOrder> orders = findByBatchId(batchId);
+        if ("Y".equals(config.getMarkProcessing())) {
+            orders.forEach(shopOrder -> {
+                shopOrder.setStatus(OrderStatusEnum.PROCESSING.getCode());
+                update(shopOrder);
+            });
+        }
+        cloudPrinter.print(orders, batchId.toString(), config.getPrintPieces());
+    }
+
+    private void markAllTuanSuccess(Long tuanId) {
+        List<ShopOrder> shopOrders = findByTuanId(tuanId);
+        for (ShopOrder shopOrder : shopOrders) {
+            if (shopOrder.getTuanStatus() == TuanStatus.INIT) {
+                shopOrder.setTuanStatus(TuanStatus.FULL);
+                update(shopOrder);
+            }
+            printByBatchId(shopOrder.getBatchId());
+        }
+    }
+
+    public List<ShopOrder> findByTuanId(Long tuanId) {
+        ShopOrder order = new ShopOrder();
+        order.setTuanId(tuanId);
+        return query(order);
     }
 
     @Override
@@ -159,9 +216,9 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
     public Map<Long, List<ShopOrder>> findByStatusAndTime(Long ts, Long end, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
         List<ShopOrder> ret = shopOrderDao.findAllBySchoolIdAndStatusInAndCreatedBetween(
-            SchoolIdThreadLocal.getSchoolId(), ss, ts, end);
+                SchoolIdThreadLocal.getSchoolId(), ss, ts, end);
         return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
-            Collectors.groupingBy(s -> s.getBatchId()));
+                Collectors.groupingBy(s -> s.getBatchId()));
     }
 
     public List<ShopOrder> findTuanByUserId(Long userId) {
@@ -175,14 +232,14 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         List<ShopOrder> ret = null;
         if (status == null) {
             ret = shopOrderDao.findAllBySchoolIdAndBindRiderOrderByUpdatedDesc(SchoolIdThreadLocal.getSchoolId(), rider,
-                new PageRequest(page, 1000));
+                    new PageRequest(page, 1000));
         } else {
             ret = shopOrderDao.findAllBySchoolIdAndStatusAndBindRiderOrderByIdDesc(SchoolIdThreadLocal.getSchoolId(),
-                status.getCode(), rider,
-                new PageRequest(page, 1000));
+                    status.getCode(), rider,
+                    new PageRequest(page, 1000));
         }
         return ret.stream().collect(
-            Collectors.groupingBy(s -> s.getBatchId()));
+                Collectors.groupingBy(s -> s.getBatchId()));
     }
 
     public Long countByRiderAndStatus(OrderStatusEnum status, Long id) {
@@ -195,27 +252,32 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         exp.setBatchId(batchId);
         List<ShopOrder> ret = query(exp);
         return empty(ret).stream().peek(s -> s.setProduct(productService.findById(s.getProductId()))).collect(
-            Collectors.toList());
+                Collectors.toList());
     }
 
-    public Map<Long, List<ShopOrder>> findByStatusAndTimeGroupingByBatchId(Long ts, long end,
+    public Map<Long, List<ShopOrder>> findByStatusAndTimeGroupingByBatchId(long start, long end,
                                                                            OrderStatusEnum... status) {
+        List<ShopOrder> ret = null;
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
-        List<ShopOrder> ret = shopOrderDao.findAllBySchoolIdAndStatusInAndCreatedBetween(
-            SchoolIdThreadLocal.getSchoolId(), ss, ts, end);
-
+        if (status != null && status.length == 1 && status[0] == OrderStatusEnum.PAIED) {
+            ret = shopOrderDao.findAllBySchoolIdAndStatusInAndCreatedBetween(
+                    SchoolIdThreadLocal.getSchoolId(), ss, 0l, end);
+        } else {
+            ret = shopOrderDao.findAllBySchoolIdAndStatusInAndCreatedBetween(
+                    SchoolIdThreadLocal.getSchoolId(), ss, start, end);
+        }
         return ret.stream().peek(s -> {
             s.setProduct(productService.findById(s.getProductId()));
             if (s.getBindRider() != null) {
                 s.setRider(appTokenService.findById(s.getBindRider()));
             }
         }).collect(
-            Collectors.groupingBy(s -> s.getBatchId()));
+                Collectors.groupingBy(s -> s.getBatchId()));
     }
 
     public Long countByRiderAndStatusAndTime(OrderStatusEnum status, Long tokenId, Long[] time) {
         Long ret = shopOrderDao.countByRiderAndStatusAndTime(SchoolIdThreadLocal.getSchoolId(), time[0], time[1],
-            tokenId, status.getCode());
+                tokenId, status.getCode());
         return ret == null ? 0 : ret;
     }
 
@@ -223,5 +285,18 @@ public class ShopOrderService extends BaseService<ShopOrder> implements UnifiedO
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
         Long ret = shopOrderDao.countByStatusAndTime(SchoolIdThreadLocal.getSchoolId(), begin, end, ss);
         return ret == null ? 0 : ret;
+    }
+
+    public Map<Long, List<ShopOrder>> searchBy(String search) {
+        search = "%" + search + "%";
+        List<ShopOrder> ret = shopOrderDao.findAllBySchoolIdAndBuyerNameLikeOrReceiverLikeOrReceiverPhoneLike(SchoolIdThreadLocal.getSchoolId(),
+                search, search, search);
+        return ret.stream().peek(s -> {
+            s.setProduct(productService.findById(s.getProductId()));
+            if (s.getBindRider() != null) {
+                s.setRider(appTokenService.findById(s.getBindRider()));
+            }
+        }).collect(
+                Collectors.groupingBy(s -> s.getBatchId()));
     }
 }

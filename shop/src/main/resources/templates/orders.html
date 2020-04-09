@@ -112,9 +112,9 @@
                 <a th:href="${'confirmReceivedGood?orderId='+item.id}" th:if="${item.status == 2||item.status == 3}">确认收货</a>
                 <a th:href="${'leaveComment?orderId='+item.id}" th:if="${item.status == 4}">立即评价</a>
             </div>
-            <div class="dpbtn3" th:if="${item.status > 1 && item.status < 4}">
-                <a href="wuliu">查看物流</a>
-            </div>
+<!--            <div class="dpbtn3" th:if="${item.status > 1 && item.status < 4}">-->
+<!--                <a href="wuliu">查看物流</a>-->
+<!--            </div>-->
             <div class="dpbtn3" th:if="${item.status > 4}">
                 <a th:href="${'/shop/detail?productId='+item.productId}">再次购买</a>
             </div>

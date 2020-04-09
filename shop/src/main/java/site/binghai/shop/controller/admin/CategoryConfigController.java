@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import site.binghai.lib.controller.BaseController;
 import site.binghai.shop.entity.ShopCategory;
 import site.binghai.shop.service.ProductService;
+import site.binghai.shop.service.SchoolService;
 import site.binghai.shop.service.ShopCategoryService;
 
 /**
@@ -20,10 +21,13 @@ public class CategoryConfigController extends BaseController {
     private ShopCategoryService shopCategoryService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private SchoolService schoolService;
 
     @GetMapping("categoryConfig")
     public String categoryConfig(ModelMap map) {
         map.put("categories", shopCategoryService.listAll());
+        map.put("school", schoolService.findById(getManager().getSchoolId()));
         return "manage/categoryConfig";
     }
 
@@ -47,13 +51,13 @@ public class CategoryConfigController extends BaseController {
     public String deleteCategory(@RequestParam Long cid) {
         ShopCategory ct = shopCategoryService.findById(cid);
         if (ct.getSuperCategory()) {
-            shopCategoryService.pageQuery(new ShopCategory(),0,999)
-                .stream()
-                .filter(p -> cid.equals(p.getSuperId()))
-                .forEach(p -> {
-                    deleteChildCategory(p.getId());
-                    shopCategoryService.delete(p);
-                });
+            shopCategoryService.pageQuery(new ShopCategory(), 0, 999)
+                    .stream()
+                    .filter(p -> cid.equals(p.getSuperId()))
+                    .forEach(p -> {
+                        deleteChildCategory(p.getId());
+                        shopCategoryService.delete(p);
+                    });
             shopCategoryService.delete(cid);
         } else {
             deleteChildCategory(cid);
@@ -63,17 +67,17 @@ public class CategoryConfigController extends BaseController {
 
     private void deleteChildCategory(Long cid) {
         productService.searchByCategory(cid)
-            .forEach(p -> {
-                p.setCategoryId(1000L);
-                p.setOffline(Boolean.TRUE);
-                productService.update(p);
-            });
+                .forEach(p -> {
+                    p.setCategoryId(1000L);
+                    p.setOffline(Boolean.TRUE);
+                    productService.update(p);
+                });
         shopCategoryService.delete(cid);
     }
 
     @ResponseBody
     @PostMapping("ajaxAddCategory")
-    public Object ajaxAddCategory(@RequestParam Long superId, @RequestParam String title, String url) {
+    public Object ajaxAddCategory(@RequestParam Long superId, @RequestParam String title, String url, Long bindProductId) {
         if (superId < 0 && hasEmptyString(url)) {
             return fail("图片必传!");
         }
@@ -84,6 +88,7 @@ public class CategoryConfigController extends BaseController {
         category.setSuperCategory(superId < 0);
         category.setSuperId(superId > 0 ? superId : -1);
         category.setTitle(title);
+        category.setBindProductId(bindProductId);
         shopCategoryService.save(category);
         return success();
     }

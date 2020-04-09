@@ -62,6 +62,7 @@ public class DetailController extends BaseController {
         map.put("recommends", recommendService.recommend(4));
         map.put("commentCnt", commentCnt);
         map.put("detail", detail);
+        map.put("images", detail.getInfos().getJSONArray("images"));
         //map.put("couponUrl", "searcher");
         map.put("collected", shopCollectionService.isCollected(getUser().getId(), productId));
         return "detail";

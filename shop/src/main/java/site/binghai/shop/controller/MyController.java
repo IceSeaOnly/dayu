@@ -11,6 +11,7 @@ import site.binghai.lib.controller.BaseController;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.WxUserService;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 import site.binghai.shop.kv.MyPageConfig;
 import site.binghai.shop.service.*;
 
@@ -69,6 +70,7 @@ public class MyController extends BaseController {
                                @RequestParam String phone,
                                @RequestParam Long schoolId) {
 
+        SchoolIdThreadLocal.setSchoolId(schoolId);
         WxUser user = getUser();
         user.setCity(city);
         user.setCountry(country);

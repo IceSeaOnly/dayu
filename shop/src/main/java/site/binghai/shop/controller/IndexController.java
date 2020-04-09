@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import site.binghai.shop.enums.BannerType;
 import site.binghai.shop.kv.AdImg;
+import site.binghai.shop.kv.IndexButtonConfig;
 import site.binghai.shop.kv.IndexHotTopicImgWall;
 import site.binghai.shop.kv.PinTuanIndexImgWall;
 import site.binghai.shop.service.BannerService;
@@ -32,6 +33,7 @@ public class IndexController {
         map.put("recommends", recommendService.recommend(100));
         map.put("pinWall", kvService.get(PinTuanIndexImgWall.class));
         map.put("hot", kvService.get(IndexHotTopicImgWall.class));
+        map.put("btns", kvService.get(IndexButtonConfig.class));
         map.put("ad", kvService.get(AdImg.class));
         return "index";
     }

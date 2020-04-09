@@ -1,0 +1,17 @@
+/**
+ * cxSlide 基本样式
+ * width 和 height 根据需求设置
+ */
+.cxslide{position:relative;}
+.cxslide .box{}
+.cxslide .list{}
+.cxslide .list li{}
+.cxslide .btn{}
+.cxslide .btn li{}
+.cxslide .btn li.selected{}
+.cxslide .minus{}
+.cxslide .plus{}
+/* 横向过渡 type: 'x' */
+.cxslide .box{overflow:hidden;}
+.cxslide .list{overflow:hidden;width:9999px;}
+.cxslide .list li{float:left;position:relative;}
