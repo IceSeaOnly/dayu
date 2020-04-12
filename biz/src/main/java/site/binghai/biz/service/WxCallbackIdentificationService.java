@@ -1,6 +1,6 @@
 package site.binghai.biz.service;
 
-import javafx.util.Pair;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import site.binghai.biz.def.Result;
 import site.binghai.biz.entity.WxCallbackIdentification;
@@ -21,8 +21,8 @@ public class WxCallbackIdentificationService extends BaseService<WxCallbackIdent
         WxCallbackIdentification i = new WxCallbackIdentification();
         i.setToken(UUID.randomUUID().toString());
         i.setStatus(WxCallbackIdentificationStatusEnum.INIT.name());
-        i.setSessionKey(params.getKey());
-        i.setSessionValue(params.getValue());
+        i.setSessionKey(params.getFirst());
+        i.setSessionValue(params.getSecond());
         i.setCallBackUrl(cbUrl);
         i.setClientIp(ip);
         return save(i);

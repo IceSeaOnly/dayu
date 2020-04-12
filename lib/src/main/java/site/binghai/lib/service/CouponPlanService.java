@@ -22,4 +22,8 @@ public class CouponPlanService extends BaseService<CouponPlan> {
                 TimeTools.format2yyyy_MM_dd(p.getInvalidTs())))).collect(
                 Collectors.toList());
     }
+
+    public List<CouponPlan> findAll() {
+        return query(new CouponPlan());
+    }
 }

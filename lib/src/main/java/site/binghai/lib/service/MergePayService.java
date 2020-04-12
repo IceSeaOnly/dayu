@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 import site.binghai.lib.def.UnifiedOrderMethods;
 import site.binghai.lib.entity.MergePayOrder;
 import site.binghai.lib.entity.UnifiedOrder;
+import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.enums.PayBizEnum;
+
+import javax.transaction.Transactional;
 
 /**
  *
@@ -39,10 +42,13 @@ public class MergePayService extends BaseService<MergePayOrder> implements Unifi
     }
 
     @Override
+    @Transactional
     public void onPaid(UnifiedOrder order) {
         MergePayOrder mergePayOrder = loadByUnifiedOrder(order);
         for (String sid : mergePayOrder.getUnifiedIds().split(",")) {
             UnifiedOrder sub = unifiedOrderService.findById(Long.parseLong(sid));
+            sub.setStatus(OrderStatusEnum.PAIED.getCode());
+            unifiedOrderService.update(sub);
             payBizServiceFactory.mutePayEvent(sub);
         }
     }

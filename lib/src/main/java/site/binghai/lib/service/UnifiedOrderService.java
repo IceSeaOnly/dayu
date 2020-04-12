@@ -35,41 +35,29 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         return dao;
     }
 
-    public List<UnifiedOrder> findByAppCode(PayBizEnum pbe, Integer page, Integer pageSize) {
-        if (page == null || page < 0) { page = 0; }
-        if (pageSize == null || pageSize < 0) { pageSize = 100; }
-        return dao.findAllByAppCodeOrderByCreatedDesc(pbe.getCode(), new PageRequest(page, pageSize));
-    }
-
-    public List<UnifiedOrder> findByAppCode(PayBizEnum pbe, Long categoryId, Integer page, Integer pageSize) {
-        if (page == null || page < 0) { page = 0; }
-        if (pageSize == null || pageSize < 0) { pageSize = 100; }
-        return dao.findAllByAppCodeOrderByCreatedDesc(pbe.getCode(), new PageRequest(page, pageSize));
-    }
-
-    public Long countByCode(PayBizEnum pb) {
-        return dao.countByAppCode(pb.getCode());
-    }
-
     public Long countByAppCodeAndStatus(PayBizEnum pb, Integer status) {
-        return dao.countByAppCodeAndStatus(pb.getCode(), status);
+        return dao.countBySchoolIdAndAppCodeAndStatus(SchoolIdThreadLocal.getSchoolId(), pb.getCode(), status);
     }
 
     public Long countByDate(PayBizEnum pb, Long[] date, OrderStatusEnum... status) {
         List<Integer> ss = Arrays.stream(status).map(s -> s.getCode()).collect(Collectors.toList());
-        return dao.countByAppCodeAndStatusInAndCreatedBetween(pb.getCode(), ss, date[0], date[1]);
+        return dao.countBySchoolIdAndAppCodeAndStatusInAndCreatedBetween(SchoolIdThreadLocal.getSchoolId(), pb.getCode(), ss, date[0], date[1]);
     }
 
     public Long countToday(PayBizEnum pb) {
-        return dao.countByAppCodeAndCreatedAfter(pb.getCode(), TimeTools.today()[0]);
+        return dao.countBySchoolIdAndAppCodeAndCreatedAfter(SchoolIdThreadLocal.getSchoolId(), pb.getCode(), TimeTools.today()[0]);
     }
 
     public List<UnifiedOrder> list(PayBizEnum payBiz, OrderStatusEnum status, Integer page, Integer pageSize) {
-        if (page == null || page < 0) { page = 0; }
-        if (pageSize == null || pageSize < 0) { pageSize = 100; }
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        if (pageSize == null || pageSize < 0) {
+            pageSize = 100;
+        }
 
-        return dao.findAllByAppCodeAndStatusOrderByCreatedDesc(payBiz.getCode(), status.getCode(),
-            new PageRequest(page, pageSize));
+        return dao.findAllBySchoolIdAndAppCodeAndStatusOrderByCreatedDesc(SchoolIdThreadLocal.getSchoolId(), payBiz.getCode(), status.getCode(),
+                new PageRequest(page, pageSize));
     }
 
     @Transactional
@@ -139,15 +127,19 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
     }
 
     public List<UnifiedOrder> findByUserIdOrderByIdDesc(Long userId, Integer page, Integer pageSize) {
-        if (page == null || page < 0) { page = 0; }
-        if (pageSize == null || pageSize < 0) { pageSize = 100; }
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        if (pageSize == null || pageSize < 0) {
+            pageSize = 100;
+        }
         return dao.findAllByUserIdOrderByIdDesc(userId, new PageRequest(page, pageSize));
     }
 
     @Transactional
     public boolean cancel(Long id) {
         UnifiedOrder order = findById(id);
-        order.setStatus(OrderStatusEnum.CANCELED.getCode());
+        order.setStatus(OrderStatusEnum.REFUNDING.getCode());
         update(order);
         if (order.getCouponId() != null) {
             couponService.unuse(order.getCouponId());
@@ -158,15 +150,21 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         return true;
     }
 
+
     public List<UnifiedOrder> scanTimeOut() {
         return dao.findAllByStatusAndCreatedBefore(OrderStatusEnum.CREATED.getCode(),
-            now() - 15 * 6000);
+                now() - 15 * 6000);
     }
 
     public Integer sumShouldPay(PayBizEnum pb, Long[] date, OrderStatusEnum... status) {
         Integer ret = dao.sum(SchoolIdThreadLocal.getSchoolId(), pb.getCode(), date[0], date[1], Arrays.stream(status)
-            .map(s -> s.getCode())
-            .collect(Collectors.toList()));
+                .map(s -> s.getCode())
+                .collect(Collectors.toList()));
         return ret == null ? 0 : ret;
+    }
+
+    public List<UnifiedOrder> loadRefunding() {
+        return dao.findAllByStatusAndCreatedBefore(OrderStatusEnum.REFUNDING.getCode(),
+                now());
     }
 }

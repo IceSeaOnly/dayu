@@ -1,6 +1,6 @@
 package site.binghai.lib.service;
 
-import javafx.util.Pair;
+import org.springframework.data.util.Pair;
 import site.binghai.lib.utils.BaseBean;
 import site.binghai.lib.utils.TimeTools;
 
@@ -23,11 +23,11 @@ public abstract class AbastractMultiKVCacheService<K, V> extends BaseBean {
             cache.put(key, loadData(key));
         }
 
-        return cache.get(key).getValue();
+        return cache.get(key).getSecond();
     }
 
     private boolean expired(Pair<Long, V> val) {
-        return now() - val.getKey() > expiredSecs;
+        return now() - val.getFirst() > expiredSecs;
     }
 
     private synchronized void init() {
@@ -41,7 +41,7 @@ public abstract class AbastractMultiKVCacheService<K, V> extends BaseBean {
     private synchronized Pair<Long, V> loadData(K key) {
         long lastCallTime = now();
         logger.info("{} reload data at {}", key, TimeTools.now());
-        return new Pair(lastCallTime, load(key));
+        return Pair.of(lastCallTime, load(key));
     }
 
     protected abstract V load(K key);

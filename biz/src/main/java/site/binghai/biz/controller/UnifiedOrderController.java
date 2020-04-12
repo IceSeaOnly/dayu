@@ -64,7 +64,7 @@ public class UnifiedOrderController extends BaseController {
         }
         if (order.getStatus() > 1) {
             return e500(
-                "订单状态错误:" + OrderStatusEnum.valueOf(order.getStatus()).getName());
+                    "订单状态错误:" + OrderStatusEnum.valueOf(order.getStatus()).getName());
         }
         map.put("order", order);
         map.put("user", user);
@@ -75,15 +75,15 @@ public class UnifiedOrderController extends BaseController {
     private JSONArray loadMoreInfo(UnifiedOrder order) {
         JSONArray ret = newJSONArray();
         payBizServiceFactory.get(order.getAppCode()).moreInfo(order)
-            .forEach((k, v) -> {
-                if (hasEmptyString(v)) {
-                    return;
-                }
-                JSONObject item = new JSONObject();
-                item.put("key", k);
-                item.put("value", v);
-                ret.add(item);
-            });
+                .forEach((k, v) -> {
+                    if (hasEmptyString(v)) {
+                        return;
+                    }
+                    JSONObject item = new JSONObject();
+                    item.put("key", k);
+                    item.put("value", v);
+                    ret.add(item);
+                });
         return ret;
     }
 
@@ -124,7 +124,7 @@ public class UnifiedOrderController extends BaseController {
         map.put("enableWalletPay", enableWalletPay);
         map.put("wxPayUrl", payBizServiceFactory.buildWxPayUrl(order));
         map.put("walletPayUrl",
-            "/user/unified/walletPay?unifiedId=" + order.getId() + payBizServiceFactory.buildCallbackUrl(order));
+                "/user/unified/walletPay?unifiedId=" + order.getId() + payBizServiceFactory.buildCallbackUrl(order));
         return map;
     }
 
@@ -142,18 +142,18 @@ public class UnifiedOrderController extends BaseController {
         WxUser user = getUser();
         List<UnifiedOrder> data = unifiedOrderService.findByUserIdOrderByIdDesc(user.getId(), 0, 1000);
         data.stream().filter(u -> !u.getAppCode().equals(PayBizEnum.MERGE_PAY.getCode()))
-            .forEach(v -> {
-                JSONObject extra = newJSONObject();
-                extra.put("img", PayBizEnum.valueOf(v.getAppCode()).getImg());
-                extra.put("title", v.getTitle());
-                extra.put("orderNo", v.getOrderId());
-                extra.put("created", v.getCreatedTime());
-                extra.put("orderStatus", OrderStatusEnum.valueOf(v.getStatus()).getName());
-                extra.put("shouldPay", v.getShouldPay());
-                extra.put("unifiedId", v.getId());
+                .forEach(v -> {
+                    JSONObject extra = newJSONObject();
+                    extra.put("img", PayBizEnum.valueOf(v.getAppCode()).getImg());
+                    extra.put("title", v.getTitle());
+                    extra.put("orderNo", v.getOrderId());
+                    extra.put("created", v.getCreatedTime());
+                    extra.put("orderStatus", OrderStatusEnum.valueOf(v.getStatus()).getName());
+                    extra.put("shouldPay", v.getShouldPay());
+                    extra.put("unifiedId", v.getId());
 
-                arr.add(extra);
-            });
+                    arr.add(extra);
+                });
 
         return success(arr, null);
     }
@@ -231,15 +231,9 @@ public class UnifiedOrderController extends BaseController {
      * 退款
      */
     private boolean refund(UnifiedOrder unifiedOrder) {
-        if (unifiedOrder.getPoints() != null && unifiedOrder.getPoints() > 0) {
-            WxUser user = wxUserService.findById(getUser().getId());
-            user.setShoppingPoints(user.getShoppingPoints() + unifiedOrder.getPoints());
-            wxUserService.update(user);
-            persistent(user);
-        }
-        if (unifiedOrder.getCouponId() != null) {
-            couponService.unuse(unifiedOrder.getCouponId());
-        }
+        unifiedOrderService.cancel(unifiedOrder.getId());
+        WxUser user = wxUserService.findById(getUser().getId());
+        persistent(user);
         return true;
     }
 }

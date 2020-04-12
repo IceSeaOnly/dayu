@@ -73,4 +73,5 @@ public class UnifiedOrder extends BaseEntity {
     public double shouldPayDouble(){
         return shouldPay/100.0;
     }
+
 }

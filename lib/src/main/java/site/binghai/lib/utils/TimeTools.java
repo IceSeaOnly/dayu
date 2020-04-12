@@ -18,7 +18,7 @@ public class TimeTools {
     }
 
     public static String format(Long date) {
-        if(date == null) return null;
+        if (date == null) return null;
         try {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return df.format(date);
@@ -55,7 +55,7 @@ public class TimeTools {
         return date.getTime();
     }
 
-    public static Long dataTime2Timestamp(String dateTime,String formats) {
+    public static Long dataTime2Timestamp(String dateTime, String formats) {
         SimpleDateFormat format = new SimpleDateFormat(formats);
         Date date = null;
         try {
@@ -183,6 +183,11 @@ public class TimeTools {
 
     public static String now() {
         return format(currentTS());
+    }
+
+    public static String format(long ts, String format) {
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        return df.format(ts);
     }
 }
 

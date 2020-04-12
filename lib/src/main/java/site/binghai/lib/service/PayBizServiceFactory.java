@@ -97,4 +97,9 @@ public class PayBizServiceFactory extends BaseBean {
         get(unifiedOrder.getAppCode()).cancel(unifiedOrder);
         wxEventHandler.onCanceled(unifiedOrder);
     }
+
+    public void cancelByTimeout(UnifiedOrder unifiedOrder) {
+        get(unifiedOrder.getAppCode()).cancel(unifiedOrder);
+        wxEventHandler.onTimeoutCanceled(unifiedOrder);
+    }
 }

@@ -11,6 +11,10 @@ public enum CouponType {
 
     private String name;
 
+    public String getName() {
+        return name;
+    }
+
     CouponType(String name) {
         this.name = name;
     }

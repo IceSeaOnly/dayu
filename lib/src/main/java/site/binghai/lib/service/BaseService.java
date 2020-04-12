@@ -1,8 +1,10 @@
 package site.binghai.lib.service;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +25,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     @Autowired
     private EntityManager entityManager;
     private SimpleJpaRepository<T, Long> daoHolder;
+
 
     public T newInstance(Map map) {
         JSONObject obj = JSONObject.parseObject(JSONObject.toJSONString(map));
@@ -51,8 +54,8 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
      */
     public List distinctList(String filed) {
         List ls = entityManager.createQuery(
-            String.format("select distinct %s from %s", filed, getTypeArguement().getSimpleName()))
-            .getResultList();
+                String.format("select distinct %s from %s", filed, getTypeArguement().getSimpleName()))
+                .getResultList();
 
         return filterDeleted(ls);
     }
@@ -61,19 +64,19 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
      * 获取T的实际类型
      */
     public Class<T> getTypeArguement() {
-        Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return tClass;
     }
 
     @Transactional
     public T save(T t) {
-        t.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+        t.setSchoolId(t.getSchoolId() == null ? SchoolIdThreadLocal.getSchoolId() : t.getSchoolId());
         return getDao().save(t);
     }
 
     @Transactional
     public T update(T t) {
-        t.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+        t.setSchoolId(t.getSchoolId() == null ? SchoolIdThreadLocal.getSchoolId() : t.getSchoolId());
         if (t.getId() >= 0) {
             t.setUpdated(now());
             return save(t);
@@ -82,7 +85,9 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     }
 
     public T findById(Long id) {
-        if (id == null) { return null; }
+        if (id == null) {
+            return null;
+        }
         T t = getDao().findById(id).orElse(null);
         if (t == null || (t.getDeleted() != null && t.getDeleted())) {
             return null;
@@ -103,9 +108,44 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     @Transactional
     public T deleteIfExist(Long id) {
         T t = findById(id);
-        if (t == null) { return null; }
+        if (t == null) {
+            return null;
+        }
         delete(id);
         return t;
+    }
+
+    @Transactional
+    public void copyFrom(Long fromSchoolId) throws Exception {
+        for (int i = 0; i < 99; i++) {
+            List<T> ret = pageQuery(getTypeArguement().newInstance(), i, 100);
+            if (isEmptyList(ret)) {
+                break;
+            }
+            ret.forEach(r -> getDao().deleteById(r.getId()));
+        }
+
+        T example = getTypeArguement().newInstance();
+        example.setCreated(null);
+        example.setCreatedTime(null);
+        example.setDeleted(null);
+        example.setUpdated(null);
+        example.setUpdatedTime(null);
+        example.setSchoolId(fromSchoolId);
+        Example<T> ex = Example.of(example);
+        for (int i = 0; i < 99; i++) {
+            Page<T> page = getDao().findAll(ex, new PageRequest(i, 10));
+            if (null == page || isEmptyList(page.getContent())) {
+                break;
+            }
+            for (T product : page.getContent()) {
+                T tmp = getTypeArguement().newInstance();
+                BeanUtils.copyProperties(product, tmp);
+                tmp.setId(null);
+                tmp.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+                save(tmp);
+            }
+        }
     }
 
     //@Transactional 启用逻辑删除，禁用此方法
@@ -122,10 +162,12 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     }
 
     public List<T> filterDeleted(List<T> inputs) {
-        if (isEmptyList(inputs)) { return inputs; }
+        if (isEmptyList(inputs)) {
+            return inputs;
+        }
         return inputs.stream()
-            .filter(v -> v.getDeleted() == null || !v.getDeleted())
-            .collect(Collectors.toList());
+                .filter(v -> v.getDeleted() == null || !v.getDeleted())
+                .collect(Collectors.toList());
     }
 
     public List<T> pageQuery(T example, int page, int size) {
@@ -160,7 +202,9 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
         T t = (rs == null ? null : rs.orElse(null));
-        if (t == null) { return null; }
+        if (t == null) {
+            return null;
+        }
         return t.getDeleted() ? null : t;
     }
 

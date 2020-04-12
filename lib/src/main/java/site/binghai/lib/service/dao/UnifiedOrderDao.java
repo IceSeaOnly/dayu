@@ -9,17 +9,17 @@ import site.binghai.lib.entity.UnifiedOrder;
 import java.util.List;
 
 public interface UnifiedOrderDao extends JpaRepository<UnifiedOrder, Long> {
-    List<UnifiedOrder> findAllByAppCodeOrderByCreatedDesc(Integer code, Pageable pageable);
+    List<UnifiedOrder> findAllBySchoolIdAndAppCodeOrderByCreatedDesc(Long schoolId,Integer code, Pageable pageable);
 
-    List<UnifiedOrder> findAllByAppCodeAndStatusOrderByCreatedDesc(Integer code, Integer status, Pageable pageable);
+    List<UnifiedOrder> findAllBySchoolIdAndAppCodeAndStatusOrderByCreatedDesc(Long schoolId,Integer code, Integer status, Pageable pageable);
 
-    Long countByAppCode(Integer code);
+    Long countBySchoolIdAndAppCode(Long schoolId,Integer code);
 
-    Long countByAppCodeAndCreatedAfter(Integer code, Long create);
+    Long countBySchoolIdAndAppCodeAndCreatedAfter(Long schoolId,Integer code, Long create);
 
-    Long countByAppCodeAndStatus(Integer code, Integer status);
+    Long countBySchoolIdAndAppCodeAndStatus(Long schoolId,Integer code, Integer status);
 
-    Long countByAppCodeAndStatusInAndCreatedBetween(Integer code, List<Integer> status, Long start, Long end);
+    Long countBySchoolIdAndAppCodeAndStatusInAndCreatedBetween(Long schoolId,Integer code, List<Integer> status, Long start, Long end);
 
     List<UnifiedOrder> findAllByUserIdOrderByIdDesc(Long userId, Pageable pageable);
 

@@ -17,4 +17,12 @@ public interface WxEventHandler {
     void onTuanJoin(Long tuanId, String goodsName, Integer shouldPay, String openId);
 
     void onTuanFail(Long tId, String title, Integer price,String openId);
+
+    void onOrderProcessing(String openId, String userName, String text);
+
+    void onOrderDelivering(String openId, String text, String riderName, String riderPhone);
+
+    void onOrderDeliveried(String openId, String text, String riderName, String riderPhone);
+
+    void onTimeoutCanceled(UnifiedOrder unifiedOrder);
 }

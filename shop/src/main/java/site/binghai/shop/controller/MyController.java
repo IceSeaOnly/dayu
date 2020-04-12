@@ -12,8 +12,11 @@ import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.enums.OrderStatusEnum;
 import site.binghai.lib.service.WxUserService;
 import site.binghai.lib.utils.SchoolIdThreadLocal;
+import site.binghai.shop.entity.School;
 import site.binghai.shop.kv.MyPageConfig;
 import site.binghai.shop.service.*;
+
+import java.util.List;
 
 /**
  * @date 2020/2/2 下午8:37
@@ -56,8 +59,14 @@ public class MyController extends BaseController {
     @GetMapping("myInfo")
     public String myInfo(ModelMap map) {
         WxUser user = getUser();
+        List<School> schools = schoolService.findAll();
+        if (user.getSchoolId() == null) {
+            user.setSchoolId(schools.get(0).getId());
+            SchoolIdThreadLocal.setSchoolId(user.getSchoolId());
+            wxUserService.update(user);
+        }
         map.put("user", user);
-        map.put("schools", schoolService.findAll());
+        map.put("schools", schools);
         map.put("needCompleteInfo", needCompleteInfo(user));
         return "myInfo";
     }
@@ -80,13 +89,13 @@ public class MyController extends BaseController {
         user.setSchoolId(schoolId);
         wxUserService.update(user);
         getSession().invalidate();
-        return "redirect:my";
+        return "redirect:relogin";
     }
 
     @GetMapping("relogin")
     public String relogin() {
         getSession().invalidate();
-        return "redirect:myInfo";
+        return "redirect:my";
     }
 
     private boolean needCompleteInfo(WxUser wxUser) {

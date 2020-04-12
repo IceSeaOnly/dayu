@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Map;
 
 public class HttpUtils {
     /**
@@ -68,7 +69,7 @@ public class HttpUtils {
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果
      */
-    public static String sendPost(String url, String param, String body,String contentType) {
+    public static String sendPost(String url, String param, String body, String contentType) {
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -121,31 +122,57 @@ public class HttpUtils {
     }
 
 
-
     public static JSONObject sendJSONGet(String url, String param) {
         String res = sendGet(url, param);
         return JSONObject.parseObject(res);
     }
 
     public static JSONObject sendJSONPost(String url, String param, String body) {
-        String res = sendPost(url, param, body,"application/json;");
+        String res = sendPost(url, param, body, "application/json;");
         return JSONObject.parseObject(res);
     }
 
 
-    public static String encode(String content){
+    public static String encode(String content) {
         try {
-            return URLEncoder.encode(content,"UTF-8");
+            return URLEncoder.encode(content, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             return null;
         }
     }
 
-    public static String decode(String txt){
+    public static String decode(String txt) {
         try {
-            return URLDecoder.decode(txt,"UTF-8");
+            return URLDecoder.decode(txt, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    public static String sendPost(String url, Map<String, String> map, boolean isproxy) {
+        return sendPost(url, null, getUrlParamsFromMap(map), "application/x-www-form-urlencoded");
+    }
+
+    public static String getUrlParamsFromMap(Map<String, String> map) {
+        try {
+            if (null != map) {
+                StringBuilder stringBuilder = new StringBuilder();
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    stringBuilder.append(URLEncoder.encode(entry.getKey(), "UTF-8"))
+                            .append("=")
+                            .append(URLEncoder.encode(entry.getValue(), "UTF-8"))
+                            .append("&");
+                }
+                String content = stringBuilder.toString();
+                if (content.endsWith("&")) {
+                    content = content.substring(0, content.length() - 1);
+                }
+                return content;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("map数据异常！" + e);
+        }
+        return "";
     }
 }
