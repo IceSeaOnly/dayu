@@ -71,11 +71,11 @@
 <div class="addressDiv">
     <div class="addiv1">
         <div class="addiv1_l">收货人：</div>
-        <div class="addiv1_r"><input id="receiverName" th:text="${recommendReceiver}" type="text"/></div>
+        <div class="addiv1_r"><input id="receiverName" th:value="${recommendReceiver}" type="text"/></div>
     </div>
     <div class="addiv1">
         <div class="addiv1_l">手机号：</div>
-        <div class="addiv1_r"><input id="receiverPhone" th:text="${recommendPhone}" type="text"/></div>
+        <div class="addiv1_r"><input id="receiverPhone" th:value="${recommendPhone}" type="text"/></div>
     </div>
     <!--<div class="addiv1">-->
     <!--<div class="addiv1_l">省市区：</div>-->
@@ -87,7 +87,7 @@
     <!--</div>-->
     <div class="addiv1">
         <div class="addiv1_l">详细地址：</div>
-        <div class="addiv1_r"><input id="receiverAddr" type="text" th:text="${recommendAddr}"/></div>
+        <div class="addiv1_r"><input id="receiverAddr" type="text" th:value="${recommendAddr}"/></div>
     </div>
 </div>
 <div class="clear"></div>
