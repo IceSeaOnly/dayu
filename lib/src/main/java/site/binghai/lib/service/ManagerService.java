@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import site.binghai.lib.entity.Manager;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author icesea
@@ -23,4 +25,13 @@ public class ManagerService extends BaseService<Manager> {
     public void updateSchool(Manager manager) {
         getDao().save(manager);
     }
+
+    public List<Manager> findAll() {
+        return getDao().findAll();
+    }
+
+    public List<Manager> findByUserName(String userName) {
+        return getDao().findAll().stream().filter(p -> p.getUserName().equals(userName)).collect(Collectors.toList());
+    }
+
 }

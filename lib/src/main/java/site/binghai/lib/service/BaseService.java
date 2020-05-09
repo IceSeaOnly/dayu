@@ -176,7 +176,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(null);
         example.setUpdated(null);
         example.setUpdatedTime(null);
-        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+        example.setSchoolId(example.getSchoolId() == null ? SchoolIdThreadLocal.getSchoolId() : example.getSchoolId());
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex, new PageRequest(page, size)).getContent());
     }
@@ -198,7 +198,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(false);
         example.setUpdated(null);
         example.setUpdatedTime(null);
-        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+        example.setSchoolId(example.getSchoolId() == null ? SchoolIdThreadLocal.getSchoolId() : example.getSchoolId());
         Example<T> ex = Example.of(example);
         Optional<T> rs = getDao().findOne(ex);
         T t = (rs == null ? null : rs.orElse(null));
@@ -227,7 +227,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         example.setDeleted(null);
         example.setUpdated(null);
         example.setUpdatedTime(null);
-        example.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+        example.setSchoolId(example.getSchoolId() == null ? SchoolIdThreadLocal.getSchoolId() : example.getSchoolId());
         Example<T> ex = Example.of(example);
         return filterDeleted(getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField)));
     }
@@ -264,7 +264,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             exp.setCreatedTime(null);
             exp.setUpdated(null);
             exp.setUpdatedTime(null);
-            exp.setSchoolId(SchoolIdThreadLocal.getSchoolId());
+            exp.setSchoolId(exp.getSchoolId() == null ? SchoolIdThreadLocal.getSchoolId() : exp.getSchoolId());
             Example<T> ex = Example.of(exp);
             return getDao().count(ex);
         } catch (Exception e) {

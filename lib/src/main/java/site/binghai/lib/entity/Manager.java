@@ -6,6 +6,7 @@ import site.binghai.lib.interfaces.SessionPersistent;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Data
 @Entity
@@ -17,5 +18,8 @@ public class Manager extends BaseEntity implements SessionPersistent {
     private String passWord;
     private String nickName;
     private Boolean forbidden;
+    private Boolean admin;
 
+    @Transient
+    private String schoolName;
 }

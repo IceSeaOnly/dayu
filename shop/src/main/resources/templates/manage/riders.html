@@ -146,6 +146,7 @@
                                             <td th:text="${token.remark}">Otto</td>
                                             <td th:text="${token.schoolReview?'有':'无'}">@mdo</td>
                                             <td>
+                                                <button class="btn btn-outline-danger" th:onclick="${'deleteRider('+token.id+')'}">删除</button>
                                                 <button class="btn btn-outline-danger" th:onclick="${'resetPassWord('+token.id+')'}">重置密码</button>
                                                 <button class="btn btn-outline-info" th:onclick="${'privilegeControl('+token.id+')'}">权限控制</button>
                                             </td>
@@ -287,6 +288,20 @@
 
     function privilegeControl(token) {
         $.getJSON('privilegeControl?token=' + token, function (resp) {
+            if(resp.status != 'SUCCESS'){
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            }else{
+                window.location.reload();
+            }
+        })
+    }
+
+    function deleteRider(token) {
+        $.getJSON('deleteRider?token=' + token, function (resp) {
             if(resp.status != 'SUCCESS'){
                 Swal.fire({
                     icon: 'error',

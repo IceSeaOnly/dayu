@@ -53,14 +53,13 @@
                 <div style="height: 15px"></div>
                 <div class="row">
                     <div class="col-xl-6" th:each="school:${schools}">
-
-                        <div class="card">
+                        <div class="card" th:if="${manager.admin == true || manager.schoolId == school.id}">
                             <div class="card-body">
 
                                 <h4 class="card-title" th:text="${school.schoolName}">Horizontal Form</h4>
                                 <form class="form-horizontal" th:id="${'school_form_'+school.id}"
                                       th:each="item:${school}">
-                                    <div class="form-group row mb-3">
+                                    <div class="form-group row mb-3" >
                                         <div class="col-9">
                                             <input type="hidden" name="id" th:value="${item.id}"/>
                                             <div class="form-group row mb-3">
@@ -101,14 +100,13 @@
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更新&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 </button>
                                                 <button type="button"
+                                                        th:if="${manager.admin == true}"
                                                         th:onclick="${'changeTo('''+item.id+''')'}"
                                                         class="btn btn-secondary waves-effect waves-light">
                                                     切换到该学校
                                                 </button>
                                             </div>
                                         </div>
-
-
                                     </div>
 
                                 </form>
@@ -118,7 +116,7 @@
 
                     </div> <!-- end col -->
 
-                    <div class="col-xl-6">
+                    <div class="col-xl-6" th:if="${manager.admin == true}">
 
                         <div class="card">
                             <div class="card-body">

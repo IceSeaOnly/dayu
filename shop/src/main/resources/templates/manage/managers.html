@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>FastShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/theme.min.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <div class="header-border"></div>
+
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <div th:include="manage/menus"></div>
+    <!-- Left Sidebar End -->
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row" >
+                    <div class="col-lg-12" th:if="${manager.admin == true}">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">管理员列表</h4>
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>账号</th>
+                                            <th>管理区域</th>
+                                            <th>禁止登陆</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="m:${managers}">
+                                            <th th:text="${m.id}">1</th>
+                                            <td th:text="${m.userName}">Mark</td>
+                                            <td th:text="${m.schoolName}">Otto</td>
+                                            <td th:text="${m.forbidden?'是':'否'}">@mdo</td>
+                                            <td>
+                                                <button class="btn btn-outline-danger"
+                                                        th:onclick="${'resetPassWord('+m.id+')'}">重置密码
+                                                </button>
+                                                <button class="btn btn-outline-info"
+                                                        th:if="${m.admin != true}"
+                                                        th:onclick="${'privilegeControl('+m.id+')'}">权限控制
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                        <!--end card-->
+                    </div>
+
+                    <div class="col-lg-12" th:if="${manager.admin == true}">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">新增管理员</h4>
+                                <form class="form-horizontal" id="addNewManager" action="addNewManager" method="post">
+                                    <div class="form-group row mb-3">
+                                        <div class="col-9">
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">账号（不可重复）</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="userName" class="form-control"
+                                                           placeholder="数字或英文">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">绑定区域</label>
+                                                <div class="col-9">
+                                                    <select name="schoolId">
+                                                        <option th:each="sc:${schools}"
+                                                                th:value="${sc.id}"
+                                                                th:text="${sc.schoolName}"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div style="text-align: center;padding-top: 10px">
+                                                <button type="submit"
+                                                        class="btn btn-primary waves-effect waves-light">
+                                                    新增
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">更新我的密码</h4>
+                                <form class="form-horizontal" id="resetMyPassword" action="resetMyPassword" method="post">
+                                    <div class="form-group row mb-3">
+                                        <div class="col-9">
+                                            <div class="form-group row mb-3">
+                                                <label class="col-3 col-form-label">新密码</label>
+                                                <div class="col-9">
+                                                    <input type="text" name="passwd" class="form-control"
+                                                           placeholder="数字或英文">
+                                                </div>
+                                            </div>
+                                            <div style="text-align: center;padding-top: 10px">
+                                                <button type="submit"
+                                                        class="btn btn-primary waves-effect waves-light">
+                                                    立刻更新
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+
+                </div>
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+
+    </div>
+    <!-- end main content-->
+
+</div>
+<!-- END layout-wrapper -->
+<script>
+    function resetPassWord(token) {
+        $.getJSON('resetManagerPassWord?managerId=' + token, function (resp) {
+            if (resp.status != 'SUCCESS') {
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: '新密码',
+                    text: resp.data
+                })
+            }
+        })
+    }
+
+    function privilegeControl(token) {
+        $.getJSON('managerCtrl?managerId=' + token, function (resp) {
+            if (resp.status != 'SUCCESS') {
+                Swal.fire({
+                    icon: 'error',
+                    title: '发生错误',
+                    text: resp.msg
+                })
+            } else {
+                window.location.reload();
+            }
+        })
+    }
+</script>
+<!-- Overlay-->
+<div class="menu-overlay"></div>
+
+<!-- jQuery  -->
+<script src="/js/jquery-1.8.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/metismenu.min.js"></script>
+<script src="/js/waves.js"></script>
+<script src="/js/simplebar.min.js"></script>
+<!-- Sweet Alerts Js-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<!-- App js -->
+<script src="/js/theme.js"></script>
+</body>
+
+</html>

@@ -34,18 +34,18 @@ public class RiderManageController extends BaseController {
     @GetMapping("riders")
     public String riders(ModelMap map) {
         Long totalProcessing = shopOrderService.countByStateAndTime(TimeTools.today()[0], TimeTools.today()[1],
-            OrderStatusEnum.PROCESSING);
+                OrderStatusEnum.PROCESSING);
         Long totalDelivery = 0L;
         Long totalComplete = 0L;
 
         List<AppToken> tokens = appTokenService.findAllBySchool();
         for (AppToken token : tokens) {
             token.setTodayComplete(
-                shopOrderService.countByRiderAndStatusAndTime(OrderStatusEnum.COMPLETE, token.getId(),
-                    TimeTools.today()));
+                    shopOrderService.countByRiderAndStatusAndTime(OrderStatusEnum.COMPLETE, token.getId(),
+                            TimeTools.today()));
             token.setTodayDelivery(
-                shopOrderService.countByRiderAndStatusAndTime(OrderStatusEnum.DELIVERY, token.getId(),
-                    TimeTools.today()));
+                    shopOrderService.countByRiderAndStatusAndTime(OrderStatusEnum.DELIVERY, token.getId(),
+                            TimeTools.today()));
             token.setTodayTake(token.getTodayComplete() + token.getTodayDelivery());
 
             totalDelivery += token.getTodayDelivery();
@@ -93,6 +93,14 @@ public class RiderManageController extends BaseController {
         AppToken app = appTokenService.findById(token);
         app.setSchoolReview(!app.getSchoolReview());
         appTokenService.update(app);
+        return success();
+    }
+
+    @GetMapping("deleteRider")
+    @ResponseBody
+    public Object deleteRider(@RequestParam Long token) {
+        AppToken app = appTokenService.findById(token);
+        appTokenService.delete(app);
         return success();
     }
 

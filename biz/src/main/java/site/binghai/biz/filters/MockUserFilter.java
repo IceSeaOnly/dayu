@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import site.binghai.lib.entity.WxUser;
 import site.binghai.lib.service.WxUserService;
+import site.binghai.lib.utils.SchoolIdThreadLocal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ public class MockUserFilter extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-        throws Exception {
+            throws Exception {
         HttpSession session = request.getSession();
         if (session != null) {
             Object obj = session.getAttribute("__WXUSER__");
@@ -28,7 +29,9 @@ public class MockUserFilter extends HandlerInterceptorAdapter {
     }
 
     private WxUser mockUser() {
-        return wxUserService.findById(99999999L);
+        WxUser user = wxUserService.findById(1L);
+        SchoolIdThreadLocal.setSchoolId(user.getSchoolId());
+        return user;
     }
 
 }

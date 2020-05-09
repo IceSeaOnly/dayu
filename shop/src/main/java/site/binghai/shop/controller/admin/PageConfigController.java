@@ -30,6 +30,7 @@ public class PageConfigController extends BaseController {
     @GetMapping("pageConfig")
     public String pageConfig(ModelMap map, Long update) {
         Map<ConfObj, List<ConfObj>> configs = new LinkedHashMap<>();
+        join(configs, PrinterConfig.class);
         join(configs, AutoAcceptOrderConfig.class);
         join(configs, IndexButtonConfig.class);
         join(configs, AppConfig.class);

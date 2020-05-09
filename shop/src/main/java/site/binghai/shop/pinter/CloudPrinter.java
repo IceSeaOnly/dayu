@@ -1,29 +1,44 @@
 package site.binghai.shop.pinter;
 
+import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import site.binghai.lib.config.IceConfig;
 import site.binghai.shop.entity.ShopOrder;
+import site.binghai.shop.kv.PrinterConfig;
+import site.binghai.shop.service.KvService;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class CloudPrinter {
-    private CloudPrinterProxy printerProxy;
     @Autowired
-    private IceConfig iceConfig;
+    private KvService kvService;
+    private ConcurrentHashMap<Long, CloudPrinterProxy> proxies = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long, PrinterConfig> configs = new ConcurrentHashMap<>();
 
 
-    @PostConstruct
-    public void init() {
-        printerProxy = CloudPrinterProxy.getInstance();
-        printerProxy.init(iceConfig.getYilianyunClientId(), iceConfig.getYilianyunClientSecret());
+    private void init(Long schoolId) {
+        PrinterConfig config = kvService.get(PrinterConfig.class, schoolId);
+        CloudPrinterProxy printerProxy = CloudPrinterProxy.getInstance();
+        printerProxy.init(config.getClientId(), config.getClientSecret());
         printerProxy.getFreedomToken();
         printerProxy.refreshToken();
-        printerProxy.addPrinter(iceConfig.getYilianyunMachineCode(), iceConfig.getYilianyunMechineSecret());
+        printerProxy.addPrinter(config.getMachineCode(), config.getMachineSecret());
+        proxies.put(schoolId, printerProxy);
+        configs.put(schoolId, config);
+    }
 
+    @Synchronized
+    private CloudPrinterProxy getProxy(Long schoolId) {
+        if (proxies.containsKey(schoolId)) {
+            return proxies.get(schoolId);
+        }
+        init(schoolId);
+        return proxies.get(schoolId);
     }
 
     public String print(ShopOrder order, String orderId, int pieces) {
@@ -40,6 +55,8 @@ public class CloudPrinter {
     }
 
     public String print(List<ShopOrder> orders, String orderId) {
+        Long schoolId = orders.get(0).getSchoolId();
+        CloudPrinterProxy printerProxy = getProxy(schoolId);
         printerProxy.refreshToken();
         StringBuilder sb = new StringBuilder();
         sb.append("<MN>1</MN>");
@@ -66,7 +83,7 @@ public class CloudPrinter {
         sb.append("收货电话:" + orders.get(0).getReceiverPhone() + "\n");
         sb.append("配送地址:" + orders.get(0).getReceiverAddress() + "\n");
         sb.append("<QR>" + orderId + "</QR>");
-        String resp = printerProxy.print(iceConfig.getYilianyunMachineCode(), sb.toString(), orderId);
+        String resp = printerProxy.print(configs.get(schoolId).getMachineCode(), sb.toString(), orderId);
         System.out.println(orderId + "打印结果：" + resp);
         return resp;
     }
